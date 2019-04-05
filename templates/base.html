@@ -1,0 +1,124 @@
+{% load static %}
+{% load bootstrap4 %}
+
+<!doctype html>
+<html lang="ru">
+<head>
+
+    {% include 'head.html' %}
+
+    {% bootstrap_css %}
+    {% block css %}{% endblock %}
+    <style>
+        .selected {
+            background-color: green;
+            color: #fff;
+        }
+    </style>
+    <title>{% block title %}{% endblock %}</title>
+
+
+</head>
+<body>
+
+
+<div class="container-fluid">
+    <div class="row">
+
+        <div class="col-2">
+            {% include 'left-menu.html' %}
+        </div>
+
+        <div class="col-10">
+            {% block content %}{% endblock %}
+        </div>
+
+    </div>
+</div>
+
+
+
+
+
+
+{% bootstrap_javascript jquery='full' %}
+{% block scripts %}{% endblock %}
+<script>
+    $('td')
+      .mousedown(function(){
+        $(this).toggleClass('selected');
+        $('td').on('mouseenter',function(){
+          $(this).toggleClass('selected');
+        });
+      })
+      .mouseup(function(){
+        $('td').off('mouseenter');
+      });
+
+    function preventSelection(element){
+      var preventSelection = false;
+
+      function addHandler(element, event, handler){
+        if (element.attachEvent)
+          element.attachEvent('on' + event, handler);
+        else
+          if (element.addEventListener)
+            element.addEventListener(event, handler, false);
+      }
+      function removeSelection(){
+        if (window.getSelection) { window.getSelection().removeAllRanges(); }
+        else if (document.selection && document.selection.clear)
+          document.selection.clear();
+      }
+      function killCtrlA(event){
+        var event = event || window.event;
+        var sender = event.target || event.srcElement;
+
+        if (sender.tagName.match(/INPUT|TEXTAREA/i))
+          return;
+
+        var key = event.keyCode || event.which;
+        if (event.ctrlKey && key == 'A'.charCodeAt(0))  // 'A'.charCodeAt(0) можно заменить на 65
+        {
+          removeSelection();
+
+          if (event.preventDefault)
+            event.preventDefault();
+          else
+            event.returnValue = false;
+        }
+      }
+
+      // не даем выделять текст мышкой
+      addHandler(element, 'mousemove', function(){
+        if(preventSelection)
+          removeSelection();
+      });
+      addHandler(element, 'mousedown', function(event){
+        var event = event || window.event;
+        var sender = event.target || event.srcElement;
+        preventSelection = !sender.tagName.match(/INPUT|TEXTAREA/i);
+      });
+
+      // борем dblclick
+      // если вешать функцию не на событие dblclick, можно избежать
+      // временное выделение текста в некоторых браузерах
+      addHandler(element, 'mouseup', function(){
+        if (preventSelection)
+          removeSelection();
+        preventSelection = false;
+      });
+
+      // борем ctrl+A
+      // скорей всего это и не надо, к тому же есть подозрение
+      // что в случае все же такой необходимости функцию нужно
+      // вешать один раз и на document, а не на элемент
+      addHandler(element, 'keydown', killCtrlA);
+      addHandler(element, 'keyup', killCtrlA);
+    }
+
+    preventSelection(document);
+
+</script>
+</body>
+</html>

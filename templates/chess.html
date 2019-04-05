@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load bootstrap4 %}
+{% load my_filter %}
+
+
+{% block content %}
+    <div style="width: 100%; text-align: center; font-size: 20px;">{{ today }}</div>
+    <table class="table table-bordered" id="timeGrid">
+        {% for type_room in type_rooms %}
+            {% if forloop.first %}
+            <thead>
+                <tr>
+                    <th></th>
+                    {% for weekday in weekdays %}
+                        <td style="text-align: center; font-size:14px;">{{ weekday }}</td>
+                    {% endfor %}
+                </tr>
+            </thead>
+            {% endif %}
+            <thead>
+                <tr>
+                    <th style="font-size: 14px;">{{ type_room.name }}</th>
+                    {% for i in 15|create_range %}
+                        <td style="font-size:12px; text-align: center;">{{ type_room.price }}</td>
+                    {% endfor %}
+
+                </tr>
+            </thead>
+            <tbody>
+                {% for room in type_room.rooms_set.all %}
+                    <tr>
+                        <th style="font-size:14px;font-weight: 400;">Комната №{{ room.number_room }}</th>
+                        {% for date in dates %}
+                            <td style="font-size: 12px; text-align: center;">{{ date }}</td>
+                        {% endfor %}
+
+                    </tr>
+                {% endfor %}
+
+            </tbody>
+        {% endfor %}
+    </table>
+
+{% endblock %}
