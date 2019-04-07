@@ -8,13 +8,9 @@
     {% include 'head.html' %}
 
     {% bootstrap_css %}
+    <link rel="stylesheet" href="{% static 'css/jquery-ui.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
     {% block css %}{% endblock %}
-    <style>
-        .selected {
-            background-color: green;
-            color: #fff;
-        }
-    </style>
     <title>{% block title %}{% endblock %}</title>
 
 
@@ -42,6 +38,7 @@
 
 
 {% bootstrap_javascript jquery='full' %}
+<script src="{% static 'js/jquery-ui.min.js' %}"></script>
 {% block scripts %}{% endblock %}
 <script>
     $('td')
@@ -89,7 +86,6 @@
         }
       }
 
-      // не даем выделять текст мышкой
       addHandler(element, 'mousemove', function(){
         if(preventSelection)
           removeSelection();
@@ -100,19 +96,12 @@
         preventSelection = !sender.tagName.match(/INPUT|TEXTAREA/i);
       });
 
-      // борем dblclick
-      // если вешать функцию не на событие dblclick, можно избежать
-      // временное выделение текста в некоторых браузерах
       addHandler(element, 'mouseup', function(){
         if (preventSelection)
           removeSelection();
         preventSelection = false;
       });
 
-      // борем ctrl+A
-      // скорей всего это и не надо, к тому же есть подозрение
-      // что в случае все же такой необходимости функцию нужно
-      // вешать один раз и на document, а не на элемент
       addHandler(element, 'keydown', killCtrlA);
       addHandler(element, 'keyup', killCtrlA);
     }

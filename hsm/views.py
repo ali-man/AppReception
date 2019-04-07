@@ -30,7 +30,7 @@ def date_list():
     today = datetime.datetime.now()
 
     dates = {'date_and_weekday': [], 'date': []}
-    for i in range(-7, 8):
+    for i in range(-3, 12):
         date = today + datetime.timedelta(days=i)
         weekday_num = date.weekday()
         dates['date_and_weekday'].append(F'{int_to_str(weekday_num)} {change_date_num(date.strftime(date_format))}')
