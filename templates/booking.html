@@ -1,0 +1,174 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+
+{% endblock %}
+
+{% block title %}Новое бронирование{% endblock %}
+
+{% block content %}
+    <form action="{% url 'booking' %}" method="POST">{% csrf_token %}
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home"
+                   aria-selected="true">Информация о заезде</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab"
+                   aria-controls="profile"
+                   aria-selected="false">Данные о госте</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab"
+                   aria-controls="contact"
+                   aria-selected="false">Задачи</a>
+            </li>
+        </ul>
+        <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                <div class="block-info-booking">
+                    <div class="block-info-booking__left">
+                        <label for="source-booking">Источник брони*:</label>
+                        <select name="source-booking" id="source-booking" class="js-example-tags">
+                            {% for src in source_booking %}
+                                <option value="{{ src }}">{{ src }}</option>
+                            {% endfor %}
+                        </select>
+
+                        <label for="number-source-booking">Номер брони у источника</label>
+                        <input type="text" name="number-source-booking" id="number-source-booking">
+
+                        <label for="rooms">Номера</label>
+                        <select name="rooms" id="rooms" class="js-example-placeholder-single">
+                            {% for type_room in type_rooms %}
+                                <optgroup label="{{ type_room }}">
+                                    {% for room in type_room.rooms_set.all %}
+                                        <option value="{{ room }}">{{ room }}</option>
+                                    {% endfor %}
+                                </optgroup>
+                            {% endfor %}
+                        </select>
+
+                        <label for="price">Цена</label>
+                        <select name="price" id="price">
+                            <option value="fixed-price">Фиксированная цена</option>
+                            <option value="own-price">Своя цена</option>
+                        </select>
+                        <label for="id_own-price-num">Своя цена</label>
+                        <input type="text" name="own-price-num" id="id_own-price-num">
+                    </div>
+                    <div class="block-info-booking__middle">
+                        <label for="date-arrival">Заезд*:</label>
+                        <div class="date-arrival">
+                            <input type="text" name="date-arrival" id="date-arrival">
+                            <label for="date-arrival-time">Время</label>
+                            <input type="text" name="date-arrival-time" id="date-arrival-time">
+                        </div>
+                        <label for="date-departure">Выезд*:</label>
+                        <div class="date-departure">
+                            <input type="text" name="date-departure" id="date-departure">
+                            <label for="date-departure-time">время</label>
+                            <input type="text" name="date-departure-time" id="date-departure-time">
+                        </div>
+                        <select name="status-booking" id="status-booking" class="js-example-tags">
+                            {% for status in status_booking %}
+                                <option value="{{ status.0 }}">{{ status.1 }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="block-info-booking__right">
+                        <label for="admin-comment">Комментарий администратора</label>
+                        <textarea name="admin-comment" id="admin-comment" cols="30" rows="10"></textarea>
+                        <label for="customer-wishes">Пожелания клиента</label>
+                        <textarea name="customer-wishes" id="customer-wishes" cols="30" rows="10"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+
+                <label for="id_serial_number">Серийный номер паспорта</label>
+                <input type="text" name="serial_number" id="id_serial_number">
+
+                <label for="id_fullname">Ф.И.О</label>
+                <input type="text" name="fullname" id="id_fullname">
+
+                <label for="id_date_of_birth">Дата рождения</label>
+                <input type="text" name="date_of_birth" id="id_date_of_birth">
+
+                <label for="id_place_of_birth">Место рождение</label>
+                <select name="place_of_birth" id="id_place_of_birth" class="js-example-single">
+                    {% for city in form_guest.place_of_birth %}
+                        {{ city }}
+                    {% endfor %}
+                </select>
+
+                <label for="id_given_date">Дата выдачи паспорта</label>
+                <input type="text" name="given_date" id="id_given_date">
+
+                <label for="id_expire_date">Дата окончания срока паспорта</label>
+                <input type="text" name="expire_date" id="id_expire_date">
+
+                <label for="id_give_organization">Кем выдано</label>
+                <input type="text" name="give_organization" id="id_give_organization">
+
+                <label for="id_place_of_living">Место проживания</label>
+                <input type="text" name="place_of_living" id="id_place_of_living">
+
+                <label for="id_nationality">Национальность</label>
+                <select name="nationality" id="id_nationality" class="js-example-single">
+                    {% for nationality in form_guest.nationality %}
+                        {{ nationality }}
+                    {% endfor %}
+                </select>
+
+                <label for="id_citeznship">Гражданство</label>
+                <select name="citeznship" id="id_citeznship">
+                    {% for citeznship in form_guest.citeznship %}
+                        {{ citeznship }}
+                    {% endfor %}
+                </select>
+
+                <label for="id_visa">Виза</label>
+                <select name="visa" id="id_visa">
+                    {% for visa in form_guest.visa %}
+                        {{ visa }}
+                    {% endfor %}
+                </select>
+
+                <label for="id_visa_number">Номер визы</label>
+                <input type="text" name="visa_number" id="id_visa_number">
+
+                <label for="id_visa_type">Тип визы</label>
+                <input type="text" name="visa_type" id="id_visa_type">
+
+                <label for="id_visa_given_date">Дата выдачи визы</label>
+                <input type="text" name="visa_given_date" id="id_visa_given_date">
+
+                <label for="id_visa_expire_date">Дата окончания срока визы</label>
+                <input type="text" name="visa_expire_date" id="id_visa_expire_date">
+
+            </div>
+            <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+                <h3>Новая задача</h3>
+                {#            <label for="id_templates">Готовые шаблоны:</label>#}
+                {#            <select name="templates" id="id_templates">#}
+                {#                {% for template in templates %}#}
+                {#                    {{ template }}#}
+                {#                {% endfor %}#}
+                {#            </select>#}
+            </div>
+        </div>
+
+        <div class="btns">
+            <button type="submit" id="send-booking" class="btn btn-primary">Сохранить</button>
+            <a href="#" class="btn btn-primary">Сохранить и остаться</a>
+            <a href="#" class="btn btn-primary">Резерв</a>
+            <a href="#" class="btn btn-primary">Отмена</a>
+        </div>
+    </form>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'js/booking.js' %}"></script>
+{% endblock %}

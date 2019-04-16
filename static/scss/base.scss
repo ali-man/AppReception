@@ -1,220 +1,62 @@
-$color-selected: #009600;
-$col-brd: #CCCCCC;
-
-@mixin width_col($value) {
-  width: $value + px;
+.datepicker {
+  z-index: 999;
 }
 
-@mixin height_row($value) {
-  height: $value + px;
-}
-
-@mixin type_room {
-  display: flex;
-  width: 100%;
-  border-bottom: 1px solid $col-brd;
-  cursor: default;
-}
-
-@mixin room {
-  width: 150px;
-  border-right: 1px solid $col-brd;
-}
-
-@mixin date {
-  width: 65px;
-  height: 30px;
-  text-align: center;
-  font-size: 12px;
-  border-right: 1px solid $col-brd;
-}
-
-.colors {
-  display: flex;
-  width: 100%;
-  margin: 10px 0;
-  div {
-    font-size: 12px;
-    border: 1px solid #888888;
-    margin: 0 5px;
-    padding: 5px 8px;
-    color: #000;
-  }
-}
-
-.reservation {
-  background-color: #a7caf0;
-}
-
-.reservation-deposit {
-  background-color: #406bde;
-  color: #fff !important;
-}
-
-.person {
-  background-color: #92ed8d;
-}
-
-.person-debt {
-  background-color: #009600;
-  color: #fff !important;
-}
-
-.evicted-person {
-  background-color: #c8c8c8;
-}
-
-.person-exit {
-  background-color: #fffe00;
-}
-
-.lock-room {
-  background-color: #1e1e1e;
-  color: #fff !important;
-}
-
-.now-line {
-  position: relative;
-  &:after {
-    content: '';
-    position: absolute;
-    left: 0;
-    border-left: 3px solid #ecdc14;
-    height: 100vh;
-  }
-}
-
-@for $i from 1 through 5 {
-  .w-col-#{$i} {
-    @include width_col(60*$i);
-    //border-left: 1px solid #ccc;
-    border-right: 1px solid $col-brd;
-    float: left;
-    position: relative;
-    text-align: center;
-  }
-  .h-row-#{$i} {
-    @include height_row(25*$i);
-    //border-top: 1px solid #ccc;
-    border-bottom: 1px solid $col-brd;
-    float: left;
-  }
-}
-
-.selected {
-  background-color: $color-selected;
-  color: $color-selected;
-  border: 1px solid $color-selected !important;
-}
-
-.sel-test {
-  background-color: orange;
-  color: orange;
-}
-
-.datetime {
-  @include type_room;
-  .empty-line {
-    @include room;
-  }
-  .weekday {
-    @include date;
-    font-size: 14px;
-  }
-}
-
-.block-header {
-  @include type_room;
-  .type-room {
-    @include room;
-    font-weight: 600;
-    font-size: 14px;
-  }
-  .price {
-    @include date;
-  }
-}
-
-.row-ka {
-  @include type_room;
-  font-size: 12px;
-  .room {
-    @include room;
-  }
-  .date {
-    @include date;
-  }
-}
-
-.jquerydd {
-  left: 120px;
-  top: 0px;
-  position: absolute;
-}
-
-.drag, .drop {
-  width: 100px;
-  height: 50px;
-  position: absolute;
-  background: none;
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 2px solid #000;
-  font-size: 14px;
-  font-weight: bold;
-}
-
-.drag {
-  background: #000;
-  cursor: pointer;
-  z-index: 5;
-}
-
-#drag_0 {
-  left: 80px;
-  top: 100px;
-}
-
-#drag_1 {
-  left: 250px;
-  top: 100px;
-}
-
-#drag_2 {
-  left: 410px;
-  top: 100px;
-}
-
-#drop_0 {
-  left: 80px;
-  top: 200px;
-}
-
-#drop_1 {
-  left: 250px;
-  top: 200px;
-}
-
-#drop_2 {
-  left: 410px;
-  top: 200px;
-}
-
-// модальное окно для регисрации гостей
-.block-data-person {
+#new-booking {
   display: none;
-  position: fixed;
-  right: 10px;
-  top: 10px;
-  background-color: #fff;
-  width: 400px;
-  height: 600px;
-  -webkit-border-radius: 4px;
-  -moz-border-radius: 4px;
-  border-radius: 4px;
-  -webkit-box-shadow: 0 1px 3px 0 #000;
-  -moz-box-shadow: 0 1px 3px 0 #000;
-  box-shadow: 0 1px 3px 0 #000;
+  .wrap {
+    height: 160px;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-gap: 15px;
+    .title {
+      margin-top: 5px;
+    }
+    .desc {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+    }
+    .datepicker {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      input {
+        width: 85px;
+        height: 25px;
+      }
+    }
+    .btns {
+      display: flex;
+      justify-content: space-around;
+      align-self: center;
+      margin-bottom: 15px;
+      & a {
+        font-size: 12px;
+        color: #fff;
+      }
+    }
+  }
+}
+
+// booking.html
+.block-info-booking {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-gap: 10px;
+  &__left {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-gap: 10px;
+  }
+  &__middle {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-gap: 10px;
+  }
+  &__right {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-gap: 10px;
+  }
 }

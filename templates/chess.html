@@ -4,78 +4,267 @@
 {% load my_filter %}
 
 
+{% block css %}
+
+{% endblock %}
+
+{% block title %}
+    Шахматка
+{% endblock %}
+
 {% block content %}
 
-    <div class="colors">
-        <div class="reservation">Бронь</div>
-        <div class="reservation-deposit">Бронь с предоплатой</div>
-        <div class="person">Размещение гостя</div>
-        <div class="person-debt">Размещение гостя с долгом</div>
-        <div class="evicted-person">Выселенное размещение</div>
-        <div class="person-exit">Гости сегодня выезжают из этого номера</div>
+    <table class="table calendar-table" id="calendar">
+        <thead>
+        <tr>
+            <th class="firstcol"></th>
+            <th colspan="15" class="month">
+                <div class="month-wrap" title="{{ date.today }}">{{ date.today|today }}</div>
+            </th>
+        </tr>
+        <tr>
+            <td></td>
 
-        <div class="lock-room">Блокировка номера</div>
-    </div>
-
-    <div class="text-center">{{ today }}</div>
-
-    <div class="testing">
-        <div class="datetime">
-            <div class="empty-line">
-                <div id="buttons" class="d-none">
-                <button id="accept" class="btn btn-success" style="font-size: 11px;padding:.175rem .25rem">Добавить</button>
-                <button id="cancel" class="btn btn-danger" style="font-size: 11px;padding:.175rem .25rem">Отменить</button>
-            </div>
-            </div>
-            {% for weekday in weekdays %}
-                <div class="weekday">{{ weekday }}</div>
+            {% for weekday in date.full_date %}
+                {% if weekday == date.today %}
+                    <th class="today">{{ weekday|weekday }}</th>
+                {% else %}
+                    <th>{{ weekday|weekday }}</th>
+                {% endif %}
             {% endfor %}
 
-        </div>
+        </tr>
+        <tr class="dates">
+            <td class="rooms firstcol"><b>Номера</b></td>
+
+            {% for day in date.full_date %}
+                {% if day == date.today %}
+                    <th class="today">
+                        {{ day|day }}
+                        <div title="сегодня" class="line"
+                             style="border-color: rgb(78, 200, 234) !important; top: 27px; height: 3553px;"></div>
+                    </th>
+                {% else %}
+                    <th>{{ day|day }}</th>
+                {% endif %}
+            {% endfor %}
+
+        </tr>
+        </thead>
+        <tbody>
         {% for type_room in type_rooms %}
-
-            <div class="type-room-items">
-                <div class="block-header">
-                    <div class="type-room">
-                        {{ type_room.name }}
+            <tr id="cat{{ type_room.id }}">
+                <td class="firstcol cat" colspan="16">
+                    <span class="collapse" data-cat="{{ type_room.id }}"></span>
+                    <span class="cat-name">{{ type_room.name }}</span>
+                    <div class="fixed-column" style="width: 1401px; height: 27px;">
+                        <span class="collapse" data-cat="{{ type_room.id }}"></span>
+                        <span class="cat-name">{{ type_room.name }}</span>
                     </div>
-                    <div class="price">{{ type_room.price }}</div>
-                    <div class="price">{{ type_room.price }}</div>
-                    <div class="price">{{ type_room.price }}</div>
-                    <div class="price">{{ type_room.price }}</div>
-                    <div class="price">{{ type_room.price }}</div>
-                    <div class="price">{{ type_room.price }}</div>
-                    <div class="price">{{ type_room.price }}</div>
-                    <div class="price">{{ type_room.price }}</div>
-                    <div class="price">{{ type_room.price }}</div>
-                    <div class="price">{{ type_room.price }}</div>
-                    <div class="price">{{ type_room.price }}</div>
-                    <div class="price">{{ type_room.price }}</div>
-                    <div class="price">{{ type_room.price }}</div>
-                    <div class="price">{{ type_room.price }}</div>
-                    <div class="price">{{ type_room.price }}</div>
-                </div>
-                {% for room in type_room.rooms_set.all %}
-                    <div class="row-ka">
-                        <div class="room">Room №{{ room.number_room }}</div>
-                        {% for date in dates %}
-                            <div class="date">{{ date }}</div>
-                        {% endfor %}
-                    </div>
-                {% endfor %}
-            </div>
+                </td>
+            </tr>
+            {% for room in type_room.rooms_set.all %}
+                <tr id="room{{ type_room.id }}" data-cat="{{ type_room.id }}" class="highlight room">
+                    {% for date in date.full_date %}
+                        {% if forloop.first %}
+                            <td class="firstcol cleanmode">
+                            <span title="{{ room.number_room }}" class="room-name room-extra">
+                                {{ room.number_room }}
+                                <span>{{ type_room }} {{ room.number_room }}</span>
+                            </span>
+                                <div class="room-status status0" data-room_id="{{ room.id }}">
+                                    <a href="javascript:;" data-status_id="0">чистый</a>
+                                </div>
+                                <div class="fixed-column" style="width: 350px; height: 31px;">
+                                <span title="1" class="room-name room-extra">
+                                    {{ room.number_room }}
+                                    <span>{{ type_room }} {{ room.number_room }}</span>
+                                </span>
+                                    <div class="room-status status0" data-room_id="{{ room.id }}">
+                                        <a href="javascript:;" data-status_id="0">чистый</a>
+                                    </div>
+                                </div>
+                            </td>
+{#                            <td class="booking">#}
+{#                                <div id="b675837" class="dateline" style="left: 34.5px;">#}
+{#                                    <span class="status" style="background-color: #8c06a3">#}
+{#                                        <div class="status-name-wrap">#}
+{#                                            <div class="status-name white"> Асадчих Юлия</div>#}
+{#                                        </div>#}
+{#                                    </span>#}
+{#                                    <div class="info">#}
+{#                                        <div>#}
+{#                                            <a title="открыть карточку клиента" href="/client/info?id=496809">#}
+{#                                                Асадчих Юлия Олександровна#}
+{#                                            </a>#}
+{#                                        </div>#}
+{#                                        <div>заезд: 05-04-2019 13:00</div>#}
+{#                                        <div>выезд: 06-04-2019 12:00</div>#}
+{#                                        <div>суток: 1</div>#}
+{#                                        <div data-booking_id="675837" class="change_status_link">статус: <a#}
+{#                                                title="изменить статус брони" class="dashed" data-status_id="8"#}
+{#                                                href="javascript:;">резерв</a>#}
+{#                                        </div>#}
+{#                                        <div>мест: 1</div>#}
+{#                                        <div>к оплате: 1420 руб. (1420 руб. в сутки)</div>#}
+{#                                        <div class="green">оплачено: 0 руб.</div>#}
+{#                                        <div class="red">долг: 1420 руб.</div>#}
+{#                                        <div>телефон: <a href="javascript:;"#}
+{#                                                         onclick="window.open('/client/sms?to=0679264076', 'sms_form', 'height=450,width=550,scrollbars=1,toolbar=0,location=0,resizable=1')">0679264076</a>#}
+{#                                            <a href="tel:0679264076"><img class="phone" src="/img/admin/call_icon.png"></a>#}
+{#                                        </div>#}
+{#                                        <div>почта: <a href="javascript:;"#}
+{#                                                       onclick="window.open('/client/mail?to=Juliaesa919%40gmail.com', 'mail_form', 'height=600,width=650,scrollbars=1,toolbar=0,location=0,resizable=1')">Juliaesa919@gmail.com</a>#}
+{#                                        </div>#}
+{#                                        <div>источник: Инстаграм (12345)</div>#}
+{#                                        <div>автор: test1</div>#}
+{#                                        <div>дата создания: 05-04-2019 15:19:25</div>#}
+{#                                        <div>ID брони: <span class="booking_id">1594</span></div>#}
+{#                                        <div class="tooltip-nav"><a title="Информация"#}
+{#                                                                    href="/booking/info?id=675837"><img#}
+{#                                                src="//litepms.ru//img/admin/eye_icon.gif"></a> <a title="Редактировать"#}
+{#                                                                                                   href="/booking/edit?id=675837&amp;r=cal&amp;d=05-04-2019"><img#}
+{#                                                src="//litepms.ru//img/admin/edit_icon.png"></a> <a title="Копировать"#}
+{#                                                                                                    href="javascript:;"#}
+{#                                                                                                    onclick="copybooking(675837)"><img#}
+{#                                                src="//litepms.ru//img/admin/copy_icon.png"></a> <a#}
+{#                                                title="Поменять местами"#}
+{#                                                href="javascript:;"#}
+{#                                                onclick="swapbooking(675837, 1594)"><img#}
+{#                                                src="//litepms.ru//img/admin/swap_icon.png"></a></div>#}
+{#                                    </div>#}
+{#                                </div>#}
+{#                            </td>#}
+                        {% endif %}
+                        {% if date.1|checking_date:room %}
+                            <td title="{{ date.0 }}-{{ date.1 }}" class="booking" data-booking-id="{{ date.1|info_booking:room }}"></td>
+                        {% else %}
+                            {# TODO: дата должна поступать в "5 апреля 2019, Пт" #}
+                            <td title="{{ date.0 }}-{{ date.1 }}" class="freeday" data-id="r24397d1554498000"></td>
+                        {% endif %}
+                    {% endfor %}
 
+                </tr>
+            {% endfor %}
         {% endfor %}
+        </tbody>
+        <tfoot>
+        <tr>
+            <td></td>
 
+            {% for weekday in date.full_date %}
+                {# TODO: написать фильтр для получения дней недели (Пн, Вт и тд) #}
+                {% if weekday == date.today %}
+                    <th class="today">{{ weekday|weekday }}</th>
+                {% else %}
+                    <th>{{ weekday|weekday }}</th>
+                {% endif %}
+            {% endfor %}
+
+        </tr>
+        <tr class="dates">
+            <td class="rooms firstcol">
+                <b>Номера</b>
+            </td>
+
+            {% for day in date.full_date %}
+                {# TODO: написать фильтр для получения число месяца (12, 13 и тд) #}
+                {% if day == date.today %}
+                    <th class="today">
+                        {{ day|day }}
+                        <div title="сегодня" class="line"
+                             style="border-color: rgb(78, 200, 234) !important; top: 27px; height: 3553px;"></div>
+                    </th>
+                {% else %}
+                    <th>{{ day|day }}</th>
+                {% endif %}
+            {% endfor %}
+
+        </tr>
+        <tr>
+            <th class="firstcol"></th>
+            <th colspan="15" class="month">
+                <div class="month-wrap" title="{{ date.today }}">{{ date.today }}</div>
+            </th>
+        </tr>
+        </tfoot>
+    </table>
+
+
+    <div id="new-booking">
+        <div class="wrap">
+            <div class="title">
+                <b>Новое бронирование</b>
+            </div>
+            <div class="desc">
+                <span class="start">Заезд:</span>
+                <span class="end">Выезд:</span>
+            </div>
+            <div class="datepicker">
+                <input type="text" id="date_timepicker_start" name="date-start">
+                <input type="text" id="date_timepicker_end" name="date-end">
+            </div>
+            <div class="btns">
+                <a role="button" class="btn btn-success btn-sm">Забронировать</a>
+                <a role="button" class="btn btn-primary btn-sm">Резерв</a>
+                <a role="button" class="btn btn-dark btn-sm">Закрыть на ремонт</a>
+                <a id="new-booking_cancel" role="button" class="btn btn-danger btn-sm">Отмена</a>
+            </div>
+        </div>
     </div>
 
-    <div id="data-person" class="block-data-person">
-    <button class="btn btn-danger" id="data-person-hide">Закрыть</button>
-    </div>
 
 {% endblock %}
 
 {% block scripts %}
+
+    <script type="text/javascript">
+        jQuery(function () {
+            jQuery('#date_timepicker_start').datetimepicker({
+                format: 'd-m-Y',
+                onShow: function (ct) {
+                    this.setOptions({
+                        maxDate: jQuery('#date_timepicker_end').val() ? jQuery('#date_timepicker_end').val() : false
+                    })
+                },
+                timepicker: false
+            });
+            jQuery('#date_timepicker_end').datetimepicker({
+                format: 'd-m-Y',
+                onShow: function (ct) {
+                    this.setOptions({
+                        minDate: jQuery('#date_timepicker_start').val() ? jQuery('#date_timepicker_start').val() : false
+                    })
+                },
+                timepicker: false
+            });
+
+            let dataBookingIDs = $('*[data-booking-id]');
+            let objDataBookingID = {};
+            for (let i = 0; i < dataBookingIDs.length; i++) {
+                objDataBookingID[$(dataBookingIDs[i]).attr('data-booking-id')] = $(dataBookingIDs[i]).attr('data-booking-id');
+            }
+            console.log(objDataBookingID);
+            console.log(objDataBookingID.length);
+            for (key in objDataBookingID) {
+                console.log(objDataBookingID[key]);
+                let dataKey = $(`*[data-booking-id=${key}]`);
+                for (let i = 0; i < dataKey.length; i++) {
+                    if(dataKey[i] === dataKey[0] ) {
+                        console.log($(dataKey[0]));
+                        $(dataKey[0]).attr('colspan', dataKey.length-1);
+                        $(dataKey[0]).css('background-color', 'yellow');
+                    } else if (dataKey[i] === dataKey[dataKey.length-1]) {
+                        $(dataKey[dataKey.length-1]).css({"background-color": "black"})
+                    } else {
+                        {#$(dataKey[i]).css({"background-color": "orange"});#}
+                        $(dataKey[i]).remove()
+                    }
+                }
+            }
+        });
+    </script>
+
     <script src="{% static 'js/chess.js' %}"></script>
-    <script src="{% static 'js/chess-data-person.js' %}"></script>
+
 {% endblock %}

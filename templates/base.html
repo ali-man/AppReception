@@ -8,8 +8,12 @@
     {% include 'head.html' %}
 
     {% bootstrap_css %}
-    <link rel="stylesheet" href="{% static 'css/jquery-ui.min.css' %}">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="{% static 'css/jquery.datetimepicker.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/select2.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'css/chess.css' %}">
     {% block css %}{% endblock %}
     <title>{% block title %}{% endblock %}</title>
 
@@ -18,14 +22,20 @@
 <body>
 
 
-<div class="container-fluid">
+<div class="container">
+
+    <div class="row">
+        <div class="col-12">
+            <ul class="top-menu">
+                <li><a href="{% url 'chess' %}">Шахматка</a></li>
+                <li><a href="{% url 'booking' %}">Новое бронирование</a></li>
+            </ul>
+        </div>
+    </div>
+
     <div class="row">
 
-        <div class="col-2">
-            {% include 'left-menu.html' %}
-        </div>
-
-        <div class="col-10">
+        <div class="col-12">
             {% block content %}{% endblock %}
         </div>
 
@@ -38,76 +48,10 @@
 
 
 {% bootstrap_javascript jquery='full' %}
-<script src="{% static 'js/jquery-ui.min.js' %}"></script>
+<script src="{% static 'js/jquery.datetimepicker.full.min.js' %}"></script>
+<script src="{% static 'js/select2.min.js' %}"></script>
+<script src="{% static 'js/moment.js' %}"></script>
 {% block scripts %}{% endblock %}
-<script>
-    $('td')
-      .mousedown(function(){
-        $(this).toggleClass('selected');
-        $('td').on('mouseenter',function(){
-          $(this).toggleClass('selected');
-        });
-      })
-      .mouseup(function(){
-        $('td').off('mouseenter');
-      });
 
-    function preventSelection(element){
-      var preventSelection = false;
-
-      function addHandler(element, event, handler){
-        if (element.attachEvent)
-          element.attachEvent('on' + event, handler);
-        else
-          if (element.addEventListener)
-            element.addEventListener(event, handler, false);
-      }
-      function removeSelection(){
-        if (window.getSelection) { window.getSelection().removeAllRanges(); }
-        else if (document.selection && document.selection.clear)
-          document.selection.clear();
-      }
-      function killCtrlA(event){
-        var event = event || window.event;
-        var sender = event.target || event.srcElement;
-
-        if (sender.tagName.match(/INPUT|TEXTAREA/i))
-          return;
-
-        var key = event.keyCode || event.which;
-        if (event.ctrlKey && key == 'A'.charCodeAt(0))  // 'A'.charCodeAt(0) можно заменить на 65
-        {
-          removeSelection();
-
-          if (event.preventDefault)
-            event.preventDefault();
-          else
-            event.returnValue = false;
-        }
-      }
-
-      addHandler(element, 'mousemove', function(){
-        if(preventSelection)
-          removeSelection();
-      });
-      addHandler(element, 'mousedown', function(event){
-        var event = event || window.event;
-        var sender = event.target || event.srcElement;
-        preventSelection = !sender.tagName.match(/INPUT|TEXTAREA/i);
-      });
-
-      addHandler(element, 'mouseup', function(){
-        if (preventSelection)
-          removeSelection();
-        preventSelection = false;
-      });
-
-      addHandler(element, 'keydown', killCtrlA);
-      addHandler(element, 'keyup', killCtrlA);
-    }
-
-    preventSelection(document);
-
-</script>
 </body>
 </html>
