@@ -6,12 +6,12 @@
 <head>
 
     {% include 'head.html' %}
-
-    {% bootstrap_css %}
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
-
-    <link rel="stylesheet" href="{% static 'css/jquery.datetimepicker.min.css' %}">
-    <link rel="stylesheet" href="{% static 'css/select2.min.css' %}">
+    <link href="https://fonts.googleapis.com/css?family=Exo+2" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/libs/bootstrap.min.css' %}">
+    {#    <link rel="stylesheet" href="{% static 'css/libs/mdb.min.css' %}">#}
+    <link rel="stylesheet" href="{% static 'css/libs/jquery.datetimepicker.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/libs/select2.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
     <link rel="stylesheet" href="{% static 'css/chess.css' %}">
     {% block css %}{% endblock %}
@@ -26,10 +26,43 @@
 
     <div class="row">
         <div class="col-12">
-            <ul class="top-menu">
-                <li><a href="{% url 'chess' %}">Шахматка</a></li>
-                <li><a href="{% url 'booking' %}">Новое бронирование</a></li>
-            </ul>
+            <div class="header">
+                {% if user.is_authenticated %}
+                    <ul class="top-menu">
+                        <li>
+                            <a href="#" title="Уведомления">
+                                <i class="fas fa-bell"></i>
+                            </a>
+                        </li>
+                        <li><a href="{% url 'chess' %}" title="Шахматка">
+                            <i class="fas fa-chess-board"></i>
+                        </a></li>
+                        <li><a href="{% url 'booking' %}" title="Регистрация">
+                            <i class="fas fa-person-booth"></i>
+                        </a></li>
+                        <li><a href="{% url 'guests' %}" title="База гостей">
+                            <i class="fas fa-address-card"></i>
+                        </a></li>
+                        <li><a href="{% url 'tasks' %}" title="Задачи">
+                            <i class="fas fa-tasks"></i>
+                        </a></li>
+                    </ul>
+                    <ul class="top-menu">
+                        <li><a href="{% url 'statistics' %}" title="Статистика">
+                            <i class="fas fa-file-medical-alt"></i>
+                        </a></li>
+                        <li><a href="{% url 'profile' %}" title="Профиль">
+                            <i class="fas fa-street-view"></i>
+                        </a></li>
+                        <li><a href="{% url 'register' %}" title="Управление аккаунтами ресепшена">
+                            <i class="fas fa-hotel"></i>
+                        </a></li>
+                        <li><a href="{% url 'logout' %}" title="Выйти">
+                            <i class="fas fa-door-open"></i>
+                        </a></li>
+                    </ul>
+                {% endif %}
+            </div>
         </div>
     </div>
 
@@ -40,17 +73,23 @@
         </div>
 
     </div>
+    <div class="row">
+        <div class="col-12">
+            <div class="footer">
+                <span style="color: #fff;">Разработчик: <a href="https://t.me/alimanuz" target="_blank" style="color: #eee;">Ali-man</a></span>
+            </div>
+        </div>
+    </div>
 </div>
 
 
-
-
-
-
-{% bootstrap_javascript jquery='full' %}
-<script src="{% static 'js/jquery.datetimepicker.full.min.js' %}"></script>
-<script src="{% static 'js/select2.min.js' %}"></script>
-<script src="{% static 'js/moment.js' %}"></script>
+<script src="{% static 'js/libs/jquery-3.3.1.min.js' %}"></script>
+<script src="{% static 'js/libs/bootstrap.min.js' %}"></script>
+{#<script src="{% static 'js/libs/mdb.min.js' %}"></script>#}
+<script src="{% static 'js/libs/jquery.datetimepicker.full.min.js' %}"></script>
+<script src="{% static 'js/libs/js.cookie.js' %}"></script>
+<script src="{% static 'js/libs/select2.min.js' %}"></script>
+<script src="{% static 'js/libs/moment.js' %}"></script>
 {% block scripts %}{% endblock %}
 
 </body>

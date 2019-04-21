@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+
+{% endblock %}
+
+{% block title %}
+    База клиентов
+{% endblock %}
+
+{% block content %}
+
+    <table class="table" style="background-color: #fff; color: #505050; margin-top: 15px;">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Заголовок</th>
+                <th>Описание</th>
+                <th>Дата и время напоминания</th>
+                <th>Статус</th>
+            </tr>
+        </thead>
+        {% for task in tasks %}
+            <tr>
+                <td>{{ task.id }}</td>
+                <td>{{ task.title }}</td>
+                <td>{{ task.info }}</td>
+                <td>{{ task.datetime }}</td>
+                <td>{{ task.status }}</td>
+            </tr>
+        {% endfor %}
+
+    </table>
+
+{% endblock %}
+
+{% block scripts %}
+
+{% endblock %}

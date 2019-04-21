@@ -58,3 +58,40 @@ def info_booking(timestamp, room):
         if i.date_of_arrival <= timestamp <= i.date_of_departure and i.room == room:
             result = i.id
     return result
+
+
+@register.filter(name='date_full_to_date')
+def date_full_to_date(date_full):
+    print(F'asd {date_full}')
+    return date_full.strftime("%d")
+
+
+@register.filter(name='status_booking')
+def status_booking(status):
+    return {
+        -1: 'Бронь без оплаты',
+        1: 'Бронь с предоплатой',
+        -2: 'Размещение гостя с долгом',
+        2: 'Размещение гостя с оплатой',
+        -3: 'Выселенное размещение',
+        3: 'Резерв',
+        4: 'Гости сегодня выезжают',
+        -4: 'Блокировка номера',
+    }[status]
+
+
+@register.filter(name='tester')
+def tester(req):
+    print(type(req))
+    print(req)
+
+
+@register.filter(name='type_payment')
+def type_payment(val):
+    return {
+        0: 'Неизвестно',
+        1: 'Наличка',
+        2: 'Пластик',
+        3: 'Без нал (Перечисление)',
+        4: 'В долларах'
+    }[val]

@@ -1,0 +1,172 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load my_filter %}
+
+{% block css %}
+
+{% endblock %}
+
+{% block title %}
+    База клиентов
+{% endblock %}
+
+{% block content %}
+
+    <table class="table" style="background-color: #fff; color: #505050; margin-top: 15px;">
+        <tbody>
+        <tr>
+            <td style="width: 200px;">ID:</td>
+            <td>{{ booking.id }}</td>
+        </tr>
+        <tr>
+            <td>Разместил:</td>
+            <td>{{ booking.user }}</td>
+        </tr>
+        <tr>
+            <td>Гости:</td>
+            <td>
+                {% for guest in booking.guest.all %}
+                    {% if forloop.last %}
+                        {{ guest }}
+                    {% else %}
+                        {{ guest }},
+                    {% endif %}
+                {% endfor %}
+            </td>
+        </tr>
+        <tr>
+            <td>Номер:</td>
+            <td>{{ booking.room }}</td>
+        </tr>
+        <tr>
+            <td>Дата заезда:</td>
+            <td>{{ booking.date_arrival }}</td>
+        </tr>
+        <tr>
+            <td>Дата выезда:</td>
+            <td>{{ booking.date_departure }}</td>
+        </tr>
+        <tr>
+            <td>Суток:</td>
+            <td>{{ booking.days }}</td>
+        </tr>
+        <tr>
+            <td>Цена за ночь:</td>
+            <td>{{ booking.price_per_night }}</td>
+        </tr>
+        <tr>
+            <td>Цена за всё время:</td>
+            <td>{{ booking.price_for_all_time }}</td>
+        </tr>
+        <tr>
+            <td>Оплачено:</td>
+            <td>{{ booking.paid }}</td>
+        </tr>
+        <tr>
+            <td>Осталось оплатить:</td>
+            <td>{{ booking.left_to_pay }}</td>
+        </tr>
+        <tr>
+            <td>Тип оплаты:</td>
+            <td>{{ booking.type_payment|type_payment }}</td>
+        </tr>
+        <tr>
+            <td>Статус бронирования:</td>
+            <td>{{ booking.status_booking|status_booking }}</td>
+        </tr>
+        </tbody>
+    </table>
+
+    {% for guest in booking.guest.all %}
+        <table class="table" style="background-color: #fff; color: #505050; margin-top: 15px;">
+            <tbody>
+            <tr style="width: 300px;">
+                <td>Гость:</td>
+                <td>{{ guest }}</td>
+            </tr>
+            <tr>
+                <td>ID:</td>
+                <td>{{ guest.id }}</td>
+            </tr>
+            <tr>
+                <td>Телефон:</td>
+                <td>{{ guest.phone }}</td>
+            </tr>
+            <tr>
+                <td>Email:</td>
+                <td>{{ guest.email }}</td>
+            </tr>
+            <tr>
+                <td>Паспорт у нас:</td>
+                <td>{{ guest.passport }}</td>
+            </tr>
+            <tr>
+                <td>Дата рождения:</td>
+                <td>{{ guest.date_of_birth }}</td>
+            </tr>
+            <tr>
+                <td>Место рождение: город:</td>
+                <td>{{ guest.place_of_birth }}</td>
+            </tr>
+            <tr>
+                <td>Серийный номер паспорта:</td>
+                <td>{{ guest.serial_number }}</td>
+            </tr>
+            <tr>
+                <td>Дата выдачи паспорта:</td>
+                <td>{{ guest.given_date }}</td>
+            </tr>
+            <tr>
+                <td>Дата окончания срока паспорта:</td>
+                <td>{{ guest.expire_date }}</td>
+            </tr>
+            <tr>
+                <td>Кем выдано:</td>
+                <td>{{ guest.give_organization }}</td>
+            </tr>
+            <tr>
+                <td>Место проживания:</td>
+                <td>{{ guest.place_of_living }}</td>
+            </tr>
+            <tr>
+                <td>Национальность:</td>
+                <td>{{ guest.nationality }}</td>
+            </tr>
+            <tr>
+                <td>Гражданство:</td>
+                <td>{{ guest.citeznship }}</td>
+            </tr>
+            <tr>
+                <td>КПП №:</td>
+                <td>{{ guest.kpp_number }}</td>
+            </tr>
+            <tr>
+                <td>Дата заезда КПП:</td>
+                <td>{{ guest.kpp_date_arrival }}</td>
+            </tr>
+            <tr>
+                <td>Номер визы:</td>
+                <td>{{ guest.visa.number }}</td>
+            </tr>
+            <tr>
+                <td>Тип визы:</td>
+                <td>{{ guest.visa.visa_type }}</td>
+            </tr>
+            <tr>
+                <td>Дата выдачи визы:</td>
+                <td>{{ guest.visa.given_date }}</td>
+            </tr>
+            <tr>
+                <td>Дата окончания визы:</td>
+                <td>{{ guest.visa.expire_date }}</td>
+            </tr>
+            </tbody>
+        </table>
+    {% endfor %}
+
+
+{% endblock %}
+
+{% block scripts %}
+
+{% endblock %}

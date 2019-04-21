@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+
+{% endblock %}
+
+{% block title %}
+    База клиентов
+{% endblock %}
+
+{% block content %}
+
+    <table class="table" style="background-color: #fff; color: #505050; margin-top: 15px;">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Логин</th>
+            <th>Последняя активность</th>
+            <th>Вошёл в систему</th>
+            <th>Приступил к работе</th>
+        </tr>
+        </thead>
+        <tr>
+            <td>{{ user.id }}</td>
+            <td>{{ user.username }}</td>
+            <td>{{ user.last_login }}</td>
+            <td>{{ sss }}</td>
+            <td>{{ user.date_joined }}</td>
+        </tr>
+    </table>
+
+{% endblock %}
+
+{% block scripts %}
+
+{% endblock %}

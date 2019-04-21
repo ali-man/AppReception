@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+
+{% endblock %}
+
+{% block title %}
+    База клиентов
+{% endblock %}
+
+{% block content %}
+
+    <table class="table" style="background-color: #fff; color: #505050; margin-top: 15px;">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Имя</th>
+                <th>Телефон</th>
+                <th>Email</th>
+                <th>Номер</th>
+                <th>Заезд</th>
+                <th>Выезд</th>
+                <th>Visa</th>
+                <th>Паспорт</th>
+            </tr>
+        </thead>
+        {% for guest in guests %}
+            <tr>
+                <td>{{ guest.id }}</td>
+                <td>{{ guest.full_name }}</td>
+                <td>{{ guest.phone }}</td>
+                <td>{{ guest.email }}</td>
+                {% for room in guest.booking_set.all %}
+                    {% if forloop.last %}
+                        <td>{{ room.room }}</td>
+                        <td style="font-size: 12px;" title="{{ room.date_arrival.time }}">{{ room.date_arrival.date }}</td>
+                        <td style="font-size: 12px;" title="{{ room.date_departure.time }}">{{ room.date_departure.date }}</td>
+                    {% endif %}
+                {% endfor %}
+                <td>{{ guest.visa }}</td>
+                <td>{{ guest.passport }}</td>
+            </tr>
+        {% endfor %}
+
+    </table>
+
+{% endblock %}
+
+{% block scripts %}
+
+{% endblock %}

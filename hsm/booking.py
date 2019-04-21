@@ -1,6 +1,8 @@
+import datetime
+
 import arrow
 
-from hsm.models import Guest, City, Nationality, Citeznship, Visa, Booking, Rooms, TypeRoom, TypePayment, SourceBooking
+from hsm.models import Guest, City, Nationality, Citeznship, Visa, Booking, Rooms, TypeRoom, SourceBooking
 
 
 def timestamp(_date): #, _time
@@ -12,6 +14,14 @@ def timestamp(_date): #, _time
     # time = int(time.split(':')[0])
     time_stamp = arrow.get(year, month, day).timestamp
     return time_stamp
+
+
+def to_datetime(date, time):
+    print(date, time)
+    print(type(date), type(time))
+    date = list(map(int, date.split('-')))
+    time = list(map(int, time.split(':')))
+    return datetime.datetime(date[2], date[1], date[0], time[0], time[1])
 
 
 def request_processing(req):
@@ -39,9 +49,9 @@ def request_processing(req):
         'rooms': req['rooms'],
         'price': req['price'],
         'own-price-num': req['own-price-num'],
-        'date-arrival': timestamp(req['date-arrival']), #, req['date-arrival-time']
+        'date-arrival': req['date-arrival'], #, req['date-arrival-time']
         'date-arrival-time': req['date-arrival-time'],
-        'date-departure': timestamp(req['date-departure']), #, req['date-departure-time']
+        'date-departure': req['date-departure'], #, req['date-departure-time']
         'date-departure-time': req['date-departure-time'],
         'status-booking': int(req['status-booking']),
         'admin-comment': req['admin-comment'],
@@ -70,70 +80,54 @@ def visa_register(_visa):
     return visa
 
 
-def guest_register(visa, req):
-    try:
-        place_of_birth = City.objects.get(name=req['place_of_birth'])
-    except City.DoesNotExist:
-        place_of_birth = City(name=req['place_of_birth'])
-        place_of_birth.save()
-
-    try:
-        nationality = Nationality.objects.get(name=req['nationality'])
-    except Nationality.DoesNotExist:
-        nationality = Nationality(name=req['nationality'])
-        nationality.save()
-    try:
-        citeznship = Citeznship.objects.get(name=req['citeznship'])
-    except Citeznship.DoesNotExist:
-        citeznship = Citeznship(name=req['citeznship'])
-        citeznship.save()
+def guest_register(req, visa=None):
 
     try:
         guest = Guest.objects.get(serial_number=req['serial_number'])
     except Guest.DoesNotExist:
+        try:
+            place_of_birth_pk = int(req['place_of_birth'])
+            place_of_birth = City.objects.get(id=place_of_birth_pk)
+        except ValueError:
+            place_of_birth = City.objects.get(name=req['place_of_birth'])
+        except City.DoesNotExist:
+            place_of_birth = City(name=req['place_of_birth'])
+            place_of_birth.save()
+        try:
+            nationality_pk = int(req['nationality'])
+            nationality = Nationality.objects.get(id=nationality_pk)
+        except ValueError:
+            nationality = Nationality.objects.get(name=req['nationality'])
+        except Nationality.DoesNotExist:
+            nationality = Nationality(name=req['nationality'])
+            nationality.save()
+        try:
+            citeznship_pk = int(req['citeznship'])
+            citeznship = Citeznship.objects.get(id=citeznship_pk)
+        except ValueError:
+            citeznship = Citeznship.objects.get(name=req['citeznship'])
+        except Citeznship.DoesNotExist:
+            citeznship = Citeznship(name=req['citeznship'])
+            citeznship.save()
         guest = Guest()
-        print('guest')
         guest.full_name = req['fullname']
-        # guest.save()
-        # print('fullname')
         guest.date_of_birth = req['date_of_birth']
-        # guest.save()
-        # print('date_of_birth')
         guest.place_of_birth = place_of_birth
-        # guest.save()
-        # print('place_of_birth_id')
         guest.serial_number = req['serial_number']
-        # guest.save()
-        # print('serial_number')
         guest.given_date = req['given_date']
-        # guest.save()
-        # print('given_date')
         guest.expire_date = req['expire_date']
-        # guest.save()
-        # print('expire_date')
         guest.give_organization = req['give_organization']
-        # guest.save()
-        # print('give_organization')
         guest.place_of_living = req['place_of_living']
-        # guest.save()
-        # print('place_of_living')
         guest.nationality = nationality
-        # guest.save()
-        # print('nationality_id')
         guest.citeznship = citeznship
-        # guest.save()
-        # print('citeznship_id')
-        guest.visa = visa
+        if visa is not None:
+            guest.visa = visa
         guest.save()
-        print('visa_id')
 
     return guest
 
 
 def booking_register(guest, kwargs):
-    # print(guest)
-    # print(kwargs['type_payment'])
-    print(kwargs['rooms'])
     r = kwargs['rooms'].split('-')
     type_room = TypeRoom.objects.get(name=r[0])
     room = Rooms.objects.get(type_room=type_room, number_room=r[-1])
@@ -142,15 +136,11 @@ def booking_register(guest, kwargs):
     b = arrow.get(kwargs['date-departure'])
     days = (b.datetime - a.datetime).days
     if kwargs['price'] == 'fixed-price':
-        price = type_room.price
+        price = type_room.price_uzs
+        price_all = price * days
     else:
-        price = int(kwargs['own-price-num'])
-    price_all = price * days
-    # try:
-    #     type_payment = TypePayment.objects.get(name=kwargs['type_payment'])
-    # except TypeRoom.DoesNotExist:
-    #     type_payment = TypeRoom(name=kwargs['type_payment'])
-    #     type_payment.save()
+        price_all = int(kwargs['own-price-num'])
+        price = price_all / days
     try:
         source_of_booking = SourceBooking.objects.get(name=kwargs['source-booking'])
     except SourceBooking.DoesNotExist:
@@ -159,13 +149,12 @@ def booking_register(guest, kwargs):
 
     booking = Booking(
         room=room,
-        date_of_arrival=kwargs['date-arrival'],
+        date_of_arrival=timestamp(kwargs['date-arrival']),
         date_of_arrival_time=kwargs['date-arrival-time'],
-        date_of_departure=kwargs['date-departure'],
+        date_of_departure=timestamp(kwargs['date-departure']),
         date_of_departure_time=kwargs['date-departure-time'],
         price_per_night=price,
         price_for_all_time=price_all,
-        # type_payment=type_payment,
         source_of_booking=source_of_booking,
         number_source_booking=kwargs['number-source-booking'] if kwargs['number-source-booking'] else '',
         status_booking=kwargs['status-booking'],
@@ -173,6 +162,8 @@ def booking_register(guest, kwargs):
         customer_wishes=kwargs['customer-wishes'],
         # task=kwargs['task'],
     )
+    booking.date_arrival = to_datetime(kwargs['date-arrival'], kwargs['date-arrival-time'])
+    booking.date_departure = to_datetime(kwargs['date-departure'], kwargs['date-departure-time'])
     booking.save()
     booking.guest.add(guest)
     booking.save()

@@ -44,6 +44,8 @@
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   grid-gap: 10px;
+  justify-content: center;
+  align-items: center;
   &__left {
     display: grid;
     grid-template-columns: 1fr;
@@ -53,6 +55,11 @@
     display: grid;
     grid-template-columns: 1fr;
     grid-gap: 10px;
+    .date-arrival {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-gap: 10px;
+    }
   }
   &__right {
     display: grid;

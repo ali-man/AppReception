@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load my_filter %}
+
+{% block title %}
+    Изменения статуса брони {{ booking.id }}
+{% endblock %}
+
+{% block content %}
+    <div style="opacity: 0;">
+        <span id="id_booking_id">{{ booking.id }}</span>
+        <span id="current_stat_status_booking">{{ booking.status_booking }}</span>
+        <span id="current_stat_type_payment">{{ booking.type_payment }}</span>
+        <span id="current_stat_rooms">{{ booking.room }}</span>
+        {% for guest in booking.guest.all %}
+            <i class="guest_selected" data-guest-id="{{ guest.id }}">{{ guest }}</i>
+        {% endfor %}
+    </div>
+
+    <table class="table" style="background-color: #fff; padding: 10px; margin-top: 15px;">
+        <tbody>
+        <tr>
+            <td>Имя гостя:</td>
+
+            <td>
+                <select name="guests" id="guests" class="js-example-basic-multiple" multiple>
+                    {% for guest in guests %}
+                        <option value="{{ guest.id }}">{{ guest.full_name }}</option>
+                    {% endfor %}
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>Статус брони:</td>
+
+            <td>
+                <select name="status_booking" id="id_status_booking">
+                    {% for sb in status_booking %}
+                        <option value="{{ sb.0 }}">{{ sb.1 }}</option>
+                    {% endfor %}
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>Долг:</td>
+            <td>{{ booking.left_to_pay }}</td>
+        </tr>
+        <tr>
+            <td>Оплачено:</td>
+            <td>
+                {{ booking.paid }}
+                <input name="paid" id="id_paid" type="number" value="0">
+            </td>
+        </tr>
+        <tr>
+            <td>Тип оплаты:</td>
+
+            <td>
+                <select name="type_payment" id="id_type_payment">
+                    {% for tp in type_payment %}
+                        <option value="{{ tp.0 }}">{{ tp.1 }}</option>
+                    {% endfor %}
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>Номер</td>
+
+            <td>
+                <select name="rooms" id="id_rooms">
+                    {% for type_room in type_rooms %}
+                        <optgroup label="{{ type_room }}">
+                            {% for room in type_room.rooms_set.all %}
+                                <option value="{{ room }}">{{ room }}</option>
+                            {% endfor %}
+                        </optgroup>
+                    {% endfor %}
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>Комментарий Админа</td>
+            <td>
+                <textarea name="admin_comment" id="id_admin_comment" cols="80"
+                          rows="5">{{ booking.admin_comment }}</textarea>
+            </td>
+
+        </tr>
+        <tr>
+            <td>Пожелания гостя</td>
+            <td>
+                <textarea name="customer_wishes" id="id_customer_wishes" cols="80"
+                          rows="5">{{ booking.customer_wishes }}</textarea>
+            </td>
+
+        </tr>
+        </tbody>
+    </table>
+    <div style="padding: 10px; background-color: #fff; border-radius: 4px;">
+        <a class="btn" id="status_save" style="background-color: #505050; color: #fff;">Сохранить</a>
+        <a class="btn" id="status_remove" style="background-color: #505050; color: #fff;">Удалить</a>
+    </div>
+
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'js/status-chess.js' %}"></script>
+{% endblock %}

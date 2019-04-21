@@ -1,3 +1,17 @@
+@font-face {
+  font-family: 'Exo 2', sans-serif;
+  url('../fonts/Exo2-Regular.ttf') format('truetype'),
+  font-weight: normal;
+  font-style: normal;
+}
+body {
+  background-color: #eeeeee!important;
+  font-family: 'Exo 2', sans-serif!important;
+}
+span {
+  font-family: 'Exo 2', sans-serif!important;
+}
+
 .datepicker {
   z-index: 999; }
 
@@ -19,7 +33,7 @@
       justify-content: space-around;
       align-items: center; }
       #new-booking .wrap .datepicker input {
-        width: 85px;
+        width: 112px;
         height: 25px; }
     #new-booking .wrap .btns {
       display: flex;
@@ -32,17 +46,70 @@
 
 .block-info-booking {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  grid-gap: 10px; }
-  .block-info-booking__left {
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-gap: 10px; }
-  .block-info-booking__middle {
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-gap: 10px; }
-  .block-info-booking__right {
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-gap: 10px; }
+  grid-template-columns: 1fr 3fr;
+  grid-gap: 10px;
+  padding: 10px;
+}
+.hide-own-price, .hide-own-source-booking {
+  display: none;
+}
+
+#myTabContent {
+  padding: 10px;
+  margin: 10px 0;
+  background-color: #fff;
+}
+
+.header {
+  background-color: #505050;
+  width: 100%;
+  height: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+}
+.header ul.top-menu {
+  display: inline-block;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.header ul.top-menu li {
+  float: left;
+}
+.header ul.top-menu li a {
+  color: #eee;
+  margin: 0 10px;
+  font-size: 24px;
+}
+.header ul.top-menu li a:hover {
+  color: #CCCCCC;
+}
+
+#type_rooms {
+    color: #444;
+    line-height: 28px;
+    padding: 5px;
+    border-radius: 4px;
+    font-family: 'Exo 2', sans-serif
+}
+
+.guest-2, .guest-3 {
+  display: none;
+}
+#btn-guest-3 {
+  display: none;
+  background-color: #505050; color:#fff;margin: 10px 0;
+}
+
+.footer {
+  background-color: #505050;
+  width: 100%;
+  margin-top: 10px!important;
+  height: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+}

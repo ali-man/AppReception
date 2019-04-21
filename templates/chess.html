@@ -11,184 +11,161 @@
 {% block title %}
     Шахматка
 {% endblock %}
-
 {% block content %}
 
-    <table class="table calendar-table" id="calendar">
+    <div class="colors">
+        <div class="reservation">Бронь без оплаты</div>
+        <div class="reservation-deposit">Бронь с предоплатой</div>
+        <div class="person">Размещение гостя c оплатой</div>
+        <div class="person-debt">Размещение гостя с долгом</div>
+        <div class="evicted-person">Выселенное размещение</div>
+        <div class="person-exit">Гости сегодня выезжают из этого номера</div>
+
+        <div class="lock-room">Блокировка номера</div>
+    </div>
+
+    <table class="table calendar-table" id="calendar" style="background-color: #fff; padding-bottom: 400px;">
         <thead>
         <tr>
-            <th class="firstcol"></th>
-            <th colspan="15" class="month">
-                <div class="month-wrap" title="{{ date.today }}">{{ date.today|today }}</div>
+            <th class="firstcol" style="border: none;"></th>
+            <th colspan="15" class="month" style="border: none;">
+                <div class="month-wrap" title="Дата сегоднящняя"
+                     style="font-size: 18px;color:#4c4c4c">{{ today.date }}</div>
             </th>
         </tr>
         <tr>
-            <td></td>
-
-            {% for weekday in date.full_date %}
-                {% if weekday == date.today %}
-                    <th class="today">{{ weekday|weekday }}</th>
-                {% else %}
-                    <th>{{ weekday|weekday }}</th>
-                {% endif %}
-            {% endfor %}
-
-        </tr>
-        <tr class="dates">
-            <td class="rooms firstcol"><b>Номера</b></td>
-
-            {% for day in date.full_date %}
-                {% if day == date.today %}
-                    <th class="today">
-                        {{ day|day }}
+            <td style="border: none;"></td>
+            {% for date in dates.date_days %}
+                {% if date == today.day %}
+                    <th style="text-align: center; color: #fff;background-color: #505050; position: relative;">
+                        {{ date }}
                         <div title="сегодня" class="line"
-                             style="border-color: rgb(78, 200, 234) !important; top: 27px; height: 3553px;"></div>
+                             style="border-color: #505050!important; top: 20px; height: 3611px;"></div>
                     </th>
                 {% else %}
-                    <th>{{ day|day }}</th>
+                    <th style="text-align: center; color: #6f6e6e;">{{ date }}</th>
                 {% endif %}
             {% endfor %}
-
+        </tr>
+        <tr class="dates" style="border: none;">
+            <td class="rooms firstcol" style="border: none;"><b>Номера</b></td>
+            {% for date in dates.date_weekdays %}
+                <th style="text-align: center; color: #6f6e6e;">{{ date }}</th>
+            {% endfor %}
         </tr>
         </thead>
         <tbody>
-        {% for type_room in type_rooms %}
-            <tr id="cat{{ type_room.id }}">
+        {% for type_key, type_val in alls.items %}
+            {#                TODO: id="cat{{ type_room.id }}" #}
+            <tr>
                 <td class="firstcol cat" colspan="16">
-                    <span class="collapse" data-cat="{{ type_room.id }}"></span>
-                    <span class="cat-name">{{ type_room.name }}</span>
+                    {#                        TODO:  data-cat="{{ type_room.id }}"#}
+                    <span class="collapse"></span>
+                    <span class="cat-name">{{ type_key }}</span>
                     <div class="fixed-column" style="width: 1401px; height: 27px;">
-                        <span class="collapse" data-cat="{{ type_room.id }}"></span>
-                        <span class="cat-name">{{ type_room.name }}</span>
+                        {#                            TODO: data-cat="{{ type_room.id }}"#}
+                        <span class="collapse"></span>
+                        <span class="cat-name">{{ type_key }}</span>
                     </div>
                 </td>
             </tr>
-            {% for room in type_room.rooms_set.all %}
-                <tr id="room{{ type_room.id }}" data-cat="{{ type_room.id }}" class="highlight room">
-                    {% for date in date.full_date %}
+            {% for room_key, room_val in type_val.items %}
+                {#                    TODO: id="room{{ type_room.id }}" data-cat="{{ type_room.id }}"#}
+                <tr class="highlight room">
+                    {% for date_key, date_value in room_val.items %}
                         {% if forloop.first %}
                             <td class="firstcol cleanmode">
-                            <span title="{{ room.number_room }}" class="room-name room-extra">
-                                {{ room.number_room }}
-                                <span>{{ type_room }} {{ room.number_room }}</span>
-                            </span>
-                                <div class="room-status status0" data-room_id="{{ room.id }}">
+                                    <span title="{{ room_key }}" class="room-name room-extra">
+                                        {{ room_key }}
+{#                                        <span>{{ room_key }}</span>#}
+                                    </span>
+                                {#                                    TODO: data-room_id="{{ room.id }}"#}
+                                <div class="room-status status0">
                                     <a href="javascript:;" data-status_id="0">чистый</a>
                                 </div>
                                 <div class="fixed-column" style="width: 350px; height: 31px;">
-                                <span title="1" class="room-name room-extra">
-                                    {{ room.number_room }}
-                                    <span>{{ type_room }} {{ room.number_room }}</span>
-                                </span>
-                                    <div class="room-status status0" data-room_id="{{ room.id }}">
+                                    <span title="1" class="room-name room-extra">
+                                        {{ room_key }}
+                                        <span>{{ type_key }} {{ room_key }}</span>
+                                    </span>
+                                    {#                                        TODO: data-room_id="{{ room.id }}"#}
+                                    <div class="room-status status0">
                                         <a href="javascript:;" data-status_id="0">чистый</a>
                                     </div>
                                 </div>
                             </td>
-{#                            <td class="booking">#}
-{#                                <div id="b675837" class="dateline" style="left: 34.5px;">#}
-{#                                    <span class="status" style="background-color: #8c06a3">#}
-{#                                        <div class="status-name-wrap">#}
-{#                                            <div class="status-name white"> Асадчих Юлия</div>#}
-{#                                        </div>#}
-{#                                    </span>#}
-{#                                    <div class="info">#}
-{#                                        <div>#}
-{#                                            <a title="открыть карточку клиента" href="/client/info?id=496809">#}
-{#                                                Асадчих Юлия Олександровна#}
-{#                                            </a>#}
-{#                                        </div>#}
-{#                                        <div>заезд: 05-04-2019 13:00</div>#}
-{#                                        <div>выезд: 06-04-2019 12:00</div>#}
-{#                                        <div>суток: 1</div>#}
-{#                                        <div data-booking_id="675837" class="change_status_link">статус: <a#}
-{#                                                title="изменить статус брони" class="dashed" data-status_id="8"#}
-{#                                                href="javascript:;">резерв</a>#}
-{#                                        </div>#}
-{#                                        <div>мест: 1</div>#}
-{#                                        <div>к оплате: 1420 руб. (1420 руб. в сутки)</div>#}
-{#                                        <div class="green">оплачено: 0 руб.</div>#}
-{#                                        <div class="red">долг: 1420 руб.</div>#}
-{#                                        <div>телефон: <a href="javascript:;"#}
-{#                                                         onclick="window.open('/client/sms?to=0679264076', 'sms_form', 'height=450,width=550,scrollbars=1,toolbar=0,location=0,resizable=1')">0679264076</a>#}
-{#                                            <a href="tel:0679264076"><img class="phone" src="/img/admin/call_icon.png"></a>#}
-{#                                        </div>#}
-{#                                        <div>почта: <a href="javascript:;"#}
-{#                                                       onclick="window.open('/client/mail?to=Juliaesa919%40gmail.com', 'mail_form', 'height=600,width=650,scrollbars=1,toolbar=0,location=0,resizable=1')">Juliaesa919@gmail.com</a>#}
-{#                                        </div>#}
-{#                                        <div>источник: Инстаграм (12345)</div>#}
-{#                                        <div>автор: test1</div>#}
-{#                                        <div>дата создания: 05-04-2019 15:19:25</div>#}
-{#                                        <div>ID брони: <span class="booking_id">1594</span></div>#}
-{#                                        <div class="tooltip-nav"><a title="Информация"#}
-{#                                                                    href="/booking/info?id=675837"><img#}
-{#                                                src="//litepms.ru//img/admin/eye_icon.gif"></a> <a title="Редактировать"#}
-{#                                                                                                   href="/booking/edit?id=675837&amp;r=cal&amp;d=05-04-2019"><img#}
-{#                                                src="//litepms.ru//img/admin/edit_icon.png"></a> <a title="Копировать"#}
-{#                                                                                                    href="javascript:;"#}
-{#                                                                                                    onclick="copybooking(675837)"><img#}
-{#                                                src="//litepms.ru//img/admin/copy_icon.png"></a> <a#}
-{#                                                title="Поменять местами"#}
-{#                                                href="javascript:;"#}
-{#                                                onclick="swapbooking(675837, 1594)"><img#}
-{#                                                src="//litepms.ru//img/admin/swap_icon.png"></a></div>#}
-{#                                    </div>#}
-{#                                </div>#}
-{#                            </td>#}
                         {% endif %}
-                        {% if date.1|checking_date:room %}
-                            <td title="{{ date.0 }}-{{ date.1 }}" class="booking" data-booking-id="{{ date.1|info_booking:room }}"></td>
+                        {#                            {{ date_value }}#}
+                        {% if date_value.0 != 'f' %}
+                            {#                                TODO: data-booking-id="{{ date.1|info_booking:room }}"#}
+                            {#                                <td title="{{ date_key }} - Бронь без оплаты" class="booking"></td>#}
+                            <td class="booking" data-booking-id="{{ date_value.id }}"
+                                data-date-arrival="{{ date_value.date_arrival.date }}"
+                                data-date-departure="{{ date_value.date_departure.date }}">
+                                <div class="pos-abs">
+                                    <div class="bg-clr status_booking{{ date_value.status_booking }}">
+                                            <span class="booking-fullname">
+                                            {% for guest in date_value.guest.all %}
+                                                {{ guest }}
+                                            {% endfor %}
+                                            </span>
+                                    </div>
+                                </div>
+                                <div class="display-info-booking">
+                                    <div class="grid-col">
+                                        <div class="context-management">
+                                            <a href="{% url 'detail-booking' date_value.id %}" title="Просмотр"><i
+                                                    class="fas fa-eye"></i></a>
+                                            <a href="{% url 'edit-booking' date_value.id %}" title="Редактировать"><i
+                                                    class="fas fa-cut"></i></a>
+                                            <a href="{% url 'status-booking' date_value.id %}"
+                                               title="Изменения статуса"><i class="fas fa-pen-square"></i></a>
+                                        </div>
+                                        {% for guest in date_value.guest.all %}
+                                            <span class="fullname"><b>{{ guest }}</b></span>
+                                        {% endfor %}
+
+                                        <span>Статус брони:  {{ date_value.status_booking|status_booking }} </span>
+                                        <span>Разместил:  {{ date_value.user }} </span>
+                                        <span>Цена за ночь:  {{ date_value.price_per_night }} </span>
+                                        <span>Цена за {{ date_value.days }} суток:  {{ date_value.price_for_all_time }} </span>
+                                        {% if date_value.paid == 0 %}
+                                            <span>Оплачено:  {{ date_value.paid }} </span>
+                                        {% else %}
+                                            <span style="color: green;">Оплачено:  {{ date_value.paid }} </span>
+                                        {% endif %}
+                                        {% if date_value.left_to_pay == 0 %}
+                                            <span>Осталось оплатить:  {{ date_value.left_to_pay }} </span>
+                                        {% else %}
+                                            <span style="color: red;">Осталось оплатить:  {{ date_value.left_to_pay }} </span>
+                                        {% endif %}
+                                        <span>Тип оплаты:  {{ date_value.type_payment|type_payment }} </span>
+
+                                        <span>Номер:  {{ date_value.room }} </span>
+
+                                        <span>Дата заезда:  {{ date_value.date_arrival }} </span>
+                                        <span>Дата выезда:  {{ date_value.date_departure }} </span>
+
+                                        <span>Источник бронирования:  {{ date_value.source_of_booking }} </span>
+                                        {% if date_value.number_source_booking %}
+                                            <span>Номер брони источника:  {{ date_value.number_source_booking }} </span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </td>
                         {% else %}
-                            {# TODO: дата должна поступать в "5 апреля 2019, Пт" #}
-                            <td title="{{ date.0 }}-{{ date.1 }}" class="freeday" data-id="r24397d1554498000"></td>
+                            {#                                TODO:  data-id="r24397d1554498000"#}
+                            <td title="{{ date_key }}" data-room-uzs="{{ date_value.1 }}"
+                                data-room-usd="{{ date_value.2 }}"
+                                class="freeday" data-day="{{ date_key.day }}">{{ date_key.day }}</td>
                         {% endif %}
                     {% endfor %}
-
                 </tr>
             {% endfor %}
         {% endfor %}
         </tbody>
-        <tfoot>
-        <tr>
-            <td></td>
-
-            {% for weekday in date.full_date %}
-                {# TODO: написать фильтр для получения дней недели (Пн, Вт и тд) #}
-                {% if weekday == date.today %}
-                    <th class="today">{{ weekday|weekday }}</th>
-                {% else %}
-                    <th>{{ weekday|weekday }}</th>
-                {% endif %}
-            {% endfor %}
-
-        </tr>
-        <tr class="dates">
-            <td class="rooms firstcol">
-                <b>Номера</b>
-            </td>
-
-            {% for day in date.full_date %}
-                {# TODO: написать фильтр для получения число месяца (12, 13 и тд) #}
-                {% if day == date.today %}
-                    <th class="today">
-                        {{ day|day }}
-                        <div title="сегодня" class="line"
-                             style="border-color: rgb(78, 200, 234) !important; top: 27px; height: 3553px;"></div>
-                    </th>
-                {% else %}
-                    <th>{{ day|day }}</th>
-                {% endif %}
-            {% endfor %}
-
-        </tr>
-        <tr>
-            <th class="firstcol"></th>
-            <th colspan="15" class="month">
-                <div class="month-wrap" title="{{ date.today }}">{{ date.today }}</div>
-            </th>
-        </tr>
-        </tfoot>
     </table>
+
 
 
     <div id="new-booking">
@@ -205,7 +182,7 @@
                 <input type="text" id="date_timepicker_end" name="date-end">
             </div>
             <div class="btns">
-                <a role="button" class="btn btn-success btn-sm">Забронировать</a>
+                <a id="new-booking_add" role="button" class="btn btn-success btn-sm">Забронировать</a>
                 <a role="button" class="btn btn-primary btn-sm">Резерв</a>
                 <a role="button" class="btn btn-dark btn-sm">Закрыть на ремонт</a>
                 <a id="new-booking_cancel" role="button" class="btn btn-danger btn-sm">Отмена</a>
@@ -219,23 +196,75 @@
 {% block scripts %}
 
     <script type="text/javascript">
+        function preventSelection(element) {
+            var preventSelection = false;
+
+            function addHandler(element, event, handler) {
+                if (element.attachEvent)
+                    element.attachEvent('on' + event, handler);
+                else if (element.addEventListener)
+                    element.addEventListener(event, handler, false);
+            }
+
+            function removeSelection() {
+                if (window.getSelection) {
+                    window.getSelection().removeAllRanges();
+                }
+                else if (document.selection && document.selection.clear)
+                    document.selection.clear();
+            }
+
+            function killCtrlA(event) {
+                var event = event || window.event;
+                var sender = event.target || event.srcElement;
+                if (sender.tagName.match(/INPUT|TEXTAREA/i))
+                    return;
+                var key = event.keyCode || event.which;
+                if (event.ctrlKey && key == 'A'.charCodeAt(0))  // 'A'.charCodeAt(0) можно заменить на 65
+                {
+                    removeSelection();
+                    if (event.preventDefault)
+                        event.preventDefault();
+                    else
+                        event.returnValue = false;
+                }
+            }
+
+            // не даем выделять текст мышкой
+            addHandler(element, 'mousemove', function () {
+                if (preventSelection)
+                    removeSelection();
+            });
+            addHandler(element, 'mousedown', function (event) {
+                var event = event || window.event;
+                var sender = event.target || event.srcElement;
+                preventSelection = !sender.tagName.match(/INPUT|TEXTAREA/i);
+            });
+            // борем dblclick
+            // если вешать функцию не на событие dblclick, можно избежать
+            // временное выделение текста в некоторых браузерах
+            addHandler(element, 'mouseup', function () {
+                if (preventSelection)
+                    removeSelection();
+                preventSelection = false;
+            });
+            // борем ctrl+A
+            // скорей всего это и не надо, к тому же есть подозрение
+            // что в случае все же такой необходимости функцию нужно
+            // вешать один раз и на document, а не на элемент
+            addHandler(element, 'keydown', killCtrlA);
+            addHandler(element, 'keyup', killCtrlA);
+        }
+
+        preventSelection(document);
+
         jQuery(function () {
             jQuery('#date_timepicker_start').datetimepicker({
                 format: 'd-m-Y',
-                onShow: function (ct) {
-                    this.setOptions({
-                        maxDate: jQuery('#date_timepicker_end').val() ? jQuery('#date_timepicker_end').val() : false
-                    })
-                },
                 timepicker: false
             });
             jQuery('#date_timepicker_end').datetimepicker({
                 format: 'd-m-Y',
-                onShow: function (ct) {
-                    this.setOptions({
-                        minDate: jQuery('#date_timepicker_start').val() ? jQuery('#date_timepicker_start').val() : false
-                    })
-                },
                 timepicker: false
             });
 
@@ -244,24 +273,50 @@
             for (let i = 0; i < dataBookingIDs.length; i++) {
                 objDataBookingID[$(dataBookingIDs[i]).attr('data-booking-id')] = $(dataBookingIDs[i]).attr('data-booking-id');
             }
-            console.log(objDataBookingID);
-            console.log(objDataBookingID.length);
             for (key in objDataBookingID) {
-                console.log(objDataBookingID[key]);
                 let dataKey = $(`*[data-booking-id=${key}]`);
                 for (let i = 0; i < dataKey.length; i++) {
-                    if(dataKey[i] === dataKey[0] ) {
-                        console.log($(dataKey[0]));
-                        $(dataKey[0]).attr('colspan', dataKey.length-1);
-                        $(dataKey[0]).css('background-color', 'yellow');
-                    } else if (dataKey[i] === dataKey[dataKey.length-1]) {
-                        $(dataKey[dataKey.length-1]).css({"background-color": "black"})
+                    if (dataKey[i] === dataKey[0]) {
+                        $(dataKey[0]).attr('colspan', dataKey.length - 1);
+                        if (dataKey.length - 1 !== 0) {
+                            let a = $(dataKey[0]).after('<td class="freeday"></td>');
+                        } else {
+                            $(dataKey[0]).children('.pos-abs').css({
+                                'left': '0',
+                                'width': '50%'
+                            });
+                        }
                     } else {
                         {#$(dataKey[i]).css({"background-color": "orange"});#}
                         $(dataKey[i]).remove()
                     }
                 }
             }
+
+            let rooms = $('.cleanmode');
+            let logic = true;
+            for (let i = 0; i < rooms.length; i++) {
+                let dates = $(rooms[i]).parent().children();
+                {#console.log($(rooms[i]).parent().children('td .cleanmode').children('span').attr('title'));#}
+                {#console.log('i' + i);#}
+                for (let j = 0; j < dates.length; j++) {
+                    if ($(dates[j]).attr('data-date-arrival')) {
+                        for (let k = 0; k < $(dates[j]).attr('data-date-arrival').length; k++) {
+                            if ($(dates[j]).attr('data-date-arrival') === $(dates[k]).attr('data-date-departure')) {
+                                let num = Number($(dates[k]).attr('colspan'));
+                                if (logic) {
+                                    $(dates[k]).attr('colspan', num + 1);
+                                    logic = false;
+                                } else {
+                                    $(dates[k]).attr('colspan', num);
+                                }
+                                $(dates[k]).next().remove();
+                            }
+                        }
+                    }
+                }
+            }
+
         });
     </script>
 
