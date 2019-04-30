@@ -2,6 +2,7 @@
 {% load static %}
 
 {% block css %}
+    <link rel="stylesheet" href="{% static 'css/booking.css' %}">
 {% endblock %}
 
 {% block title %}Новое бронирование{% endblock %}
@@ -54,11 +55,21 @@
                     <div class="date-arrival">
                         <input type="text" name="date-arrival" id="date-arrival">
                         <input type="text" name="date-arrival-time" id="date-arrival-time">
+                        <div class="custom-control custom-checkbox mr-sm-2">
+                            <input type="checkbox" name="early_arrival" class="custom-control-input"
+                                   id="id_early_arrival">
+                            <label class="custom-control-label" for="id_early_arrival">Ранний заезд</label>
+                        </div>
                     </div>
                     <label for="date-departure">Выезд*:</label>
                     <div class="date-departure">
                         <input type="text" name="date-departure" id="date-departure">
                         <input type="text" name="date-departure-time" id="date-departure-time">
+                        <div class="custom-control custom-checkbox mr-sm-2">
+                            <input type="checkbox" name="late_departure" class="custom-control-input"
+                                   id="id_late_departure">
+                            <label class="custom-control-label" for="id_late_departure">Поздний выезд</label>
+                        </div>
                     </div>
 
                     <label for="admin-comment">Комментарий администратора</label>
@@ -73,284 +84,376 @@
 
             <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
 
-                <div class="guest-1">
-                    <div class="block-guest"
-                         style="padding: 10px; margin-bottom: 10px; background-color: #505050; color: #fff; width: 100%; display: grid; grid-template-columns: 1fr 3fr; grid-gap: 10px; justify-content: center; align-items: center;">
-                        <label for="id_search_text" style="font-size: 16px;">Поиск гостя:</label>
-                        <input type="text" id="id_search_text">
-                    </div>
-
-                    <div id="result_search_guests"></div>
-
-                    <div style="display: flex; align-items: end">
-                        <div style="display: grid; grid-template-columns: 1fr 3fr; grid-gap: 10px; padding: 10px;">
-
-                            <label for="id_organization">Организация</label>
-                            <input type="text" name="organization" id="id_organization">
-
-                            <label for="id_fullname">Ф.И.О</label>
-                            <input type="text" name="fullname" id="id_fullname" autocomplete="off">
-
-                            <label for="id_date_of_birth">Дата рождения</label>
-                            <input type="text" name="date_of_birth" id="id_date_of_birth" autocomplete="off">
-
-{#                            <label for="id_place_of_birth">Место рождение</label>#}
-{#                            <select name="place_of_birth" id="id_place_of_birth" class="js-example-single">#}
-{#                                {% for city in form_guest.place_of_birth %}#}
-{#                                    {{ city }}#}
-{#                                {% endfor %}#}
-{#                            </select>#}
-
-                            <label for="id_serial_number">Серийный номер паспорта</label>
-                            <input type="text" name="serial_number" id="id_serial_number" autocomplete="off">
-
-                            <label for="id_given_date">Дата выдачи паспорта</label>
-                            <input type="text" name="given_date" id="id_given_date" autocomplete="off">
-
-                            <label for="id_expire_date">Дата окончания срока паспорта</label>
-                            <input type="text" name="expire_date" id="id_expire_date" autocomplete="off">
-
-                            <label for="id_give_organization">Кем выдано</label>
-                            <input type="text" name="give_organization" id="id_give_organization" autocomplete="off">
-
-                            <label for="id_place_of_living">Место проживания</label>
-                            <input type="text" name="place_of_living" id="id_place_of_living" autocomplete="off">
-
-                            <label for="id_nationality">Национальность</label>
-                            <select name="nationality" id="id_nationality" class="js-example-single">
-                                {% for nationality in form_guest.nationality %}
-                                    {{ nationality }}
-                                {% endfor %}
-                            </select>
-
-                            <label for="id_citeznship">Гражданство</label>
-                            <select name="citeznship" id="id_citeznship">
-                                {% for citeznship in form_guest.citeznship %}
-                                    {{ citeznship }}
-                                {% endfor %}
-                            </select>
-
+                <div class="accordion" id="accordionExample">
+                    <div class="card">
+                        <div class="card-header" id="headingOne">
+                            <h2 class="mb-0">
+                                <button class="btn btn-link" type="button" data-toggle="collapse"
+                                        data-target="#collapseOne" aria-expanded="true"
+                                        aria-controls="collapseOne">
+                                    Гость 1
+                                </button>
+                            </h2>
                         </div>
-                        <div style="display: grid; grid-template-columns: 1fr 3fr; grid-gap: 10px; padding: 10px;">
 
-                            <label for="id_phone">Телефон:</label>
-                            <input type="text" name="phone" id="id_phone" autocomplete="off">
+                        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne"
+                             data-parent="#accordionExample">
+                            <div class="card-body">
+                                <div class="guest-1">
+                                    <div class="block-guest"
+                                         style="padding: 10px; margin-bottom: 10px; background-color: #505050; color: #fff; width: 100%; display: grid; grid-template-columns: 1fr 3fr; grid-gap: 10px; justify-content: center; align-items: center;">
+                                        <label for="id_search_text" style="font-size: 16px;">Поиск гостя:</label>
+                                        <input type="text" id="id_search_text">
+                                    </div>
 
-                            <label for="id_email">Email:</label>
-                            <input type="text" name="email" id="id_email">
+                                    <div id="result_search_guests"></div>
 
-                            <label for="id_kpp_number">КПП №</label>
-                            <input type="text" name="kpp_number" id="id_kpp_number" autocomplete="off">
+                                    <div style="display: flex; align-items: end">
+                                        <div class="guest-form">
 
-                            <label for="id_kpp_date_arrival">Дата заезда КПП</label>
-                            <input type="text" name="kpp_date_arrival" id="id_kpp_date_arrival" autocomplete="off">
+                                            <label for="id_organization">Организация</label>
+                                            <input type="text" name="organization" id="id_organization">
 
-                            <hr>
-                            <hr>
+                                            <label for="id_fullname">Ф.И.О</label>
+                                            <input type="text" name="fullname" id="id_fullname"
+                                                   autocomplete="off">
 
-                            <label for="id_visa">Виза</label>
-                            <select name="visa" id="id_visa">
-                                {% for visa in form_guest.visa %}
-                                    {{ visa }}
-                                {% endfor %}
-                            </select>
+                                            <label for="id_date_of_birth">Дата рождения</label>
+                                            <input type="text" name="date_of_birth" id="id_date_of_birth"
+                                                   autocomplete="off">
 
-                            <label for="id_visa_number">Номер визы</label>
-                            <input type="text" name="visa_number" id="id_visa_number" autocomplete="off">
+                                            <label for="id_serial_number">Серийный номер паспорта</label>
+                                            <input type="text" name="serial_number" id="id_serial_number"
+                                                   autocomplete="off">
 
-                            <label for="id_visa_type">Тип визы</label>
-                            <input type="text" name="visa_type" id="id_visa_type" autocomplete="off">
+                                            <label for="id_given_date">Дата выдачи паспорта</label>
+                                            <input type="text" name="given_date" id="id_given_date"
+                                                   autocomplete="off">
 
-                            <label for="id_visa_given_date">Дата выдачи визы</label>
-                            <input type="text" name="visa_given_date" id="id_visa_given_date" autocomplete="off">
+                                            <label for="id_expire_date">Дата окончания срока паспорта</label>
+                                            <input type="text" name="expire_date" id="id_expire_date"
+                                                   autocomplete="off">
 
-                            <label for="id_visa_expire_date">Дата окончания срока визы</label>
-                            <input type="text" name="visa_expire_date" id="id_visa_expire_date" autocomplete="off">
-                        </div>
-                    </div>
-                </div>
+                                            <label for="id_give_organization">Кем выдано</label>
+                                            <input type="text" name="give_organization"
+                                                   id="id_give_organization"
+                                                   autocomplete="off">
 
-                <a class="btn" id="btn-guest-2" style="background-color: #505050; color:#fff;margin: 10px 0;">Гость
-                    2</a>
-                <div class="guest-2">
-                    <div class="block-guest"
-                         style="padding: 10px; margin-bottom: 10px; background-color: #505050; color: #fff; width: 100%; display: grid; grid-template-columns: 1fr 3fr; grid-gap: 10px; justify-content: center; align-items: center;">
-                        <label for="id_search_text2" style="font-size: 16px;">Поиск гостя 2:</label>
-                        <input type="text" id="id_search_text2">
-                    </div>
-                    <div style="display: flex; align-items: end">
-                        <div style="display: grid; grid-template-columns: 1fr 3fr; grid-gap: 10px; padding: 10px;">
+                                            <label for="id_place_of_living">Место проживания</label>
+                                            <input type="text" name="place_of_living" id="id_place_of_living"
+                                                   autocomplete="off">
 
-                            <label for="id_fullname2">Ф.И.О</label>
-                            <input type="text" name="fullname2" id="id_fullname2" autocomplete="off">
+                                            <label for="id_nationality">Национальность</label>
+                                            <select name="nationality" id="id_nationality"
+                                                    class="js-example-single">
+                                                {% for nationality in form_guest.nationality %}
+                                                    {{ nationality }}
+                                                {% endfor %}
+                                            </select>
 
-                            <label for="id_date_of_birth2">Дата рождения</label>
-                            <input type="text" name="date_of_birth2" id="id_date_of_birth2" autocomplete="off">
+                                            <label for="id_citeznship">Гражданство</label>
+                                            <select name="citeznship" id="id_citeznship">
+                                                {% for citeznship in form_guest.citeznship %}
+                                                    {{ citeznship }}
+                                                {% endfor %}
+                                            </select>
 
-                            <label for="id_place_of_birth2">Место рождение</label>
-                            <select name="place_of_birth2" id="id_place_of_birth2" class="js-example-single">
-                                {% for city in form_guest.place_of_birth %}
-                                    {{ city }}
-                                {% endfor %}
-                            </select>
+                                        </div>
+                                        <div class="guest-form">
 
-                            <label for="id_serial_number2">Серийный номер паспорта</label>
-                            <input type="text" name="serial_number2" id="id_serial_number2" autocomplete="off">
+                                            <label for="id_phone">Телефон:</label>
+                                            <input type="text" name="phone" id="id_phone" autocomplete="off">
 
-                            <label for="id_given_date2">Дата выдачи паспорта</label>
-                            <input type="text" name="given_date2" id="id_given_date2" autocomplete="off">
+                                            <label for="id_email">Email:</label>
+                                            <input type="text" name="email" id="id_email">
 
-                            <label for="id_expire_date2">Дата окончания срока паспорта</label>
-                            <input type="text" name="expire_date2" id="id_expire_date2" autocomplete="off">
+                                            <label for="id_kpp_number">КПП №</label>
+                                            <input type="text" name="kpp_number" id="id_kpp_number"
+                                                   autocomplete="off">
 
-                            <label for="id_give_organization2">Кем выдано</label>
-                            <input type="text" name="give_organization2" id="id_give_organization2" autocomplete="off">
+                                            <label for="id_kpp_date_arrival">Дата заезда КПП</label>
+                                            <input type="text" name="kpp_date_arrival" id="id_kpp_date_arrival"
+                                                   autocomplete="off">
 
-                            <label for="id_place_of_living2">Место проживания</label>
-                            <input type="text" name="place_of_living2" id="id_place_of_living2" autocomplete="off">
+                                            <hr>
+                                            <hr>
 
-                            <label for="id_nationality2">Национальность</label>
-                            <select name="nationality2" id="id_nationality2" class="js-example-single">
-                                {% for nationality in form_guest.nationality %}
-                                    {{ nationality }}
-                                {% endfor %}
-                            </select>
+                                            <label for="id_visa">Виза</label>
+                                            <select name="visa" id="id_visa">
+                                                {% for visa in form_guest.visa %}
+                                                    {{ visa }}
+                                                {% endfor %}
+                                            </select>
 
-                            <label for="id_citeznship2">Гражданство</label>
-                            <select name="citeznship2" id="id_citeznship2">
-                                {% for citeznship in form_guest.citeznship %}
-                                    {{ citeznship }}
-                                {% endfor %}
-                            </select>
+                                            <label for="id_visa_number">Номер визы</label>
+                                            <input type="text" name="visa_number" id="id_visa_number"
+                                                   autocomplete="off">
 
-                        </div>
-                        <div style="display: grid; grid-template-columns: 1fr 3fr; grid-gap: 10px; padding: 10px;">
+                                            <label for="id_visa_type">Тип визы</label>
+                                            <input type="text" name="visa_type" id="id_visa_type"
+                                                   autocomplete="off">
 
-                            <label for="id_phone2">Телефон:</label>
-                            <input type="text" name="phone2" id="id_phone2" autocomplete="off">
+                                            <label for="id_visa_given_date">Дата выдачи визы</label>
+                                            <input type="text" name="visa_given_date" id="id_visa_given_date"
+                                                   autocomplete="off">
 
-                            <label for="id_email2">Email:</label>
-                            <input type="text" name="email2" id="id_email2">
-
-                            <label for="id_kpp_number2">КПП №</label>
-                            <input type="text" name="kpp_number2" id="id_kpp_number2" autocomplete="off">
-
-                            <label for="id_kpp_date_arrival2">Дата заезда КПП</label>
-                            <input type="text" name="kpp_date_arrival2" id="id_kpp_date_arrival2" autocomplete="off">
-
-                            <hr>
-                            <hr>
-
-                            <label for="id_visa2">Виза</label>
-                            <select name="visa2" id="id_visa2">
-                                {% for visa in form_guest.visa %}
-                                    {{ visa }}
-                                {% endfor %}
-                            </select>
-
-                            <label for="id_visa_number2">Номер визы</label>
-                            <input type="text" name="visa_number2" id="id_visa_number2" autocomplete="off">
-
-                            <label for="id_visa_type2">Тип визы</label>
-                            <input type="text" name="visa_type2" id="id_visa_type2" autocomplete="off">
-
-                            <label for="id_visa_given_date2">Дата выдачи визы</label>
-                            <input type="text" name="visa_given_date2" id="id_visa_given_date2" autocomplete="off">
-
-                            <label for="id_visa_expire_date2">Дата окончания срока визы</label>
-                            <input type="text" name="visa_expire_date2" id="id_visa_expire_date2" autocomplete="off">
+                                            <label for="id_visa_expire_date">Дата окончания срока визы</label>
+                                            <input type="text" name="visa_expire_date" id="id_visa_expire_date"
+                                                   autocomplete="off">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-
-                <a class="btn" id="btn-guest-3">Гость 3</a>
-                <div class="guest-3">
-                    <div class="block-guest"
-                         style="padding: 10px; margin-bottom: 10px; background-color: #505050; color: #fff; width: 100%; display: grid; grid-template-columns: 1fr 3fr; grid-gap: 10px; justify-content: center; align-items: center;">
-                        <label for="id_search_text3" style="font-size: 16px;">Поиск гостя 3:</label>
-                        <input type="text" id="id_search_text3">
-                    </div>
-                    <div style="display: flex; align-items: end">
-                        <div style="display: grid; grid-template-columns: 1fr 3fr; grid-gap: 10px; padding: 10px;">
-
-                            <label for="id_fullname3">Ф.И.О</label>
-                            <input type="text" name="fullname3" id="id_fullname3" autocomplete="off">
-
-                            <label for="id_date_of_birth3">Дата рождения</label>
-                            <input type="text" name="date_of_birth3" id="id_date_of_birth3" autocomplete="off">
-
-                            <label for="id_place_of_birth3">Место рождение</label>
-                            <select name="place_of_birth3" id="id_place_of_birth3" class="js-example-single">
-                                {% for city in form_guest.place_of_birth %}
-                                    {{ city }}
-                                {% endfor %}
-                            </select>
-
-                            <label for="id_serial_number3">Серийный номер паспорта</label>
-                            <input type="text" name="serial_number3" id="id_serial_number3" autocomplete="off">
-
-                            <label for="id_given_date3">Дата выдачи паспорта</label>
-                            <input type="text" name="given_date3" id="id_given_date3" autocomplete="off">
-
-                            <label for="id_expire_date3">Дата окончания срока паспорта</label>
-                            <input type="text" name="expire_date3" id="id_expire_date3" autocomplete="off">
-
-                            <label for="id_give_organization3">Кем выдано</label>
-                            <input type="text" name="give_organization3" id="id_give_organization3" autocomplete="off">
-
-                            <label for="id_place_of_living3">Место проживания</label>
-                            <input type="text" name="place_of_living3" id="id_place_of_living3" autocomplete="off">
-
-                            <label for="id_nationality3">Национальность</label>
-                            <select name="nationality3" id="id_nationality3" class="js-example-single">
-                                {% for nationality in form_guest.nationality %}
-                                    {{ nationality }}
-                                {% endfor %}
-                            </select>
-
-                            <label for="id_citeznship3">Гражданство</label>
-                            <select name="citeznship3" id="id_citeznship3">
-                                {% for citeznship in form_guest.citeznship %}
-                                    {{ citeznship }}
-                                {% endfor %}
-                            </select>
-
+                    <div class="card">
+                        <div class="card-header" id="headingTwo">
+                            <h2 class="mb-0">
+                                <button class="btn btn-link collapsed" type="button" data-toggle="collapse"
+                                        data-target="#collapseTwo" aria-expanded="false"
+                                        aria-controls="collapseTwo">
+                                    Гость 2
+                                </button>
+                            </h2>
                         </div>
-                        <div style="display: grid; grid-template-columns: 1fr 3fr; grid-gap: 10px; padding: 10px;">
+                        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo"
+                             data-parent="#accordionExample">
+                            <div class="card-body">
+                                <div class="guest-2">
+                                    <div class="block-guest"
+                                         style="padding: 10px; margin-bottom: 10px; background-color: #505050; color: #fff; width: 100%; display: grid; grid-template-columns: 1fr 3fr; grid-gap: 10px; justify-content: center; align-items: center;">
+                                        <label for="id_search_text2" style="font-size: 16px;">Поиск гостя
+                                            2:</label>
+                                        <input type="text" id="id_search_text2">
+                                    </div>
+                                    <div style="display: flex; align-items: end">
+                                        <div class="guest-form">
 
-                            <label for="id_phone3">Телефон:</label>
-                            <input type="text" name="phone3" id="id_phone3" autocomplete="off">
+                                            <label for="id_fullname2">Ф.И.О</label>
+                                            <input type="text" name="fullname2" id="id_fullname2"
+                                                   autocomplete="off">
 
-                            <label for="id_email">Email:</label>
-                            <input type="text" name="email3" id="id_email3">
+                                            <label for="id_date_of_birth2">Дата рождения</label>
+                                            <input type="text" name="date_of_birth2" id="id_date_of_birth2"
+                                                   autocomplete="off">
 
-                            <label for="id_kpp_number3">КПП №</label>
-                            <input type="text" name="kpp_number3" id="id_kpp_number3" autocomplete="off">
+                                            <label for="id_place_of_birth2">Место рождение</label>
+                                            <select name="place_of_birth2" id="id_place_of_birth2"
+                                                    class="js-example-single">
+                                                {% for city in form_guest.place_of_birth %}
+                                                    {{ city }}
+                                                {% endfor %}
+                                            </select>
 
-                            <label for="id_kpp_date_arrival3">Дата заезда КПП</label>
-                            <input type="text" name="kpp_date_arrival3" id="id_kpp_date_arrival3" autocomplete="off">
+                                            <label for="id_serial_number2">Серийный номер паспорта</label>
+                                            <input type="text" name="serial_number2" id="id_serial_number2"
+                                                   autocomplete="off">
 
-                            <hr>
-                            <hr>
+                                            <label for="id_given_date2">Дата выдачи паспорта</label>
+                                            <input type="text" name="given_date2" id="id_given_date2"
+                                                   autocomplete="off">
 
-                            <label for="id_visa3">Виза</label>
-                            <select name="visa3" id="id_visa3">
-                                {% for visa in form_guest.visa %}
-                                    {{ visa }}
-                                {% endfor %}
-                            </select>
+                                            <label for="id_expire_date2">Дата окончания срока паспорта</label>
+                                            <input type="text" name="expire_date2" id="id_expire_date2"
+                                                   autocomplete="off">
 
-                            <label for="id_visa_number3">Номер визы</label>
-                            <input type="text" name="visa_number3" id="id_visa_number3" autocomplete="off">
+                                            <label for="id_give_organization2">Кем выдано</label>
+                                            <input type="text" name="give_organization2"
+                                                   id="id_give_organization2"
+                                                   autocomplete="off">
 
-                            <label for="id_visa_type3">Тип визы</label>
-                            <input type="text" name="visa_type3" id="id_visa_type3" autocomplete="off">
+                                            <label for="id_place_of_living2">Место проживания</label>
+                                            <input type="text" name="place_of_living2" id="id_place_of_living2"
+                                                   autocomplete="off">
 
-                            <label for="id_visa_given_date3">Дата выдачи визы</label>
-                            <input type="text" name="visa_given_date3" id="id_visa_given_date3" autocomplete="off">
+                                            <label for="id_nationality2">Национальность</label>
+                                            <select name="nationality2" id="id_nationality2"
+                                                    class="js-example-single">
+                                                {% for nationality in form_guest.nationality %}
+                                                    {{ nationality }}
+                                                {% endfor %}
+                                            </select>
 
-                            <label for="id_visa_expire_date3">Дата окончания срока визы</label>
-                            <input type="text" name="visa_expire_date3" id="id_visa_expire_date3" autocomplete="off">
+                                            <label for="id_citeznship2">Гражданство</label>
+                                            <select name="citeznship2" id="id_citeznship2">
+                                                {% for citeznship in form_guest.citeznship %}
+                                                    {{ citeznship }}
+                                                {% endfor %}
+                                            </select>
+
+                                        </div>
+                                        <div class="guest-form">
+
+                                            <label for="id_phone2">Телефон:</label>
+                                            <input type="text" name="phone2" id="id_phone2" autocomplete="off">
+
+                                            <label for="id_email2">Email:</label>
+                                            <input type="text" name="email2" id="id_email2">
+
+                                            <label for="id_kpp_number2">КПП №</label>
+                                            <input type="text" name="kpp_number2" id="id_kpp_number2"
+                                                   autocomplete="off">
+
+                                            <label for="id_kpp_date_arrival2">Дата заезда КПП</label>
+                                            <input type="text" name="kpp_date_arrival2"
+                                                   id="id_kpp_date_arrival2"
+                                                   autocomplete="off">
+
+                                            <hr>
+                                            <hr>
+
+                                            <label for="id_visa2">Виза</label>
+                                            <select name="visa2" id="id_visa2">
+                                                {% for visa in form_guest.visa %}
+                                                    {{ visa }}
+                                                {% endfor %}
+                                            </select>
+
+                                            <label for="id_visa_number2">Номер визы</label>
+                                            <input type="text" name="visa_number2" id="id_visa_number2"
+                                                   autocomplete="off">
+
+                                            <label for="id_visa_type2">Тип визы</label>
+                                            <input type="text" name="visa_type2" id="id_visa_type2"
+                                                   autocomplete="off">
+
+                                            <label for="id_visa_given_date2">Дата выдачи визы</label>
+                                            <input type="text" name="visa_given_date2" id="id_visa_given_date2"
+                                                   autocomplete="off">
+
+                                            <label for="id_visa_expire_date2">Дата окончания срока визы</label>
+                                            <input type="text" name="visa_expire_date2"
+                                                   id="id_visa_expire_date2"
+                                                   autocomplete="off">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header" id="headingThree">
+                            <h2 class="mb-0">
+                                <button class="btn btn-link collapsed" type="button" data-toggle="collapse"
+                                        data-target="#collapseThree" aria-expanded="false"
+                                        aria-controls="collapseThree">
+                                    Гость 3
+                                </button>
+                            </h2>
+                        </div>
+                        <div id="collapseThree" class="collapse" aria-labelledby="headingThree"
+                             data-parent="#accordionExample">
+                            <div class="card-body">
+                                <div class="guest-3">
+                                    <div class="block-guest"
+                                         style="padding: 10px; margin-bottom: 10px; background-color: #505050; color: #fff; width: 100%; display: grid; grid-template-columns: 1fr 3fr; grid-gap: 10px; justify-content: center; align-items: center;">
+                                        <label for="id_search_text3" style="font-size: 16px;">Поиск гостя
+                                            3:</label>
+                                        <input type="text" id="id_search_text3">
+                                    </div>
+                                    <div style="display: flex; align-items: end">
+                                        <div class="guest-form">
+
+                                            <label for="id_fullname3">Ф.И.О</label>
+                                            <input type="text" name="fullname3" id="id_fullname3"
+                                                   autocomplete="off">
+
+                                            <label for="id_date_of_birth3">Дата рождения</label>
+                                            <input type="text" name="date_of_birth3" id="id_date_of_birth3"
+                                                   autocomplete="off">
+
+                                            <label for="id_place_of_birth3">Место рождение</label>
+                                            <select name="place_of_birth3" id="id_place_of_birth3"
+                                                    class="js-example-single">
+                                                {% for city in form_guest.place_of_birth %}
+                                                    {{ city }}
+                                                {% endfor %}
+                                            </select>
+
+                                            <label for="id_serial_number3">Серийный номер паспорта</label>
+                                            <input type="text" name="serial_number3" id="id_serial_number3"
+                                                   autocomplete="off">
+
+                                            <label for="id_given_date3">Дата выдачи паспорта</label>
+                                            <input type="text" name="given_date3" id="id_given_date3"
+                                                   autocomplete="off">
+
+                                            <label for="id_expire_date3">Дата окончания срока паспорта</label>
+                                            <input type="text" name="expire_date3" id="id_expire_date3"
+                                                   autocomplete="off">
+
+                                            <label for="id_give_organization3">Кем выдано</label>
+                                            <input type="text" name="give_organization3"
+                                                   id="id_give_organization3"
+                                                   autocomplete="off">
+
+                                            <label for="id_place_of_living3">Место проживания</label>
+                                            <input type="text" name="place_of_living3" id="id_place_of_living3"
+                                                   autocomplete="off">
+
+                                            <label for="id_nationality3">Национальность</label>
+                                            <select name="nationality3" id="id_nationality3"
+                                                    class="js-example-single">
+                                                {% for nationality in form_guest.nationality %}
+                                                    {{ nationality }}
+                                                {% endfor %}
+                                            </select>
+
+                                            <label for="id_citeznship3">Гражданство</label>
+                                            <select name="citeznship3" id="id_citeznship3">
+                                                {% for citeznship in form_guest.citeznship %}
+                                                    {{ citeznship }}
+                                                {% endfor %}
+                                            </select>
+
+                                        </div>
+                                        <div class="guest-form">
+
+                                            <label for="id_phone3">Телефон:</label>
+                                            <input type="text" name="phone3" id="id_phone3" autocomplete="off">
+
+                                            <label for="id_email">Email:</label>
+                                            <input type="text" name="email3" id="id_email3">
+
+                                            <label for="id_kpp_number3">КПП №</label>
+                                            <input type="text" name="kpp_number3" id="id_kpp_number3"
+                                                   autocomplete="off">
+
+                                            <label for="id_kpp_date_arrival3">Дата заезда КПП</label>
+                                            <input type="text" name="kpp_date_arrival3"
+                                                   id="id_kpp_date_arrival3"
+                                                   autocomplete="off">
+
+                                            <hr>
+                                            <hr>
+
+                                            <label for="id_visa3">Виза</label>
+                                            <select name="visa3" id="id_visa3">
+                                                {% for visa in form_guest.visa %}
+                                                    {{ visa }}
+                                                {% endfor %}
+                                            </select>
+
+                                            <label for="id_visa_number3">Номер визы</label>
+                                            <input type="text" name="visa_number3" id="id_visa_number3"
+                                                   autocomplete="off">
+
+                                            <label for="id_visa_type3">Тип визы</label>
+                                            <input type="text" name="visa_type3" id="id_visa_type3"
+                                                   autocomplete="off">
+
+                                            <label for="id_visa_given_date3">Дата выдачи визы</label>
+                                            <input type="text" name="visa_given_date3" id="id_visa_given_date3"
+                                                   autocomplete="off">
+
+                                            <label for="id_visa_expire_date3">Дата окончания срока визы</label>
+                                            <input type="text" name="visa_expire_date3"
+                                                   id="id_visa_expire_date3"
+                                                   autocomplete="off">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -370,16 +473,7 @@
 
                     <div style="display: grid; grid-template-columns: 1fr; grid-gap: 10px;">
                         <div style="display: grid; grid-template-columns: 1fr 1fr; grid-gap: 10px; width: 380px;">
-                            <label for="type_payment">Тип оплаты</label>
                             <label for="status-booking">Статус бронирования</label>
-
-                            <select name="type_payment" id="type_payment" class="js-example-tags">
-                                <option value="Не известно">Не известно</option>
-                                <option value="Наличка">Наличка</option>
-                                <option value="Пластик">Пластик</option>
-                                <option value="Без нал (Перечисление)">Без нал (Перечисление)</option>
-                                <option value="В долларах">В долларах</option>
-                            </select>
 
                             <select name="status-booking" id="status-booking" class="js-example-tags">
                                 {% for status in status_booking %}
@@ -388,14 +482,12 @@
                             </select>
                         </div>
 
-                        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; grid-gap: 10px; width: 300px;">
-                            <label for="id_koplate_i">К оплате</label>
-                            <label for="id_oplacheno_i">Оплачено</label>
-                            <div></div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; grid-gap: 10px; width: 380px;">
+                            <label for="id_koplate_i">Изменить цену "за ночь"</label>
                             <input type="number" id="id_koplate_i">
-                            <input type="number" id="id_oplacheno_i">
                         </div>
-                        <a class="btn" style="background-color: #505050; color: #fff;" id="answer" style="color: #fff;">Посчитать</a>
+                        <a class="btn" style="background-color: #505050; color: #fff;" id="answer"
+                           style="color: #fff;">Посчитать</a>
                     </div>
 
                     <table class="table" style="width: 300px;">
@@ -411,14 +503,6 @@
                             <td>К оплате:</td>
                             <td id="koplate"></td>
                         </tr>
-                        <tr>
-                            <td>Оплачено:</td>
-                            <td id="oplacheno"></td>
-                        </tr>
-                        <tr>
-                            <td>Осталось оплатить:</td>
-                            <td id="ostalos"></td>
-                        </tr>
                     </table>
 
                 </div>
@@ -426,7 +510,8 @@
                 <div class="btns" style="padding: 10px; background-color: #fff; border-radius: 4px;">
                     <a id="send-booking" class="btn btn-primary"
                        style="color: #fff;border-color: #505050; background-color: #505050;">Сохранить</a>
-                    <a id="save_and_back" class="btn" style="color: #fff;border-color: #505050; background-color: #505050;">Сохранить и
+                    <a id="save_and_back" class="btn"
+                       style="color: #fff;border-color: #505050; background-color: #505050;">Сохранить и
                         вернуться</a>
                     <a href="/" class="btn"
                        style="color: #fff;border-color: #505050; background-color: #505050;">Отмена</a>

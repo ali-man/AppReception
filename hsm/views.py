@@ -1,23 +1,39 @@
 import datetime
+
+from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
 from django.views.generic.base import View
 
 from hsm.booking import guest_register, request_processing, visa_register, booking_register
-from hsm.forms import GuestForm, GuestsForm, BookingForm
+from hsm.forms import GuestForm, EditBookingForm, StatusForm, OrganizationForm
 from hsm.functions import int_to_str
-from hsm.models import TypeRoom, SourceBooking, Booking, Guest, Task
+from hsm.models import TypeRoom, SourceBooking, Booking, Guest, Task, Organization
 
 
 class HomeViews(View):
     @staticmethod
     def get(request):
-        today = datetime.datetime.now().date()
+        filter_date = request.GET.get('filter_date', None)
+        if filter_date is None:
+            date = datetime.datetime.now().date()
+        else:
+            # 24-04-2019
+            sort = list(map(int, filter_date.split('-')))
+            date = datetime.date(sort[2], sort[1], sort[0])
         bookings = Booking.objects.filter(stat=True)
-        today_departure = len(bookings.filter(date_departure__date=today))
-        today_arrival = len(bookings.filter(date_arrival__date=today))
-        today_booking = len(bookings.filter(date_arrival__date__lte=today, date_departure__date__gte=today).exclude(status_booking=-3))
-        today_free = 40 - today_booking
+        today_departure = len(bookings.filter(date_departure__date=date))
+        today_arrival = len(bookings.filter(date_arrival__date=date))
+        today_resident = bookings.filter(date_arrival__date__lte=date, date_departure__date__gte=date).exclude(status_booking=-3).order_by('-id')
+        today_booking = len(today_resident)
+        today_free = settings.ROOMS_QUANTITY - today_booking
+        # Гражданины РУЗ
+        guests_ruz = len(today_resident.filter(guest__citeznship_id=settings.CITEZNSHIP_RUZ))
+        # Гражданины Рф
+        guests_rf = len(today_resident.filter(guest__citeznship_id=settings.CITEZNSHIP_RF))
+        # Гражданины Ин
+        guests_in = len(today_resident.exclude(guest__citeznship_id=settings.CITEZNSHIP_RUZ).exclude(guest__citeznship_id=settings.CITEZNSHIP_RF))
+        type_rooms = TypeRoom.objects.all()
 
         return render(request, 'home.html', locals())
 
@@ -129,22 +145,26 @@ class BookingViews(View):
 class EditBookingViews(View):
     @staticmethod
     def get(request, id):
-        if request.user.is_staff:
+        if request.user.is_authenticated:
             booking = Booking.objects.get(id=id)
-            form = BookingForm(instance=booking)
+            form = EditBookingForm(instance=booking)
             return render(request, 'booking/edit.html', locals())
         else:
             return redirect('/')
 
     @staticmethod
     def post(request, id):
-        if request.user.is_staff:
+        save = request.POST['save']
+        if request.user.is_authenticated:
             booking = Booking.objects.get(id=id)
-            form = BookingForm(request.POST, instance=booking)
+            form = EditBookingForm(request.POST, instance=booking)
             if form.is_valid():
                 form.save()
-                return redirect('/')
-            return redirect('/booking/edit-' + id + '/')
+                if save == 'continue':
+                    return redirect('/booking/edit-' + str(id))
+                else:
+                    return redirect('/')
+            return redirect('/booking/edit-' + str(id))
         else:
             return redirect('/')
 
@@ -162,7 +182,7 @@ class DetailBookingViews(View):
 
 class StatusBookingViews(View):
     @staticmethod
-    def get(request: object, id: object) -> object:
+    def get(request, id):
         booking = Booking.objects.get(id=id)
         status_booking = Booking.STATUS_BOOKING
         type_payment = Booking.TYPE_PAYMENT
@@ -178,7 +198,7 @@ class StatusBookingViews(View):
 def user_login(request):
     if request.method == 'GET':
         if request.user.is_authenticated:
-            return redirect('/chess/')
+            return redirect('/')
         else:
             return render(request, 'accounts/login.html')
 
@@ -189,7 +209,7 @@ def user_login(request):
         if user is not None:
             login(request, user)
             request.session['system_joined'] = datetime.datetime.now().strftime('%d %B %Y %H:%M')
-            return redirect('/chess/')
+            return redirect('/')
         else:
             return redirect('/login')
 
@@ -233,10 +253,29 @@ class TasksViews(View):
         pass
 
 
+class ListBookingViews(View):
+    @staticmethod
+    def get(request):
+        bookings = Booking.objects.filter(stat=True).order_by('-id')
+        return render(request, 'booking/list.html', locals())
+
+    @staticmethod
+    def post(request):
+        pass
+
+
 def statistics(request):
-    today = ''
-    yesterday = ''
-    week = ''
+    r = request.GET.get('date', None)
+    if r is None:
+        date = datetime.datetime.now().date()
+    else:
+        print(r)
+        # 2019-04-24
+        sort = list(map(int, r.split('-')))
+        date = datetime.date(sort[2], sort[1], sort[0])
+
+    bookings = Booking.objects.filter(stat=True, date_arrival__date__lte=date, date_departure__date__gte=date)
+    hotel_name = settings.HOTEL_NAME
 
     return render(request, 'statistics.html', locals())
 
@@ -244,3 +283,35 @@ def statistics(request):
 def profile(request):
     sss = request.session['system_joined']
     return render(request, 'accounts/profile.html', locals())
+
+
+def printer(request, _date):
+    sort = list(map(int, _date.split('-')))
+    date = datetime.date(sort[2], sort[1], sort[0])
+
+    bookings = Booking.objects.filter(stat=True, date_arrival__date__lte=date, date_departure__date__gte=date)
+
+    return render(request, 'print.html', {'date': date, 'bookings': bookings})
+
+
+def add_guest(request):
+    form_guest = GuestForm()
+    return render(request, 'guests/add-guest.html', locals())
+
+
+def organization(request):
+    new_form = OrganizationForm()
+    orgs = Organization.objects.all().order_by('-id')
+    if request.POST:
+        form = OrganizationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('/')
+    return render(request, 'organization.html', {'new_form': new_form, 'orgs': orgs})
+
+
+def print_booking(request, id):
+    booking = Booking.objects.get(id=id)
+    today = datetime.datetime.now().date()
+    hotel_name = settings.HOTEL_NAME
+    return render(request, 'booking/print.html', {'booking': booking, 'today': today, 'hotel_name': hotel_name})

@@ -1,8 +1,10 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load my_filter %}
 
 {% block css %}
     <link rel="stylesheet" href="{% static 'css/libs/mdb.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
 {% endblock %}
 
 {% block title %}
@@ -10,164 +12,37 @@
 {% endblock %}
 
 {% block content %}
-
     <div class="container">
         <div class="row" style="margin-top: 15px;">
-
-            <!--Grid column-->
-            <div class="col-xl-3 col-md-6 mb-4">
-
-                <!--Card-->
-                <div class="card">
-
-                    <!--Card Data-->
-                    <div class="row mt-3">
-                        <div class="col-md-5 col-5 text-left pl-4">
-                            <a type="button" class="btn-floating btn-lg primary-color ml-4"><i class="far fa-eye"
-                                                                                               aria-hidden="true"></i></a>
-                        </div>
-
-                        <div class="col-md-7 col-7 text-right pr-5">
-                            <h5 class="ml-4 mt-4 mb-2 font-weight-bold">{{ today_booking }}</h5>
-                            <p class="font-small grey-text">Занятых номеров</p>
-                        </div>
-                    </div>
-                    <!--/.Card Data-->
-
-                    <!--Card content-->
-{#                    <div class="row my-3">#}
-{#                        <div class="col-md-7 col-7 text-left pl-4">#}
-{#                            <p class="font-small dark-grey-text font-up ml-4 font-weight-bold">Занятых номеров</p>#}
-{#                        </div>#}
-{##}
-{#                        <div class="col-md-5 col-5 text-right pr-5">#}
-{#                            <p class="font-small grey-text">145,567</p>#}
-{#                        </div>#}
-{#                    </div>#}
-                    <!--/.Card content-->
-
-                </div>
-                <!--/.Card-->
-
+            <div class="col-4">
+                <form action="." method="get">{% csrf_token %}
+                    <input type="text" name="filter_date" autocomplete="off" class="input_search_date" id="filter_date" placeholder="Введите дату">
+                    <button type="submit" class="btn btn-primary btn-sm btn_search_date">Поиск по дате</button>
+                </form>
             </div>
-            <!--Grid column-->
-
-            <!--Grid column-->
-            <div class="col-xl-3 col-md-6 mb-4">
-
-                <!--Card-->
-                <div class="card">
-
-                    <!--Card Data-->
-                    <div class="row mt-3">
-                        <div class="col-md-5 col-5 text-left pl-4">
-                            <a type="button" class="btn-floating btn-lg warning-color ml-4"><i class="fas fa-user"
-                                                                                               aria-hidden="true"></i></a>
-                        </div>
-
-                        <div class="col-md-7 col-7 text-right pr-5">
-                            <h5 class="ml-4 mt-4 mb-2 font-weight-bold">{{ today_free }}</h5>
-                            <p class="font-small grey-text">Свободных номеров</p>
-                        </div>
-                    </div>
-                    <!--/.Card Data-->
-
-                    <!--Card content-->
-{#                    <div class="row my-3">#}
-{#                        <div class="col-md-7 col-7 text-left pl-4">#}
-{#                            <p class="font-small dark-grey-text font-up ml-4 font-weight-bold">Свободных номеров</p>#}
-{#                        </div>#}
-{##}
-{#                        <div class="col-md-5 col-5 text-right pr-5">#}
-{#                            <p class="font-small grey-text">145,567</p>#}
-{#                        </div>#}
-{#                    </div>#}
-                    <!--/.Card content-->
-
-                </div>
-                <!--/.Card-->
-
+            <div class="col-8">
+                <ul class="color-bookings">
+                    <li>Проживает без оплаты</li>
+                    <li>Проживает с оплатой</li>
+                    <li>Выселение сегодня</li>
+                    <li>Размещение на сегодня</li>
+                </ul>
             </div>
-            <!--Grid column-->
-
-            <!--Grid column-->
-            <div class="col-xl-3 col-md-6 mb-4">
-
-                <!--Card-->
-                <div class="card">
-
-                    <!--Card Data-->
-                    <div class="row mt-3">
-                        <div class="col-md-5 col-5 text-left pl-4">
-                            <a type="button" class="btn-floating btn-lg light-blue lighten-1 ml-4"><i
-                                    class="fas fa-dollar-sign"
-                                    aria-hidden="true"></i></a>
-                        </div>
-
-                        <div class="col-md-7 col-7 text-right pr-5">
-                            <h5 class="ml-4 mt-4 mb-2 font-weight-bold">{{ today_departure }}</h5>
-                            <p class="font-small grey-text">Выселение сегодня</p>
-                        </div>
-                    </div>
-                    <!--/.Card Data-->
-
-                    <!--Card content-->
-{#                    <div class="row my-3">#}
-{#                        <div class="col-md-7 col-7 text-left pl-4">#}
-{#                            <p class="font-small dark-grey-text font-up ml-4 font-weight-bold">Выселение</p>#}
-{#                        </div>#}
-{##}
-{#                        <div class="col-md-5 col-5 text-right pr-5">#}
-{#                            <p class="font-small grey-text">145,567</p>#}
-{#                        </div>#}
-{#                    </div>#}
-                    <!--/.Card content-->
-
-                </div>
-                <!--/.Card-->
-
-            </div>
-            <!--Grid column-->
-
-            <!--Grid column-->
-            <div class="col-xl-3 col-md-6 mb-4">
-
-                <!--Card-->
-                <div class="card">
-
-                    <!--Card Data-->
-                    <div class="row mt-3">
-                        <div class="col-md-5 col-5 text-left pl-4">
-                            <a type="button" class="btn-floating btn-lg red accent-2 ml-4"><i class="fas fa-database"
-                                                                                              aria-hidden="true"></i></a>
-                        </div>
-
-                        <div class="col-md-7 col-7 text-right pr-5">
-                            <h5 class="ml-4 mt-4 mb-2 font-weight-bold">{{ today_arrival }}</h5>
-                            <p class="font-small grey-text">Размещение на сегодня</p>
-                        </div>
-                    </div>
-                    <!--/.Card Data-->
-
-                    <!--Card content-->
-{#                    <div class="row my-3">#}
-{#                        <div class="col-md-7 col-7 text-left pl-4">#}
-{#                            <p class="font-small dark-grey-text font-up ml-4 font-weight-bold">Заселение</p>#}
-{#                        </div>#}
-{##}
-{#                        <div class="col-md-5 col-5 text-right pr-5">#}
-{#                            <p class="font-small grey-text">145,567</p>#}
-{#                        </div>#}
-{#                    </div>#}
-                    <!--/.Card content-->
-
-                </div>
-                <!--/.Card-->
-
-            </div>
-            <!--Grid column-->
-
         </div>
+
+        {% include 'home/cards.html' %}
+
+        {% include 'home/rooms.html' %}
+
+
+        <div style="opacity: 0;">
+            <span id="guests_ruz">{{ guests_ruz }}</span>
+            <span id="guests_rf">{{ guests_rf }}</span>
+            <span id="guests_in">{{ guests_in }}</span>
+        </div>
+
+        {% include 'home/statistics.html' %}
+
     </div>
 
 {% endblock %}
@@ -175,4 +50,166 @@
 {% block scripts %}
     <script src="{% static 'js/libs/popper.min.js' %}"></script>
     <script src="{% static 'js/libs/mdb.min.js' %}"></script>
+    <script>
+        /*Global settings*/
+        Chart.defaults.global.defaultFontColor = '#fff';
+
+        $(function () {
+            var data = {
+                labels: ["January", "February", "March", "April", "May", "June", "July"],
+                datasets: [{
+                    label: "My First dataset",
+                    fillColor: "rgba(220,220,220,0.2)",
+                    strokeColor: "rgba(220,220,220,1)",
+                    pointColor: "rgba(220,220,220,1)",
+                    pointStrokeColor: "#fff",
+                    pointHighlightFill: "#fff",
+                    pointHighlightStroke: "rgba(0,0,0,.15)",
+                    data: [65, 59, 80, 81, 56, 55, 40],
+                    backgroundColor: "#4CAF50"
+                }, {
+                    label: "My Second dataset",
+                    fillColor: "rgba(255,255,255,.25)",
+                    strokeColor: "rgba(255,255,255,.75)",
+                    pointColor: "#fff",
+                    pointStrokeColor: "#fff",
+                    pointHighlightFill: "#fff",
+                    pointHighlightStroke: "rgba(0,0,0,.15)",
+                    data: [28, 48, 40, 19, 86, 27, 90]
+                }]
+            };
+
+
+            var dataPie = [{
+                value: 300,
+                color: "#F7464A",
+                highlight: "#FF5A5E",
+                label: "Red"
+            }, {
+                value: 50,
+                color: "#46BFBD",
+                highlight: "#5AD3D1",
+                label: "Green"
+            }, {
+                value: 100,
+                color: "#FDB45C",
+                highlight: "#FFC870",
+                label: "Yellow"
+            }]
+
+            var option = {
+                responsive: true,
+                // set font color
+                scaleFontColor: "#fff",
+                // font family
+                defaultFontFamily: "'Roboto', sans-serif",
+                // background grid lines color
+                scaleGridLineColor: "rgba(255,255,255,.1)",
+                // hide vertical lines
+                scaleShowVerticalLines: false,
+            };
+
+            //Get the context of the canvas element we want to select
+            // var ctx = document.getElementById("sales").getContext('2d');
+            // var myLineChart = new Chart(ctx).Line(data, option); //'Line' defines type of the chart.
+
+            // Get the context of the canvas element we want to select
+            // var ctx = document.getElementById("conversion").getContext('2d');
+            // var myRadarChart = new Chart(ctx).Radar(data, option);
+
+            //radar
+            var ctxR = document.getElementById("conversion").getContext('2d');
+            var myRadarChart = new Chart(ctxR, {
+                type: 'radar',
+                data: {
+                    labels: ["Eating", "Drinking", "Sleeping", "Designing", "Coding", "Cycling"],
+                    datasets: [{
+                        label: "My First dataset",
+                        fillColor: "rgba(220,220,220,0.2)",
+                        strokeColor: "rgba(220,220,220,1)",
+                        pointColor: "rgba(220,220,220,1)",
+                        pointStrokeColor: "#fff",
+                        pointHighlightFill: "#fff",
+                        pointHighlightStroke: "rgba(220,220,220,1)",
+                        data: [65, 59, 90, 81, 56, 55]
+                    },
+                        {
+                            label: "My Second dataset",
+                            fillColor: "rgba(151,187,205,0.2)",
+                            strokeColor: "rgba(151,187,205,1)",
+                            pointColor: "rgba(151,187,205,1)",
+                            pointStrokeColor: "#fff",
+                            pointHighlightFill: "#fff",
+                            pointHighlightStroke: "rgba(151,187,205,1)",
+                            data: [28, 48, 40, 19, 96, 27]
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    scaleFontColor: "#FFFFFF"
+                }
+            });
+
+
+            //bar
+            var ctx = document.getElementById("traffic").getContext('2d');
+            var myBarChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ["January", "Febuary", "March", "April", "May", "June"],
+                    datasets: [{
+                        label: '# of Votes',
+                        data: [12, 19, 3, 5, 2, 3],
+                        backgroundColor: [
+                            'rgba(255, 255, 255, 0.3)',
+                            'rgba(255, 255, 255, 0.3)',
+                            'rgba(255, 255, 255, 0.3)',
+                            'rgba(255, 255, 255, 0.3)',
+                            'rgba(255, 255, 255, 0.3)',
+                            'rgba(255, 255, 255, 0.3)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 255, 255, 1)',
+                            'rgba(255, 255, 255, 1)',
+                            'rgba(255, 255, 255, 1)',
+                            'rgba(255, 255, 255, 1)',
+                            'rgba(255, 255, 255, 1)',
+                            'rgba(255, 255, 255, 1)'
+                        ],
+                        borderWidth: 1,
+                        color: 'rgba(255, 255, 255, 1)'
+                    }]
+                },
+                optionss: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+            });
+
+            //pie
+            var ctxP = document.getElementById("seo").getContext('2d');
+            var myPieChart = new Chart(ctxP, {
+                type: 'pie',
+                data: {
+                    labels: ["РУЗ", "РФ", "Иностранцы"],
+                    datasets: [{
+                        data: [Number($('#guests_ruz')[0].textContent), Number($('#guests_rf')[0].textContent), Number($('#guests_in')[0].textContent)],
+                        backgroundColor: ["#4285F4", "#ffbb33", "#FF5252"],
+                        hoverBackgroundColor: ["#6ea0f2", "#fec451", "#fa6e6e"]
+                    }]
+                },
+                options: {
+                    responsive: true
+                }
+            });
+
+        });
+    </script>
+    <script src="{% static 'js/home.js' %}"></script>
 {% endblock %}

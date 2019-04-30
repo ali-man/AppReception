@@ -1,0 +1,92 @@
+{% load static %}
+{% load my_filter %}
+
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="{% static 'css/libs/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/print.css' %}">
+    <title>Отчёт</title>
+</head>
+<body>
+
+
+<div class="container-fluid"><div style="transform: rotate(90deg) translate(650px, -550px);">
+
+            <div style="width: 100%; display: inline-block; margin-top: 25px;">
+                <h6 style="text-align: center;">ЕЖЕДНЕВНЫЙ ОТЧЁТ проживающих в гостинице "{{ hotel_name }}" на {{ date }}</h6>
+            </div>
+
+            <table class="table table-bordered" style="font-size: 12px;">
+                <thead>
+                <tr>
+                    <td rowspan="2"><b>№</b></td>
+                    <td rowspan="2"><b>Тип номера</b></td>
+                    <td rowspan="2"><b>Номер</b></td>
+                    <td rowspan="2" style="width: 35px;"><b>Админис тратор</b></td>
+                    <td rowspan="2"><b>Ф.И.О</b></td>
+                    <td rowspan="2"><b>Организация</b></td>
+                    <td rowspan="2"><b>Дата заезда</b></td>
+                    <td rowspan="2"><b>Дата выезда</b></td>
+                    <td rowspan="2"><b>Дни</b></td>
+                    <td rowspan="2"><b>Цена номера</b></td>
+                    <td rowspan="2"><b>Начислено</b></td>
+                    <th colspan="4">Оплата</th>
+                    <td rowspan="2"><b>К оплате</b></td>
+                    <td rowspan="2"><b>Кассир</b></td>
+                    <td rowspan="2"><b>Статус</b></td>
+                </tr>
+                <tr>
+                    <th>Нал</th>
+                    <th>Переч</th>
+                    <th>Терм</th>
+                    <th>$</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for booking in bookings %}
+                    {% for guest in booking.guest.all %}
+                        <tr>
+                            <td scope="row" class="number text-center"></td>
+                            <td class="text-center">{{ booking.room.type_room.name|type_room }}</td>
+                            <td class="text-center">{{ booking.room.number_room }}</td>
+                            <td class="text-center">{{ booking.user }}</td>
+                            <td>{{ guest }}</td>
+                            <td>{{ booking.organization|organization }}</td>
+                            <td class="text-center">{{ booking.date_arrival }}</td>
+                            <td class="text-center">{{ booking.date_departure }}</td>
+                            <td class="text-center">{{ booking.days|floatformat }}</td>
+                            <td class="text-right">{{ booking.price_per_night }}</td>
+                            <td class="text-right">{{ booking.price_for_all_time }}</td>
+                            <td class="text-right">{{ booking.payment_nal }}</td>
+                            <td class="text-right">{{ booking.payment_bez_nal }}</td>
+                            <td class="text-right">{{ booking.payment_terminal }}</td>
+                            <td class="text-right">{{ booking.payment_usd }}</td>
+                            <td class="text-right">{{ booking.left_to_pay }}</td>
+                            <td class="text-center">{{ booking.user }}</td>
+                            <td class="text-center">{{ booking.status_booking|status_booking_print }}</td>
+                        </tr>{% endfor %}
+                {% endfor %}
+
+                </tbody>
+            </table>
+    </div>
+</div>
+
+<script src="{% static 'js/libs/jquery-3.3.1.min.js' %}"></script>
+<script>
+    $(document).ready(function () {
+        let number = $('.number');
+        for (let i = 0; i < number.length; i++) {
+            $(number[i]).text(i+1);
+        }
+    })
+</script>
+
+
+</body>
+</html>

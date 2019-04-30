@@ -1,0 +1,145 @@
+{% load static %}
+{% load my_filter %}
+
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="{% static 'css/libs/bootstrap.min.css' %}">
+    <style>
+        .block-print {
+            width: 400px;
+        }
+
+        .text h4 {
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .block-print p {
+            padding-left: 4px;
+        }
+
+        .block-print h5 {
+            font-size: 12px;
+            padding-left: 4px;
+        }
+
+        table.own-style th, table.own-style td {
+            vertical-align: middle;
+            text-align: center;
+        }
+
+        table th, table td {
+            font-size: 12px;
+        }
+
+        .sutok {
+            width: 30px;
+        }
+    </style>
+    <title>{{ booking.room }}</title>
+</head>
+<body>
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div style="margin: 25px 0;">
+                <label for="id_number">Введите номер счёта</label><br>
+                <input type="text" id="id_number"><br>
+                <button class="btn btn-primary btn-sm" id="id_number_button" style="margin-top: 5px;">Вписать номер счёта в чек</button>
+            </div>
+            <div id="div2">
+                <div class="block-print">
+                    <div class="text">
+                        <h4>ГОСТИНИЦА "{{ hotel_name }}" МЕХМОНХОНАСИ</h4>
+                        <h4>СЧЁТ № <span id="id_number_span"></span></h4>
+                    </div>
+                    <table>
+                        <tr>
+                            <td>От:</td>
+                            <td><b>{{ today }}</b></td>
+                        </tr>
+                        <tr>
+                            <td>Гр.:</td>
+                            <td><b>{% for guest in booking.guest.all %}
+                                {{ guest }}
+                            {% endfor %}
+                            </b></td>
+                        </tr>
+                        <tr>
+                            <td style="padding-right: 10px;">Номер:</td>
+                            <td><b>{{ booking.room.number_room }}</b></td>
+                        </tr>
+                    </table>
+                    <p>Наименование плательщика: {% for guest in booking.guest.all %}
+                                {{ guest }}
+                            {% endfor %}</p>
+                    <table border="1" class="own-style">
+                        <thead>
+                        <tr>
+                            <th width="180">Виды платежей</th>
+                            <th width="30">Количес тво суток</th>
+                            <th width="100">Цена</th>
+                            <th width="100">Сумма</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td width="180">За проживание с {{ booking.date_arrival }} по {{ booking.date_departure }}</td>
+                            <td align="center">{{ booking.days|floatformat }}</td>
+                            <td align="center">{{ booking.price_per_night }}</td>
+                            <td align="center">{{ booking.price_for_all_time }}</td>
+                        </tr>
+                        <tr>
+                            <td align="center"><b>Итого</b></td>
+                            <td colspan=2></td>
+                            <td align="center">{{ booking.price_for_all_time }}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <h5>ВСЕГО ПОЛУЧЕНО ПО СЧЕТУ: {{ booking.price_for_all_time|number_to_str }} сум</h5>
+                    <table>
+                        <tr>
+                            <td>Кассир:</td>
+                            <td>{{ booking.user }}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="$('#div2').print();">
+                Распечатать
+            </button>
+        </div>
+    </div>
+</div>
+
+
+<script src="{% static 'js/libs/jquery-3.3.1.min.js' %}"></script>
+<script>
+    $('#id_number_button').click(function () {
+        $('#id_number_span').text($('#id_number').val());
+    });
+    $.fn.extend({
+        print: function () {
+            $.ajax();
+            var frameName = 'printIframe';
+            var doc = window.frames[frameName];
+            if (!doc) {
+                $('<iframe>').hide().attr('name', frameName).appendTo(document.body);
+                doc = window.frames[frameName];
+            }
+            doc.document.body.innerHTML = this.html();
+            doc.window.print();
+            return this;
+        }
+    });
+</script>
+
+</body>
+</html>

@@ -24,6 +24,7 @@ class TypeRoom(models.Model):
 class Rooms(models.Model):
     type_room = models.ForeignKey(TypeRoom, verbose_name='Тип комнаты', on_delete=models.CASCADE)
     number_room = models.CharField(verbose_name='Номер комнаты', max_length=50, blank=True)
+    close = models.BooleanField(verbose_name='Закрыть номер', default=False)
 
     class Meta:
         verbose_name = 'Номер комнаты'
@@ -103,9 +104,6 @@ class Citeznship(models.Model):
 
     def __str__(self):
         return self.name
-
-
-admin.site.register(Citeznship)
 
 
 # Данные гостя
@@ -238,34 +236,75 @@ class Booking(models.Model):
         (E, 'В долларах')
     )
 
+    date_arrival = models.DateTimeField(verbose_name='Дата и время заезда', null=True, blank=True)
+    early_arrival = models.BooleanField(verbose_name='Ранний заезд', default=False)
+    date_departure = models.DateTimeField(verbose_name='Дата и время выезда', null=True, blank=True)
+    late_departure = models.BooleanField(verbose_name='Поздник заезд', default=False)
+    price_per_night = models.DecimalField(verbose_name='Цена за ночь', max_digits=10, decimal_places=0, null=True,
+                                          blank=True)
+    price_for_all_time = models.DecimalField(verbose_name='Цена за всё время', max_digits=10, decimal_places=0,
+                                             null=True, blank=True)
+    payment_nal = models.DecimalField(verbose_name='Сумма - налом', max_digits=10, decimal_places=0, default=0)
+    payment_bez_nal = models.DecimalField(verbose_name='Сумма - перечисление', max_digits=10, decimal_places=0,
+                                          default=0)
+    payment_terminal = models.DecimalField(verbose_name='Сумма - терминал', max_digits=10, decimal_places=0, default=0)
+    payment_usd = models.DecimalField(verbose_name='Сумма - в долларах', max_digits=10, decimal_places=0, default=0)
+    paid = models.DecimalField(verbose_name='Оплачено', max_digits=10, decimal_places=0, null=True, blank=True)
+    left_to_pay = models.DecimalField(verbose_name='Осталось оплатить', max_digits=10, decimal_places=0, null=True,
+                                      blank=True)
+    days = models.FloatField(verbose_name='Суток', null=True, blank=True)
+    status_booking = models.IntegerField(verbose_name='Статус брони', choices=STATUS_BOOKING, default=EMPTY)
+
     user = models.ForeignKey(User, verbose_name='Администратор', on_delete=models.CASCADE, null=True, blank=True)
     guest = models.ManyToManyField(Guest, verbose_name='Проживающие гости', blank=True)
     organization = models.ForeignKey(Organization, verbose_name='Организация', on_delete=models.CASCADE, null=True,
                                      blank=True)
     room = models.ForeignKey(Rooms, verbose_name='Номер остановки', on_delete=models.CASCADE, null=True, blank=True)
-    date_arrival = models.DateTimeField(verbose_name='Дата и время заезда', null=True, blank=True)
-    date_departure = models.DateTimeField(verbose_name='Дата и время выезда', null=True, blank=True)
-    days = models.IntegerField(verbose_name='Суток', null=True, blank=True)
-    price_per_night = models.DecimalField(verbose_name='Цена за ночь', max_digits=10, decimal_places=0, null=True,
-                                          blank=True)
-    price_for_all_time = models.DecimalField(verbose_name='Цена за всё время', max_digits=10, decimal_places=0,
-                                             null=True, blank=True)
-    paid = models.DecimalField(verbose_name='Оплачено', max_digits=10, decimal_places=0, null=True, blank=True)
-    left_to_pay = models.DecimalField(verbose_name='Осталось оплатить', max_digits=10, decimal_places=0, null=True,
-                                      blank=True)
-    type_payment = models.IntegerField(verbose_name='Тип оплаты', choices=TYPE_PAYMENT, default=A)
+    task = models.ForeignKey(Task, verbose_name='Задачи', on_delete=models.CASCADE, null=True, blank=True)
     source_of_booking = models.ForeignKey(SourceBooking, verbose_name='Источник бронирования', on_delete=models.CASCADE,
                                           null=True, blank=True)
     number_source_booking = models.CharField(verbose_name='Номер брони источника', max_length=50, blank=True)
-    status_booking = models.IntegerField(verbose_name='Статус брони', choices=STATUS_BOOKING, default=EMPTY)
     admin_comment = models.TextField(verbose_name='Комментарий администратора', blank=True)
     customer_wishes = models.TextField(verbose_name='Пожелания гостя', blank=True)
-    task = models.ForeignKey(Task, verbose_name='Задачи', on_delete=models.CASCADE, null=True, blank=True)
+
     stat = models.BooleanField(verbose_name='Состояние брони/объекта', default=True)
 
     class Meta:
         verbose_name = 'Бронь'
         verbose_name_plural = 'Брони'
 
+    def save(self, *args, **kwargs):
+        self.days = (self.date_departure.date() - self.date_arrival.date()).days
+        if self.early_arrival:
+            self.days += 0.5
+        if self.late_departure:
+            self.days += 0.5
+        if self.price_per_night != 0:
+            self.price_for_all_time = int(int(self.price_per_night) * float(self.days))
+            if self.payment_usd == 0:
+                all_payment = self.payment_nal + self.payment_bez_nal + self.payment_terminal
+                left_to_pay = self.price_for_all_time - all_payment
+                self.paid = all_payment
+                self.left_to_pay = left_to_pay
+            else:
+                self.paid = self.payment_usd
+                self.left_to_pay = self.price_for_all_time - self.payment_usd
+        super(Booking, self).save(*args, **kwargs)
+
     def __str__(self):
         return F'Дата заезда: {self.date_arrival} Дата выезда: {self.date_departure} - {self.room}'
+
+
+class OwnServicesBooking(models.Model):
+    booking = models.ForeignKey(Booking, verbose_name='ID брони', on_delete=models.CASCADE, related_name='osb',
+                                null=True)
+    service = models.CharField(verbose_name='Услуга', max_length=100, blank=True)
+    price = models.DecimalField(verbose_name='Цена', max_digits=10, decimal_places=0, default=0)
+    type_payment = models.IntegerField(verbose_name='Тип оплаты', choices=Booking.TYPE_PAYMENT, default=0)
+
+    class Meta:
+        verbose_name = 'Доп. платёж'
+        verbose_name_plural = 'Доп. платежи'
+
+    def __str__(self):
+        return self.service

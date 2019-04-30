@@ -5,7 +5,7 @@
 
 
 {% block css %}
-
+<link rel="stylesheet" href="{% static 'css/chess.css' %}">
 {% endblock %}
 
 {% block title %}
@@ -168,27 +168,27 @@
 
 
 
-    <div id="new-booking">
-        <div class="wrap">
-            <div class="title">
-                <b>Новое бронирование</b>
-            </div>
-            <div class="desc">
-                <span class="start">Заезд:</span>
-                <span class="end">Выезд:</span>
-            </div>
-            <div class="datepicker">
-                <input type="text" id="date_timepicker_start" name="date-start">
-                <input type="text" id="date_timepicker_end" name="date-end">
-            </div>
-            <div class="btns">
-                <a id="new-booking_add" role="button" class="btn btn-success btn-sm">Забронировать</a>
-                <a role="button" class="btn btn-primary btn-sm">Резерв</a>
-                <a role="button" class="btn btn-dark btn-sm">Закрыть на ремонт</a>
-                <a id="new-booking_cancel" role="button" class="btn btn-danger btn-sm">Отмена</a>
-            </div>
-        </div>
-    </div>
+    {#    <div id="new-booking">#}
+    {#        <div class="wrap">#}
+    {#            <div class="title">#}
+    {#                <b>Новое бронирование</b>#}
+    {#            </div>#}
+    {#            <div class="desc">#}
+    {#                <span class="start">Заезд:</span>#}
+    {#                <span class="end">Выезд:</span>#}
+    {#            </div>#}
+    {#            <div class="datepicker">#}
+    {#                <input type="text" id="date_timepicker_start" name="date-start">#}
+    {#                <input type="text" id="date_timepicker_end" name="date-end">#}
+    {#            </div>#}
+    {#            <div class="btns">#}
+    {#                <a id="new-booking_add" role="button" class="btn btn-success btn-sm">Забронировать</a>#}
+    {#                <a role="button" class="btn btn-primary btn-sm">Резерв</a>#}
+    {#                <a role="button" class="btn btn-dark btn-sm">Закрыть на ремонт</a>#}
+    {#                <a id="new-booking_cancel" role="button" class="btn btn-danger btn-sm">Отмена</a>#}
+    {#            </div>#}
+    {#        </div>#}
+    {#    </div>#}
 
 
 {% endblock %}
@@ -196,67 +196,6 @@
 {% block scripts %}
 
     <script type="text/javascript">
-        function preventSelection(element) {
-            var preventSelection = false;
-
-            function addHandler(element, event, handler) {
-                if (element.attachEvent)
-                    element.attachEvent('on' + event, handler);
-                else if (element.addEventListener)
-                    element.addEventListener(event, handler, false);
-            }
-
-            function removeSelection() {
-                if (window.getSelection) {
-                    window.getSelection().removeAllRanges();
-                }
-                else if (document.selection && document.selection.clear)
-                    document.selection.clear();
-            }
-
-            function killCtrlA(event) {
-                var event = event || window.event;
-                var sender = event.target || event.srcElement;
-                if (sender.tagName.match(/INPUT|TEXTAREA/i))
-                    return;
-                var key = event.keyCode || event.which;
-                if (event.ctrlKey && key == 'A'.charCodeAt(0))  // 'A'.charCodeAt(0) можно заменить на 65
-                {
-                    removeSelection();
-                    if (event.preventDefault)
-                        event.preventDefault();
-                    else
-                        event.returnValue = false;
-                }
-            }
-
-            // не даем выделять текст мышкой
-            addHandler(element, 'mousemove', function () {
-                if (preventSelection)
-                    removeSelection();
-            });
-            addHandler(element, 'mousedown', function (event) {
-                var event = event || window.event;
-                var sender = event.target || event.srcElement;
-                preventSelection = !sender.tagName.match(/INPUT|TEXTAREA/i);
-            });
-            // борем dblclick
-            // если вешать функцию не на событие dblclick, можно избежать
-            // временное выделение текста в некоторых браузерах
-            addHandler(element, 'mouseup', function () {
-                if (preventSelection)
-                    removeSelection();
-                preventSelection = false;
-            });
-            // борем ctrl+A
-            // скорей всего это и не надо, к тому же есть подозрение
-            // что в случае все же такой необходимости функцию нужно
-            // вешать один раз и на document, а не на элемент
-            addHandler(element, 'keydown', killCtrlA);
-            addHandler(element, 'keyup', killCtrlA);
-        }
-
-        preventSelection(document);
 
         jQuery(function () {
             jQuery('#date_timepicker_start').datetimepicker({
@@ -302,13 +241,13 @@
                 for (let j = 0; j < dates.length; j++) {
                     if ($(dates[j]).attr('data-date-arrival')) {
                         for (let k = 0; k < $(dates[j]).attr('data-date-arrival').length; k++) {
-                            if ($(dates[j]).attr('data-date-arrival') === $(dates[k]).attr('data-date-departure')) {
+                            if ($(dates[j]).attr('data-date-departure') === $(dates[k]).attr('data-date-arrival')) {
                                 let num = Number($(dates[k]).attr('colspan'));
-                                if (logic) {
+                                if (!logic) {
                                     $(dates[k]).attr('colspan', num + 1);
                                     logic = false;
                                 } else {
-                                    $(dates[k]).attr('colspan', num);
+                                    $(dates[k]).attr('colspan', num + 1);
                                 }
                                 $(dates[k]).next().remove();
                             }

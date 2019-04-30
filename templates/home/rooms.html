@@ -1,0 +1,54 @@
+{% load my_filter %}
+
+<div class="modal fade" id="evictModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Выселение</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="evict_block">
+                    <div class="evict_block-left">
+                        <div class="booking_id" style="opacity: 0;"></div>
+                        <span class="booking_status"><b>Размещён с долгом</b></span>
+                        <span><b>Цена за ночь: </b><small class="booking_price_night"></small></span>
+                        <span><b>Дней: </b><small class="booking_price_days"></small></span>
+                        <span><b>Цена за всё время: </b><small class="booking_price_all"></small></span>
+                        <span style="color: green;"><b>Оплачено: </b><small class="booking_price_paid"></small></span>
+                        <span style="color: red;"><b>Долг: </b><small class="booking_price_left_pay"></small></span>
+                    </div>
+                    <div class="evict_block-right">
+                        <input type="number" id="id_nal" placeholder="Нал">
+                        <input type="number" id="id_terminal" placeholder="Терминал">
+                        <input type="number" id="id_transfer" placeholder="Перечисление">
+                        <input type="number" id="id_usd" placeholder="$">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+                <button type="button" class="btn btn-primary" id="evict_send">Сохранить</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    {% for type_room in type_rooms %}
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header white-text primary-color type_room" style="margin-bottom: 10px;">
+                    {{ type_room }}
+                </div>
+                {% for room in type_room.rooms_set.all %}
+                    <div class="type-room__room"
+                         data-booking-id="{{ room|today_booking:date }}">{{ room.number_room }}</div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endfor %}
+</div>

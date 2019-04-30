@@ -1,6 +1,10 @@
 import datetime
+import json
 
-from django.http import JsonResponse
+from django.core import serializers
+from django.shortcuts import render
+
+from django.http import JsonResponse, HttpResponse
 
 from hsm.models import TypeRoom, Booking, Organization, Guest, Nationality, Citeznship, Visa, SourceBooking, Rooms, City
 
@@ -16,6 +20,16 @@ def str_to_int(dates):
     return datetime.datetime(dt[0], dt[1], dt[2], dt[3], dt[4])
 
 
+def ajax_booking_info(request):
+    booking_id = int(request.GET['bookingID'])
+    print(booking_id)
+    booking = Booking.objects.get(pk=booking_id)
+    data = serializers.serialize('json', [booking])
+    struct = json.loads(data)
+    data = json.dumps(struct[0])
+    return HttpResponse(data, content_type="application/json")
+
+
 def ajax_search_rooms(request):
     # TODO: Вывод свободных номеров
     req = request.GET
@@ -27,10 +41,21 @@ def ajax_search_rooms(request):
 
 
 def ajax_info_type_rooms(request):
-    type_rooms = TypeRoom.objects.all()
-    data = {}
-    for i in type_rooms:
-        data[i.name] = [int(i.price_uzs), int(i.price_usd)]
+    r = request.GET
+    print(r)
+    da = list(map(int, r.getlist('dateArrival[]')))
+    dd = list(map(int, r.getlist('dateDeparture[]')))
+    date_arrival = datetime.date(da[0], da[1], da[2])
+    date_departure = datetime.date(dd[0], dd[1], dd[2])
+    print(date_arrival)
+    days = (date_departure - date_arrival).days
+    type_rooms = TypeRoom.objects.get(name=r['typeRoom'])
+
+    data = {
+        'uzs': type_rooms.price_uzs,
+        'usd': type_rooms.price_usd,
+        'days': days
+    }
     print(data)
     return JsonResponse(data)
 
@@ -61,21 +86,10 @@ def ajax_booking_post(request):
                     citeznship = Citeznship(name=r['citeznship'])
                     citeznship.save()
 
-            # try:
-            #     city_id = int(r['placeOfBirth'])
-            #     city = City.objects.get(id=city_id)
-            # except ValueError:
-            #     try:
-            #         city = City.objects.get(name=r['placeOfBirth'])
-            #     except City.DoesNotExist:
-            #         city = City(name=r['placeOfBirth'])
-            #         city.save()
-
             guest = Guest()
             guest.full_name = r['fullname']
             guest.date_of_birth = r['dateOfBirth']
-            # guest.place_of_birth = city
-            guest.serial_number =  r['passportSerialNumber']
+            guest.serial_number = r['passportSerialNumber']
             guest.given_date = r['passportGivenDate']
             guest.expire_date = r['passportExpireDate']
             guest.give_organization = r['passportGiveOrganization']
@@ -128,20 +142,9 @@ def ajax_booking_post(request):
                         citeznship2 = Citeznship(name=r['citeznship2'])
                         citeznship2.save()
 
-                # try:
-                #     city2_id = int(r['placeOfBirth2'])
-                #     city2 = City.objects.get(id=city2_id)
-                # except ValueError:
-                #     try:
-                #         city2 = City.objects.get(name=r['placeOfBirth2'])
-                #     except City.DoesNotExist:
-                #         city2 = City(name=r['placeOfBirth2'])
-                #         city2.save()
-
                 guest2 = Guest()
                 guest2.full_name = r['fullname2']
                 guest2.date_of_birth = r['dateOfBirth2']
-                # guest2.place_of_birth = city2
                 guest2.serial_number = r['passportSerialNumber2']
                 guest2.given_date = r['passportGivenDate2']
                 guest2.expire_date = r['passportExpireDate2']
@@ -194,20 +197,9 @@ def ajax_booking_post(request):
                         citeznship3 = Citeznship(name=r['citeznship3'])
                         citeznship3.save()
 
-                # try:
-                #     city3_id = int(r['placeOfBirth3'])
-                #     city3 = City.objects.get(id=city3_id)
-                # except ValueError:
-                #     try:
-                #         city3 = City.objects.get(name=r['placeOfBirth3'])
-                #     except City.DoesNotExist:
-                #         city3 = City(name=r['placeOfBirth3'])
-                #         city3.save()
-
                 guest3 = Guest()
                 guest3.full_name = r['fullname3']
                 guest3.date_of_birth = r['dateOfBirth3']
-                # guest3.place_of_birth = city3
                 guest3.serial_number = r['passportSerialNumber3']
                 guest3.given_date = r['passportGivenDate3']
                 guest3.expire_date = r['passportExpireDate3']
@@ -258,20 +250,10 @@ def ajax_booking_post(request):
                     organization = Organization(name=r['organization'])
                     organization.save()
 
-        type_payment = {
-            'Не известно': 0,
-            'Наличка': 1,
-            'Пластик': 2,
-            'Без нал (Перечисление)': 3,
-            'В долларах': 4
-        }
-        typePayment = type_payment[r['typePayment']]
         statusBooking = int(r['statusBooking'])
-        days = r['days']
         prozh = r['prozh']
-        kOptale = r['kOptale']
-        oplacheno = r['oplacheno']
-        ostalos = r['ostalos']
+        early_arrival = True if r['earlyArrival'] == 'true' else False
+        late_departure = True if r['dateDeparture'] == 'true' else False
 
         booking = Booking()
         booking.user = user
@@ -281,20 +263,21 @@ def ajax_booking_post(request):
         booking.room = room
         booking.date_arrival = dateArrival
         booking.date_departure = dateDeparture
+        booking.early_arrival = early_arrival
+        booking.late_departure = late_departure
         if adminComment != '':
             booking.admin_comment = adminComment
         if customerWishes != '':
             booking.customer_wishes = customerWishes
         if r['organization'] != '':
             booking.organization = organization
-        booking.type_payment = typePayment
+        # booking.type_payment = typePayment
         booking.status_booking = statusBooking
-        booking.days = days
+        # booking.days = days
         booking.price_per_night = prozh
-        booking.price_for_all_time = kOptale
-        booking.paid = oplacheno
-        booking.left_to_pay = ostalos
-        booking.type_payment = typePayment
+        # booking.price_for_all_time = kOptale
+        # booking.paid = oplacheno
+        # booking.left_to_pay = ostalos
         booking.save()
         booking.guest.add(guest)
         booking.save()
@@ -306,6 +289,65 @@ def ajax_booking_post(request):
             booking.save()
 
         return JsonResponse({'ok': 'lets go!'})
+
+
+def ajax_guest_add(request):
+    r = request.POST
+    try:
+        guest = Guest.objects.get(full_name=r['fullname'])
+    except Guest.DoesNotExist:
+        try:
+            nationality_id = int(r['nationality'])
+            nationality = Nationality.objects.get(id=nationality_id)
+        except ValueError:
+            try:
+                nationality = Nationality.objects.get(name=r['nationality'])
+            except Nationality.DoesNotExist:
+                nationality = Nationality(name=r['nationality'])
+                nationality.save()
+
+        try:
+            citeznship_id = int(r['citeznship'])
+            citeznship = Citeznship.objects.get(id=citeznship_id)
+        except ValueError:
+            try:
+                citeznship = Citeznship.objects.get(name=r['citeznship'])
+            except Citeznship.DoesNotExist:
+                citeznship = Citeznship(name=r['citeznship'])
+                citeznship.save()
+        guest = Guest()
+        guest.full_name = r['fullname']
+        guest.date_of_birth = r['dateOfBirth']
+        guest.serial_number = r['passportSerialNumber']
+        guest.given_date = r['passportGivenDate']
+        guest.expire_date = r['passportExpireDate']
+        guest.give_organization = r['passportGiveOrganization']
+        guest.place_of_living = r['placeOfLiving']
+        guest.nationality = nationality
+        guest.citeznship = citeznship
+
+        guest.phone = r['phone']
+        guest.email = r['email']
+
+        guest.kpp_number = r['kppNumber']
+        guest.kpp_date_arrival = r['kppDateArrival']
+
+        if r['visaNumber'] != '':
+            try:
+                visa = Visa.objects.get(number=r['visaNumber'])
+            except Visa.DoesNotExist:
+                visa = Visa()
+                visa.number = r['visaNumber']
+                visa.visa_type = r['visaType']
+                visa.given_date = r['visaGivenDate']
+                visa.expire_date = r['visaExpireDate']
+                visa.save()
+
+            guest.visa = visa
+
+        guest.save()
+
+    return JsonResponse({'ok': 'Added New Guest'})
 
 
 def ajax_search_guest(request):
@@ -357,3 +399,103 @@ def ajax_status_booking_remove(request):
     booking.save()
 
     return JsonResponse({'ok': 'remove obj'})
+
+
+def ajax_new_chess(request):
+    bookings = Booking.objects.filter(stat=True)
+    type_rooms = TypeRoom.objects.all()
+    today = datetime.datetime.now()
+    for i in range(-2, 13):
+        date = (today + datetime.timedelta(days=i)).date()
+
+    data = serializers.serialize('json', bookings)
+    return HttpResponse(data, content_type="application/json")
+
+
+def ajax_evict_send(request):
+    r = request.POST
+    booking_id = int(r['bookingID'])
+    booking = Booking.objects.get(id=booking_id)
+    try:
+        nal = int(r['nal'])
+        booking.payment_nal += nal
+    except ValueError:
+        pass
+    try:
+        terminal = int(r['terminal'])
+        booking.payment_terminal += terminal
+    except ValueError:
+        pass
+    try:
+        transfer = int(r['transfer'])
+        booking.payment_bez_nal += transfer
+    except ValueError:
+        pass
+    try:
+        usd = int(r['usd'])
+        booking.payment_usd += usd
+    except ValueError:
+        pass
+
+    booking.status_booking = -3
+    booking.save()
+
+    return JsonResponse({'ok': 'good!'})
+
+
+def ajax_send_booking_group(request):
+    r = request.GET
+    dn = 'roomsBooking'
+    for tr in TypeRoom.objects.all():
+        for room in tr.rooms_set.all():
+            if r.getlist(F'{dn}[{room}][]'):
+                date_in = to_datetime(r.getlist(F'{dn}[{room}][]')[0], r['earlyArrival'])
+                date_out = to_datetime(r.getlist(F'{dn}[{room}][]')[-1], r['lateDeparture'])
+                booking_group = Booking()
+                booking_group.user = request.user
+                booking_group.room = room
+                booking_group.date_arrival = date_in
+                booking_group.date_departure = date_out
+                booking_group.status_booking = -1
+                booking_group.price_per_night = 0
+                if r['earlyArrivalCh'] == 'true':
+                    booking_group.early_arrival = True
+                if r['lateDepartureCh'] == 'true':
+                    booking_group.late_departure = True
+                try:
+                    org = Organization.objects.get(name=r['organization'])
+                except Organization.DoesNotExist:
+                    org = Organization(name=r['organization'])
+                    org.save()
+                booking_group.organization = org
+                booking_group.save()
+    return JsonResponse({'ok': 'yeah!'})
+
+
+def status_booking(num):
+    return {
+        -1: 'Бронь без оплаты',
+        1: 'Бронь с оплатой',
+        -2: 'Размещение без оплаты',
+        2: 'Размещение с оплатой',
+        -3: 'Выселенное размещение',
+        3: 'Резерв',
+        -4: 'Гости сегодня выезжают',
+        4: 'Блокировка номера',
+    }[num]
+
+
+def ajax_search_booking_id(request):
+    print(request.GET)
+    bookings = Booking.objects.all()
+    list_bookings = {}
+    for k, v in request.GET.items():
+        b = bookings.get(id=int(v))
+        list_bookings[b.id] = []
+        list_bookings[b.id].append('' if b.organization is None else b.organization.name)
+        list_bookings[b.id].append([g.full_name for g in b.guest.all()])
+        list_bookings[b.id].append(b.date_arrival.strftime('%d-%m-%Y %H:%M'))
+        list_bookings[b.id].append(b.date_departure.strftime('%d-%m-%Y %H:%M'))
+        list_bookings[b.id].append(b.days)
+        list_bookings[b.id].append(status_booking(b.status_booking))
+    return JsonResponse(list_bookings)

@@ -1,65 +1,144 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load my_filter %}
 
 {% block css %}
+    <link rel="stylesheet" href="{% static 'css/print.css' %}">
+    <style>
 
+        .table-bordered thead td {
+            padding: 3px !important;
+            vertical-align: middle !important;
+            text-align: center !important;
+        }
+
+        .table-bordered thead th {
+            padding: 3px !important;
+            vertical-align: middle !important;
+            text-align: center !important;
+        }
+
+        .table-bordered tbody td {
+            padding: 3px !important;
+            vertical-align: middle !important;
+        }
+
+        td.days {
+            text-align: center;
+        }
+    </style>
 {% endblock %}
 
 {% block title %}
-    База клиентов
+    Статистика
 {% endblock %}
 
 {% block content %}
 
-    <table class="table" style="background-color: #fff; color: #505050; margin-top: 15px;">
-        <thead>
-        <tr>
-            <th scope="col">Дата</th>
-            <th scope="col">Налом</th>
-            <th scope="col">Пластик</th>
-            <th scope="col">Перечислением</th>
-            <th scope="col">В долларах</th>
-            <th scope="col">В процессе</th>
-            <th scope="col">Затраты</th>
-            <th scope="col">Итог</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <td scope="row">За сегодня</td>
-            <td>100</td>
-            <td>100</td>
-            <td>100</td>
-            <td>100</td>
-            <td>100</td>
-            <td>100</td>
-            <td>100</td>
-        </tr>
-        <tr>
-            <td scope="row">За вчера</td>
-            <td>100</td>
-            <td>100</td>
-            <td>100</td>
-            <td>100</td>
-            <td>100</td>
-            <td>100</td>
-            <td>100</td>
-        </tr>
-        <tr>
-            <td scope="row">За неделю</td>
-            <td>100</td>
-            <td>100</td>
-            <td>100</td>
-            <td>100</td>
-            <td>100</td>
-            <td>100</td>
-            <td>100</td>
-        </tr>
-        </tbody>
-    </table>
+    <form action="." method="get" style="margin-top: 15px; display: flex; justify-content: center;">{% csrf_token %}
+        <input type="text" name="date" autocomplete="off" class="input_search_date" id="filter_date"
+               placeholder="Введите дату" style="padding-left: 5px;">
+        <button type="submit" class="btn btn-primary btn-sm" style="margin-left:10px;">Показать статистику на эту дату
+        </button>
+    </form>
+
+
+    {#    <button class="btn btn-primary" id="printer">На печать</button>#}
+    <div id="div2">
+        <div style="width: 100%; display: inline-block; margin-top: 25px;">
+            <h6 style="text-align: center;">ЕЖЕДНЕВНЫЙ ОТЧЁТ проживающих в гостинице "Браво-люкс" на {{ date }}</h6>
+        </div>
+
+        <table class="table table-bordered" style="font-size: 12px; background-color: #fff;">
+            <thead>
+            <tr>
+                <td rowspan="2"><b>№</b></td>
+                <td rowspan="2"><b>Тип номера</b></td>
+                <td rowspan="2"><b>Номер</b></td>
+                <td rowspan="2" style="width: 35px;"><b>Админис тратор</b></td>
+                <td rowspan="2"><b>Ф.И.О</b></td>
+                <td rowspan="2"><b>Организация</b></td>
+                <td rowspan="2"><b>Дата заезда</b></td>
+                <td rowspan="2"><b>Дата выезда</b></td>
+                <td rowspan="2"><b>Дни</b></td>
+                <td rowspan="2"><b>Цена номера</b></td>
+                <td rowspan="2"><b>Начислено</b></td>
+                <th colspan="4">Оплата</th>
+                <td rowspan="2"><b>К оплате</b></td>
+                <td rowspan="2"><b>Кассир</b></td>
+                <td rowspan="2"><b>Статус</b></td>
+            </tr>
+            <tr>
+                <th>Нал</th>
+                <th>Переч</th>
+                <th>Терм</th>
+                <th>$</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for booking in bookings %}
+                {% for guest in booking.guest.all %}
+                    <tr>
+                        <td scope="row" class="number text-center"></td>
+                        <td class="text-center">{{ booking.room.type_room.name|type_room }}</td>
+                        <td class="text-center">{{ booking.room.number_room }}</td>
+                        <td class="text-center">{{ booking.user }}</td>
+                        <td>{{ guest }}</td>
+                        <td>{{ booking.organization|organization }}</td>
+                        <td class="text-center">{{ booking.date_arrival }}</td>
+                        <td class="text-center">{{ booking.date_departure }}</td>
+                        <td class="text-center">{{ booking.days|floatformat }}</td>
+                        <td class="text-right">{{ booking.price_per_night }}</td>
+                        <td class="text-right">{{ booking.price_for_all_time }}</td>
+                        <td class="text-right">{{ booking.payment_nal }}</td>
+                        <td class="text-right">{{ booking.payment_bez_nal }}</td>
+                        <td class="text-right">{{ booking.payment_terminal }}</td>
+                        <td class="text-right">{{ booking.payment_usd }}</td>
+                        <td class="text-right">{{ booking.left_to_pay }}</td>
+                        <td class="text-center">{{ booking.user }}</td>
+                        <td class="text-center">{{ booking.status_booking|status_booking_print }}</td>
+                    </tr>{% endfor %}
+            {% endfor %}
+
+            </tbody>
+        </table>
+    </div>
+    <button class="btn btn-primary btn-sm" onclick="$('#div2').print();">
+        Распечатать
+    </button>
 
 {% endblock %}
 
 {% block scripts %}
+    <script>
+        $(document).ready(function () {
+            let number = $('.number');
+            for (let i = 0; i < number.length; i++) {
+                $(number[i]).text(i + 1);
+            }
+            $('#filter_date').datetimepicker({
+                format: 'd-m-Y',
+                timepicker: false
+            });
+            $('#print_date').datetimepicker({
+                format: 'd-m-Y',
+                timepicker: false
+            });
+        });
 
+        $.fn.extend({
+            print: function () {
+                {#$.ajax();#}
+                var frameName = 'printIframe';
+                var doc = window.frames[frameName];
+                if (!doc) {
+                    $('<iframe>').hide().attr('name', frameName).appendTo(document.body);
+                    doc = window.frames[frameName];
+                }
+                doc.document.body.innerHTML = this.html();
+                doc.window.print();
+                return this;
+            }
+        });
+    </script>
 {% endblock %}

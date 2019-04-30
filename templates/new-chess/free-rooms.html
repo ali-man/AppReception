@@ -1,0 +1,114 @@
+<div style="margin: 15px 0">
+    <ul class="free_rooms" style="opacity: 0;">
+        {% for free_room in free_rooms %}
+            <li>{{ free_room }}</li>
+        {% endfor %}
+    </ul>
+</div>
+
+<section class="section" style="margin-top: 15px;">
+
+    <div class="row">
+        <div class="col-md-12 col-lg-4 ">
+
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table large-header">
+                            <thead>
+                            <tr>
+                                <th class="font-weight-bold dark-grey-text"><strong>Номера</strong></th>
+                                <th class="font-weight-bold dark-grey-text"><strong>Свободных</strong></th>
+                                <th class="font-weight-bold dark-grey-text"><strong>Занятых</strong></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>Single</td>
+                                <td>14</td>
+                                <td>6</td>
+                            </tr>
+                            <tr>
+                                <td>Twin</td>
+                                <td>17</td>
+                                <td>0</td>
+                            </tr>
+                            <tr>
+                                <td>Double</td>
+                                <td>0</td>
+                                <td>2</td>
+                            </tr>
+                            <tr>
+                                <td>Lux</td>
+                                <td>0</td>
+                                <td>1</td>
+                            </tr>
+                            <tr>
+                                <td>Apartments</td>
+                                <td>1</td>
+                                <td>1</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <button class="btn btn-flat grey lighten-3 btn-rounded waves-effect float-right font-weight-bold dark-grey-text">
+                        Всего свободных номеров: <div class="free_rooms_quantity"></div>
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {#        <div class="col-lg-8 col-md-12">#}
+        {##}
+        {#            <div class="card mb-4">#}
+        {#                <div class="card-body">#}
+        {#                    <table class="table large-header">#}
+        {#                        <thead>#}
+        {#                        <tr>#}
+        {#                            <th class="font-weight-bold dark-grey-text"><strong>Browser</strong></th>#}
+        {#                            <th class="font-weight-bold dark-grey-text"><strong>Visits</strong></th>#}
+        {#                            <th class="font-weight-bold dark-grey-text"><strong>Pages</strong></th>#}
+        {#                        </tr>#}
+        {#                        </thead>#}
+        {#                        <tbody>#}
+        {#                        <tr>#}
+        {#                            <td>Google Chrome</td>#}
+        {#                            <td>15</td>#}
+        {#                            <td>307</td>#}
+        {#                        </tr>#}
+        {#                        <tr>#}
+        {#                            <td>Mozilla Firefox</td>#}
+        {#                            <td>32</td>#}
+        {#                            <td>504</td>#}
+        {#                        </tr>#}
+        {#                        <tr>#}
+        {#                            <td>Safari</td>#}
+        {#                            <td>41</td>#}
+        {#                            <td>613</td>#}
+        {#                        </tr>#}
+        {#                        <tr>#}
+        {#                            <td>Opera</td>#}
+        {#                            <td>14</td>#}
+        {#                            <td>208</td>#}
+        {#                        </tr>#}
+        {##}
+        {#                        </tbody>#}
+        {#                    </table>#}
+        {##}
+        {#                    <button class="btn btn-flat grey lighten-3 btn-rounded waves-effect font-weight-bold dark-grey-text float-right">#}
+        {#                        View#}
+        {#                        full report#}
+        {#                    </button>#}
+        {##}
+        {#                </div>#}
+        {##}
+        {#            </div>#}
+        {##}
+        {#        </div>#}
+    </div>
+
+</section>

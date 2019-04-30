@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load my_filter %}
+
+{% block css %}
+
+{% endblock %}
+
+{% block title %}
+    Оргазинации
+{% endblock %}
+
+{% block content %}
+
+    <form action="." method="post">{% csrf_token %}
+        <table class="table booking-list" style="background-color: #fff; color: #505050; margin-top: 15px;">
+            {{ new_form.as_table }}
+        </table>
+        <button class="btn btn-primary btn-sm" type="submit">Добавить</button>
+    </form>
+
+    <table class="table booking-list" style="background-color: #fff; color: #505050; margin-top: 15px;">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Название</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for org in orgs %}
+            <tr>
+                <td>{{ org.id }}</td>
+                <td>{{ org.name }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}
+
+{% block scripts %}
+
+{% endblock %}

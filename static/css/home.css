@@ -1,0 +1,210 @@
+.type-room {
+    border: 1px solid #505050;
+    padding: 10px;
+    background-color: #fff;
+    display: inline-block;
+    margin: 5px;
+}
+
+.card {
+    display: inline-block !important;
+    width: 100%;
+}
+
+.type-room__room {
+    width: 31px;
+    height: 25px;
+    /*border: 1px solid #505050;*/
+    border-radius: 4px;
+    background-color: #fff;
+    color: #fff;
+    float: left;
+    display: inline-block;
+    margin: 5px;
+    text-align: center;
+    cursor: pointer;
+}
+
+/*.type-room__room:hover {*/
+/*background-color: #eeeeee;*/
+/*}*/
+
+.booking {
+    background-color: green;
+    color: #fff;
+}
+
+[data-booking-id^='status-1'] {
+    background-color: #0a548c;
+}
+
+[data-booking-id^='status1'] {
+    background-color: #076BB7;
+}
+
+[data-booking-id^='status-2'] {
+    background-color: #03A762;
+}
+
+[data-booking-id^='status2'] {
+    background-color: #74C046;
+}
+
+[data-booking-id^='status-3'] {
+    background-color: #c1c1c1;
+}
+
+.person-exit {
+    background-color: #e8e8e8;
+}
+
+[data-booking-id^='status-4'] {
+    background-color: #1e1e1e;
+}
+
+.departure {
+    background-color: #ffde2d;
+}
+
+[data-booking-id='freeday'] {
+    color: #8e8e8e !important;
+}
+
+[data-booking-id='freeday']:hover {
+    background-color: #eeeeee;
+}
+
+[data-booking-id*='today-arrival'] {
+    background-color: #ffbb33 !important;
+}
+
+[data-booking-id*='today-departure'] {
+    background-color: #cab486 !important;
+}
+
+/*.display_hide {display: none;}*/
+ul.menu-booking-room {
+    position: absolute;
+    list-style: none;
+    display: inline-block;
+    width: 120px;
+    border: 1px solid #505050;
+    padding: 0;
+    margin: 0;
+    transition: .3s;
+    background-color: #fff;
+    z-index: 2;
+}
+
+ul.menu-booking-room li {
+    border: 1px solid #505050;
+    display: flex;
+    justify-content: space-around;
+    margin: 2px;
+    padding: 3px 0;
+    text-decoration: none;
+    color: #505050 !important;
+    transition: .3s;
+}
+
+ul.menu-booking-room li:hover {
+    background-color: #4285f4;
+    color: #ffffff !important;
+}
+
+input.input_search_date {
+    padding: 2px 2px 2px 5px;
+}
+
+button.btn_search_date {
+    margin-top: 0;
+}
+
+ul.color-bookings {
+    display: inline-block;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+ul.color-bookings li {
+    float: left;
+    font-size: 12px;
+    margin-left: 15px;
+}
+
+ul.color-bookings li:nth-child(1)::before {
+    content: '№';
+    display: inline-block;
+    padding: 4px 7px;
+    background-color: #03A762;
+    border-radius: 4px;
+    color: #fff;
+    text-align: center;
+    margin-right: 5px;
+}
+
+ul.color-bookings li:nth-child(2)::before {
+    content: '№';
+    display: inline-block;
+    padding: 4px 7px;
+    background-color: #74c046;
+    border-radius: 4px;
+    color: #fff;
+    text-align: center;
+    margin-right: 5px;
+}
+
+ul.color-bookings li:nth-child(3)::before {
+    content: '№';
+    display: inline-block;
+    padding: 4px 7px;
+    background-color: #cab486;
+    border-radius: 4px;
+    color: #fff;
+    text-align: center;
+    margin-right: 5px;
+}
+
+ul.color-bookings li:nth-child(4)::before {
+    content: '№';
+    display: inline-block;
+    padding: 4px 7px;
+    background-color: #ffbb33;
+    border-radius: 4px;
+    color: #fff;
+    text-align: center;
+    margin-right: 5px;
+}
+
+.evict_block {
+    display: flex;
+    align-items: center;
+}
+
+.evict_block-left {
+    padding: 10px;
+}
+
+.evict_block-left span {
+    display: inline-block;
+    width: 100%;
+    padding: 5px 0;
+    font-size: 14px;
+    border-bottom: 1px solid #ccc;
+}
+
+.evict_block-left span:last-child {
+    border: 0;
+}
+
+.evict_block-right {
+    padding: 10px;
+}
+
+.evict_block-right input {
+    margin: 5px 0;
+    padding-left: 5px;
+    border-radius: 4px;
+    width: 100%;
+}

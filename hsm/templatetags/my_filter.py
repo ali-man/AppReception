@@ -1,7 +1,10 @@
+import datetime
+
 import arrow
 from django import template
 
 from hsm.models import Booking
+from hsm.ru_number_to_text import num2text
 
 register = template.Library()
 
@@ -14,6 +17,7 @@ def create_range(value, start_index=0):
 @register.filter(name='day')
 def date_day(value):
     return value[0].split('-')[0]
+
 
 @register.filter(name='weekday')
 def date_weekday(value):
@@ -62,7 +66,6 @@ def info_booking(timestamp, room):
 
 @register.filter(name='date_full_to_date')
 def date_full_to_date(date_full):
-    print(F'asd {date_full}')
     return date_full.strftime("%d")
 
 
@@ -77,6 +80,19 @@ def status_booking(status):
         3: 'Резерв',
         4: 'Гости сегодня выезжают',
         -4: 'Блокировка номера',
+    }[status]
+
+
+@register.filter(name='status_booking_print')
+def status_booking_print(status):
+    return {
+        -1: 'Бронь',
+        1: 'Бронь',
+        -2: 'Проживает',
+        2: 'Проживает',
+        -3: 'Выселен',
+        3: 'Резерв',
+        4: 'Проживает',
     }[status]
 
 
@@ -95,3 +111,60 @@ def type_payment(val):
         3: 'Без нал (Перечисление)',
         4: 'В долларах'
     }[val]
+
+
+@register.filter(name='checking_booking')
+def checking_booking(date, room):
+    booking = Booking.objects.filter(stat=True, date_arrival__date__lte=date, date_departure__date__gte=date, room=room)
+    if str(booking) == '<QuerySet []>':
+        return False
+    else:
+        return True
+
+
+@register.filter(name='week_day')
+def week_day(w):
+    return {
+        0: 'Пн',
+        1: 'Вт',
+        2: 'Ср',
+        3: 'Чт',
+        4: 'Пт',
+        5: 'Сб',
+        6: 'Вс'
+    }[w]
+
+
+@register.filter(name='today_booking')
+def today_booking(room, date):
+    b = Booking.objects.filter(stat=True, date_arrival__date__lte=date, date_departure__date__gte=date).exclude(status_booking=-3).order_by('-id')
+    bookings = b.filter(room=room)
+    for i in bookings:
+        if i.date_departure.date() == date:
+            return F'status{i.status_booking} {i.id} today-departure'
+        elif i.date_arrival.date() == date:
+            return F'status{i.status_booking} {i.id} today-arrival'
+        elif i.date_arrival.date() <= date <= i.date_departure.date():
+            return F'status{i.status_booking} {i.id}'
+        else:
+            return 'freeday'
+
+    return 'freeday'
+
+
+@register.filter(name='organization')
+def organization(org):
+    if org is None:
+        return 'Индивидуал'
+    else:
+        return org
+
+
+@register.filter(name='type_room')
+def type_room(room):
+    return room.split(' ')[0]
+
+
+@register.filter(name='number_to_str')
+def number_to_str(num):
+    return num2text(int(num))

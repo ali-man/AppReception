@@ -1,0 +1,18 @@
+.table-bordered thead td {
+  padding: 3px!important;
+    vertical-align: middle!important;
+    text-align: center!important;
+}
+.table-bordered thead th {
+  padding: 3px!important;
+    vertical-align: middle!important;
+    text-align: center!important;
+}
+.table-bordered tbody td {
+  padding: 3px!important;
+    vertical-align: middle!important;
+}
+
+td.days {
+    text-align: center;
+}

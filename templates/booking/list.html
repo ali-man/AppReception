@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load my_filter %}
+
+{% block css %}
+
+{% endblock %}
+
+{% block title %}
+    База клиентов
+{% endblock %}
+
+{% block content %}
+
+    <table class="table booking-list" style="background-color: #fff; color: #505050; margin-top: 15px;">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Номер остановки</th>
+                <th>Дата заезда</th>
+                <th>Дата выезда</th>
+                <th>Статус брони</th>
+                <th>Гость</th>
+            </tr>
+        </thead>
+        {% for booking in bookings %}
+            <tr>
+                <td><a href="{% url 'edit-booking' booking.id %}">{{ booking.id }}</a></td>
+                <td>{{ booking.room }}</td>
+                <td>{{ booking.date_arrival }}</td>
+                <td>{{ booking.date_departure }}</td>
+                <td class="status{{ booking.status_booking }}">{{ booking.status_booking|status_booking }}</td>
+                <td>
+                    {% for guest in booking.guest.all %}
+                        {{ guest }},
+                    {% endfor %}
+                </td>
+            </tr>
+        {% endfor %}
+
+    </table>
+
+{% endblock %}
+
+{% block scripts %}
+
+{% endblock %}

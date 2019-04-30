@@ -2,20 +2,55 @@
 {% load static %}
 
 {% block css %}
+    <style>
+        input {
+            padding: 5px;
+            font-size: 13px;
+            color: #444;
+        }
 
+        tbody {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-gap: 10px;
+        }
+
+        tbody tr {
+            display: grid;
+            grid-template-columns: 1fr 3fr;
+            grid-gap: 10px;
+        }
+        label {font-size: 14px!important;}
+        label[for="id_left_to_pay"] {
+            color: red;
+        }
+        label[for="id_paid"] {
+            color: green;
+        }
+        #id_status_booking[value="-2"] {
+            color: green;
+        }
+    </style>
 {% endblock %}
 
 {% block title %}
-EDIT
+    EDIT
 {% endblock %}
 
 {% block content %}
     <form action="{% url 'edit-booking' booking.id %}" method="post">{% csrf_token %}
+        <div class="btns" style="background-color: #fff; padding: 10px; margin-top: 15px;">
+            <button type="submit" class="btn btn-primary" name="save" value="home">Сохранить</button>
+            <button type="submit" class="btn btn-primary" name="save" value="continue">Сохранить и вернуться</button>
+            <a href="/" class="btn btn-primary">Отмена</a>
+        </div>
         <table class="table" style="background-color: #fff; color: #505050; padding: 10px;">
             {{ form.as_table }}
         </table>
         <div class="btns" style="background-color: #fff; padding: 10px; margin-top: 15px;">
-            <button type="submit" class="btn btn-success">Сохранить</button>
+            <button type="submit" class="btn btn-primary" name="save" value="home">Сохранить</button>
+            <button type="submit" class="btn btn-primary" name="save" value="continue">Сохранить и вернуться</button>
+            <a href="/" class="btn btn-primary">Отмена</a>
         </div>
     </form>
 {% endblock %}
@@ -31,7 +66,7 @@ EDIT
 
         function fnSelects(selects) {
             for (let i = 0; i < selects.length; i++) {
-                $(`#${selects[i]}`).select2({width:186});
+                $(`#${selects[i]}`).select2({width: 250});
             }
         }
 

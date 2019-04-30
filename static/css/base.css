@@ -56,7 +56,7 @@ span {
 
 #myTabContent {
   padding: 10px;
-  margin: 10px 0;
+  margin: 25px 0 10px 0;
   background-color: #fff;
 }
 
@@ -95,14 +95,6 @@ span {
     font-family: 'Exo 2', sans-serif
 }
 
-.guest-2, .guest-3 {
-  display: none;
-}
-#btn-guest-3 {
-  display: none;
-  background-color: #505050; color:#fff;margin: 10px 0;
-}
-
 .footer {
   background-color: #505050;
   width: 100%;
@@ -112,4 +104,39 @@ span {
   justify-content: center;
   align-items: center;
   padding: 10px;
+}
+
+.table td {
+  font-size: 14px;
+}
+.booking-list td {
+  font-size: 12px;
+}
+
+td.status-1 {
+    color: #0a548c;
+}
+
+td.status1 {
+    color: #076BB7;
+}
+
+td.status-2 {
+    color: #03A762;
+}
+
+td.status2 {
+    color: #74C046;
+}
+
+td.status-3 {
+    color: #c1c1c1;
+}
+
+.person-exit {
+    background-color: #e8e8e8;
+}
+
+td.status-4 {
+    color: #1e1e1e;
 }

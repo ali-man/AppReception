@@ -456,18 +456,18 @@ img.phone { vertical-align: top; width: 16px;}
 
 .picker { width: 40px; height: 28px; border: 1px solid #777; cursor: pointer; }
 
-#new-booking { display: none; position: fixed; top: 0; left: 50%; margin-left: -200px; width: 410px; border-top: none; background: #ffffff; max-height: 100%; overflow: auto; z-index: 300; text-align: center; box-shadow: 0 2px 3px -1px rgba(0, 0, 0, 0.5); }
-#new-booking .wrap { margin: 5px 10px 0; overflow: hidden;}
-#new-booking .form-row { text-align: left; }
-#new-booking .title { font-weight: bold; margin-bottom: 5px; }
-#new-booking .col1, #new-booking .col2 { display: inline-block; float: none; text-align: left;}
-#new-booking .col1 { margin-right: 10px; }
-#new-booking .col2 { margin-right: 0; }
-#new-booking label { text-align: left; }
-#new-booking .reserv label { display: block; }
-#new-booking .reserv .col1, #new-booking .reserv .col2 { width: 50%; margin: 0; float: left; }
-#new-booking .reserv .col1 input, #new-booking .reserv .col2 input { width: 100%; }
-#new-booking .reserv .col1 .form-row { padding-right: 10px; }
+/*#new-booking { display: none; position: fixed; top: 0; left: 50%; margin-left: -200px; width: 410px; border-top: none; background: #ffffff; max-height: 100%; overflow: auto; z-index: 300; text-align: center; box-shadow: 0 2px 3px -1px rgba(0, 0, 0, 0.5); }*/
+/*#new-booking .wrap { margin: 5px 10px 0; overflow: hidden;}*/
+/*#new-booking .form-row { text-align: left; }*/
+/*#new-booking .title { font-weight: bold; margin-bottom: 5px; }*/
+/*#new-booking .col1, #new-booking .col2 { display: inline-block; float: none; text-align: left;}*/
+/*#new-booking .col1 { margin-right: 10px; }*/
+/*#new-booking .col2 { margin-right: 0; }*/
+/*#new-booking label { text-align: left; }*/
+/*#new-booking .reserv label { display: block; }*/
+/*#new-booking .reserv .col1, #new-booking .reserv .col2 { width: 50%; margin: 0; float: left; }*/
+/*#new-booking .reserv .col1 input, #new-booking .reserv .col2 input { width: 100%; }*/
+/*#new-booking .reserv .col1 .form-row { padding-right: 10px; }*/
 
 #swap-booking { display: none; position: fixed; top: 0; left: 50%; margin-left: -200px; width: 400px; border: 2px solid #bdd6f2; border-top: none; background: #eeeeee; max-height: 100%; overflow: auto; z-index: 300; text-align: center;}
 #swap-booking .wrap { margin: 5px 10px 0; overflow: hidden;}
@@ -929,4 +929,15 @@ td.booking > .display-info-booking > .grid-col span {
     height: 28px;
     display: block;
     z-index: 4;
+}
+
+#new-booking-mini {
+    position: absolute;
+    bottom: 30px;
+    left: 0;
+    color: #fff;
+    width: 200px;
+    height: auto;
+    display: flex;
+    justify-content: space-between;
 }

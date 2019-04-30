@@ -1,0 +1,28 @@
+.date-arrival, .date-departure {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-gap: 10px;
+    align-items: center;
+}
+input {
+    padding: 0 10px;
+    color: #444;
+}
+
+.accordion {
+    margin-top: 15px;
+}
+.card-header {
+    padding: 0!important;
+    background-color: #505050!important;
+}
+.card-header button {color: #fff!important;}
+.card-body {
+    padding: 0!important;
+}
+.guest-form {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    grid-gap: 10px;
+    padding: 10px;
+}

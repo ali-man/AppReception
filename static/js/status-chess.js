@@ -21,10 +21,12 @@ $(document).ready(function () {
     });
 
     let guestSelected = $('.guest_selected');
+    let idGuests = [];
     for (let i = 0; i < guestSelected.length; i++) {
         let idGuest = $(guestSelected[i]).attr('data-guest-id');
-        $('#guests').val(idGuest).trigger('change');
+        idGuests.push(idGuest);
     }
+    $('#guests').val(idGuests).trigger('change');
 
     $('#status_save').click(function () {
         let bookingID = $('#id_booking_id').text();

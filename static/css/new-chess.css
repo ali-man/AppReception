@@ -1,0 +1,263 @@
+.new_chess td, .new_chess th {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    border: 1px solid #f1f1f1;
+    text-align: center;
+    padding: 0;
+    height: 30px;
+    vertical-align: middle;
+}
+
+table.new_chess {
+    background-color: #fff;
+}
+
+td.chess-room {
+    width: 180px;
+    font-size: 12px;
+}
+
+.freeday, .booking {
+    font-size: 10px;
+}
+
+.freeday {
+    background-color: #fff;
+    color: #9a9a9a;
+}
+
+.booking {
+    position: relative;
+    color: #fff;
+}
+
+.selected {
+    background-color: #008E8C;
+    color: #fff !important;
+}
+
+.colors {
+    display: flex;
+    width: 100%;
+    margin: 10px 0;
+    justify-content: space-evenly;
+}
+
+.colors div {
+    font-size: 12px;
+    margin: 0 5px;
+    padding: 5px 8px;
+    color: #fff;
+    text-shadow: 1px 1px 1px #4a4a4a;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .2);
+    text-align: center;
+}
+
+td[class^="status"] {
+    color: white !important;
+}
+
+.status-1 {
+    background-color: #0a548c;
+    color: white !important;
+}
+
+.status1 {
+    background-color: #076BB7;
+    color: white !important;
+}
+
+.status-2 {
+    background-color: #03A762;
+    color: white !important;
+}
+
+.status2 {
+    background-color: #74C046;
+    color: white !important;
+}
+
+.status-3 {
+    background-color: #c1c1c1;
+    color: white !important;
+}
+
+.person-exit {
+    background-color: #e8e8e8;
+    color: white !important;
+}
+
+.status-4 {
+    background-color: #1e1e1e;
+    color: white !important;
+}
+
+/*#booking_btn_fixed {*/
+    /*position: fixed;*/
+    /*top: 10px;*/
+    /*right: 25px;*/
+/*}*/
+
+#create_booking_group {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+}
+
+.booking-fixed {
+    position: absolute;
+    top: 4px;
+    width: 100%;
+    height: 74%;
+    z-index: 2;
+}
+
+.today {
+    background-color: #00ADAE;
+    color: #fff;
+    position: relative;
+}
+
+.table .line {
+    position: absolute;
+    height: 0;
+    width: 0;
+    border-right: 2px solid #00ADAE;
+    left: 45%;
+    z-index: 1;
+}
+
+.modal-dialog {
+    max-width: 800px !important;
+}
+
+.date-arrival, .date-departure {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-gap: 10px;
+    align-items: center;
+}
+
+.block-info-booking {
+    margin-top: 15px;
+}
+
+.accordion {
+    margin-top: 15px;
+}
+
+.card-header {
+    padding: 0 !important;
+    background-color: #505050 !important;
+}
+
+.card-header button {
+    color: #fff !important;
+}
+
+/*.card-body {*/
+/*padding: 0!important;*/
+/*}*/
+
+#btn-guest-3 {
+    display: none;
+    background-color: #505050;
+    color: #fff;
+    margin: 10px 0;
+}
+
+.guest-form {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    grid-gap: 10px;
+    padding: 10px;
+}
+
+.table-own-service {
+    margin-top: 15px;
+}
+
+.table-own-service td {
+    padding: 5px;
+}
+
+td.new_chess-tr_k {
+    width: 180px;
+    text-align: center;
+    vertical-align: middle;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+td.new_chess-r_k {
+    width: 180px;
+    text-align: left;
+    vertical-align: middle;
+    font-weight: 400;
+    font-size: 12px;
+    padding-left: 15px;
+}
+
+td.new_chess-d_k {
+    width: 60px;
+    height: 35px;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 10px;
+    color: #9e9e9e;
+}
+
+ul.free_rooms {
+    list-style: none
+}
+
+table.new_chess td, table.new_chess th {
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+form.date-filter {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 5px 0;
+    margin: 15px 0;
+    background-color: #fff;
+}
+
+.form-group {
+    margin-bottom: 0;
+}
+
+.b-abs-id {
+    width: 300px;
+    height: auto;
+    position: fixed;
+    display: none;
+    color: #505050;
+    padding: 10px;
+    background-color: #fff;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .2);
+    z-index: 1;
+}
+
+.b-abs-id ul {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 10px;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.b-abs-id ul li {
+    border: 1px solid #36a8d2;
+    background-color: #33b5e5;
+    color: #fff;
+    text-shadow: 0px 0 0 #eee;
+    font-size: 12px;
+    padding: 3px 0;
+}

@@ -3,27 +3,17 @@ $(document).ready(function () {
     // console.log(Cookies.get('dateDeparture'));
 
     $('#rooms').select2();
-    if (Cookies.get('nameRoom'))
-        $('#rooms').val(Cookies.get('nameRoom')).trigger("change");
+    if (Cookies.get('room'))
+        $('#rooms').val(Cookies.get('room')).trigger("change");
 
     jQuery('#date-arrival').datetimepicker({
         format: 'd-m-Y',
-        value: Cookies.get('dateArrival') + '-04-2019',
-        // onShow: function (ct) {
-        //     this.setOptions({
-        //         maxDate: jQuery('#date-departure').val() ? jQuery('#date-departure').val() : false
-        //     })
-        // },
+        value: new Date(),
         timepicker: false
     });
     jQuery('#date-departure').datetimepicker({
         format: 'd-m-Y',
-        value: `${Cookies.get('dateDeparture')}-04-2019`,
-        // onShow: function (ct) {
-        //     this.setOptions({
-        //         minDate: jQuery('#date-arrival').val() ? jQuery('#date-arrival').val() : false
-        //     })
-        // },
+        value: new Date(),
         timepicker: false
     });
 
@@ -37,12 +27,6 @@ $(document).ready(function () {
         format: "H:i",
         value: "12:00"
     });
-
-    // $("#id_date_of_birth").datetimepicker({
-    //     format: 'd-m-Y',
-    //     timepicker: false
-    // });
-
     let elementsID = [
         "#source-booking", "#status-booking", "#id_place_of_birth",
         "#id_nationality", "#id_citeznship", "#id_visa", "#price", "#type_payment",
@@ -103,58 +87,64 @@ $(document).ready(function () {
             }
         });
     });
-    Cookies.remove('dateArrival');
-    Cookies.remove('nameRoom');
-    Cookies.remove('dateDeparture');
+    Cookies.remove('room');
 
     $('.payment-click').click(function () {
-        // let typeRoom = 'Single Rooms-1'.split('-')[0];
+        let citeznshipDefault = '7';
         let typeRoom = $('#rooms').val().split('-')[0];
         let dateArrival = fnMoment($('#date-arrival').val());
         let dateDeparture = fnMoment($('#date-departure').val());
+        let earlyArrival = false;
+        let lateDeparture = false;
+        if ($('#id_early_arrival').is(':checked')) earlyArrival = true;
+        if ($('#id_late_departure').is(':checked')) lateDeparture = true;
         let citeznship = $('#id_citeznship').val();
         let citeznship2 = $('#id_citeznship2').val();
         let citeznship3 = $('#id_citeznship3').val();
-        if (citeznship2 === "") citeznship2 = 'UZBEKISTAN';
-        if (citeznship3 === "") citeznship3 = 'UZBEKISTAN';
-        let oplachenoI = $('#id_oplacheno_i').val(0);
-        let oplacheno = $('#oplacheno').text(0);
+        console.log($('#id_citeznship').val());
+        if (citeznship2 === "") citeznship2 = citeznshipDefault;
+        if (citeznship3 === "") citeznship3 = citeznshipDefault;
+
         $.ajax({
             url: '/ajax/info-type-rooms/',
             method: 'GET',
-            data: {},
+            data: {
+                dateArrival: dateArrival,
+                dateDeparture: dateDeparture,
+                typeRoom: typeRoom
+            },
             dataType: 'json',
             success: function (data) {
+                console.log(data);
                 let price = null;
                 // TODO: Сменить на РУЗ гражданство
-                if (citeznship, citeznship2, citeznship3 === 'UZBEKISTAN') {
-                    price = data[typeRoom][0]
+                if (citeznship === citeznshipDefault && citeznship2 === citeznshipDefault && citeznship3 === citeznshipDefault) {
+                    price = data['uzs']
                 } else {
-                    price = data[typeRoom][1]
+                    price = data['usd']
                 }
-                let days = null;
-                if ($('#date-arrival').val() === $('#date-departure').val()) {
-                    days = 1
-                } else {
-                    days = dateDeparture.diff(dateArrival, 'days')
-                }
+                let days = data.days;
 
-                $('#id_koplate_i').val(price * days);
                 $('#sutok').text(days);
                 $('#prozh').text(price);
                 $('#koplate').text(price * days);
-                $('#ostalos').text(price * days);
+                if (earlyArrival) {
+                    $('#koplate').text(Number($('#koplate').text()) + (price / 2));
+                    $('#sutok').text(Number($('#sutok').text()) + 0.5);
+                }
+                if (lateDeparture) {
+                    $('#koplate').text(Number($('#koplate').text()) + (price / 2));
+                    $('#sutok').text(Number($('#sutok').text()) + 0.5);
+                }
+                $('#id_koplate_i').val(Number($('#prozh').text()));
             }
         });
 
         $('#answer').click(function () {
-            oplachenoI = $('#id_oplacheno_i').val();
             let kOplateI = $('#id_koplate_i').val();
-            $('#koplate').text(kOplateI);
+            $('#prozh').text(kOplateI);
             let days = Number($('#sutok').text());
-            $('#prozh').text(kOplateI / days);
-            $('#oplacheno').text(oplachenoI);
-            $('#ostalos').text(kOplateI - oplachenoI);
+            $('#koplate').text(Number($('#prozh').text()) * days);
         });
     });
 
@@ -164,7 +154,7 @@ $(document).ready(function () {
         let year = Number(elem[2]);
         let month = Number(elem[1]);
         let day = Number(elem[0]);
-        return moment([year, month, day])
+        return [year, month, day]
     }
 
     $('#btn-guest-2').click(function () {
@@ -194,7 +184,6 @@ $(document).ready(function () {
 
     $('#send-booking').click(function () {
         let objDataAll = fnDataAll();
-        console.log(objDataAll['dateArrival'])
         $.ajax({
             url: '/ajax/booking-post/',
             method: 'POST',
@@ -211,12 +200,15 @@ $(document).ready(function () {
 
     function fnDataAll() {
         let csrf = $("input[name=csrfmiddlewaretoken]").val();
-
         let sourceBooking = $('#source-booking').val();
         let numberSourceBooking = $('#number-source-booking').val();
         let room = $('#rooms').val();
         let dateArrival = toList($('#date-arrival').val(), $('#date-arrival-time').val());
         let dateDeparture = toList($('#date-departure').val(), $('#date-departure-time').val());
+        let earlyArrival = false;
+        let lateDeparture = false;
+        if ($('#id_early_arrival').is(':checked')) earlyArrival = true;
+        if ($('#id_late_departure').is(':checked')) lateDeparture = true;
         let adminComment = $('#admin-comment').val();
         let customerWishes = $('#customer-wishes').val();
 
@@ -290,11 +282,7 @@ $(document).ready(function () {
 
         let typePayment = $('#type_payment').val();
         let statusBooking = $('#status-booking').val();
-        let days = $('#sutok').text();
         let prozh = $('#prozh').text();
-        let kOptale = $('#koplate').text();
-        let oplacheno = $('#oplacheno').text();
-        let ostalos = $('#ostalos').text();
 
         return {
             csrfmiddlewaretoken: csrf,
@@ -302,7 +290,9 @@ $(document).ready(function () {
             numberSourceBooking: numberSourceBooking,
             room: room,
             dateArrival: dateArrival,
+            earlyArrival: earlyArrival,
             dateDeparture: dateDeparture,
+            lateDeparture: lateDeparture,
             adminComment: adminComment,
             customerWishes: customerWishes,
             organization: organization,
@@ -364,13 +354,13 @@ $(document).ready(function () {
             visaGivenDate3: visaGivenDate3,
             visaExpireDate3: visaExpireDate3,
 
-            typePayment: typePayment,
+            // typePayment: typePayment,
             statusBooking: statusBooking,
-            days: days,
+            // days: days,
             prozh: prozh,
-            kOptale: kOptale,
-            oplacheno: oplacheno,
-            ostalos: ostalos,
+            // kOptale: kOptale,
+            // oplacheno: oplacheno,
+            // ostalos: ostalos,
         }
     }
 
@@ -416,7 +406,8 @@ $(document).ready(function () {
                             $('#id_fullname').val($(this).attr('data-guest-fullname'));
                             // TODO: гражданство Ajax
                             console.log($(this).attr('data-guest-citezn'));
-                            // $('#id_citeznship').val($(this).attr('data-guest-citezn')).trigger('change');
+                            let citezn = $(this).attr('data-guest-citezn');
+                            $('#id_citeznship').val(citezn).trigger('change');
                         })
                     }
                 }

@@ -1,0 +1,205 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load my_filter %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/libs/mdb.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/new-chess.css' %}">
+{% endblock %}
+
+{% block title %}
+    Новая шахматка
+{% endblock %}
+
+{% block content %}
+
+{#    {% include 'new-booking.html' %}#}
+{#    <div id="booking_btn_fixed" class="btn btn-info" data-toggle="modal" data-target="#new_booking">Бронь</div>#}
+
+    <div class="colors">
+        <div class="status-4">Блокировка номера</div>
+        <div class="status-1">Бронь без оплаты</div>
+        <div class="status1">Бронь с предоплатой</div>
+        <div class="status-2">Размещение без оплаты</div>
+        <div class="status2">Размещение с оплаты</div>
+        <div class="status-3">Выселенное размещение</div>
+        {#        <div class="person-exit">Гости сегодня выезжают из этого номера</div>#}
+    </div>
+
+    <form method="get" action="." class="date-filter">
+        <div class="form-group">
+            <input type="text" class="form-control" name="date_in" id="date_arrival" placeholder="Дата заезда"
+                   autocomplete="off">
+        </div>
+        <div class="form-group">
+            <input type="text" class="form-control" name="date_out" id="date_departure" placeholder="Дата выезда"
+                   autocomplete="off">
+        </div>
+        <button type="submit" class="btn btn-primary btn-sm">Фильтр</button>
+    </form>
+
+    {% include 'new-chess/group-booking.html' %}
+    <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#groupBookingModal"
+            id="create_booking_group">
+        Бронь группы
+    </button>
+
+    <div class="new-chess">
+        <table class="table new_chess" id="table-cell">
+            <thead>
+            <tr>
+                <th></th>
+                <th colspan="{{ days }}">С {{ date_in }} по {{ date_out }}</th>
+            </tr>
+            <tr>
+                <th></th>
+                {% for date in dates %}
+                    {% if date == today %}
+                        <th class="today" style="background-color: #4ec8ea !important">
+                            {{ date.day }}
+                        </th>
+                    {% else %}
+                        <th>{{ date.day }}</th>
+                    {% endif %}
+                {% endfor %}
+            </tr>
+            <tr>
+                <th></th>
+                {% for date in dates %}
+                    {% if date == today %}
+                        <th class="today" style="background-color: #4ec8ea !important">
+                            {{ date.weekday|week_day }}
+                            <div title="сегодня" class="line" style="border-color: rgb(78, 200, 234) !important; top: 27px; height: 1477px;"></div>
+                        </th>
+                    {% else %}
+                        <th>{{ date.weekday|week_day }}</th>
+                    {% endif %}
+                {% endfor %}
+            </tr>
+            </thead>
+            {% for tr_k, tr_v in db.items %}
+                <tr>
+                    <td class="new_chess-tr_k">{{ tr_k }}</td>
+                </tr>
+                {% for r_k, r_v in tr_v.items %}
+                    <tr>
+                        {% for d_k, d_v in r_v.items %}
+                            {% if forloop.first %}
+                                <td class="new_chess-r_k">{{ r_k }}</td>
+                                <td class="new_chess-d_k status{{ d_v.1 }}"
+                                    data-date="{{ d_k.day }}-{{ d_k.month }}-{{ d_k.year }}"
+                                    data-booking-id="{{ d_v.0 }}"
+                                >{% if d_v.0 != 'freeday' %}
+                                    ID: {{ d_v.0 }}
+                                {% else %}
+                                    {{ d_k.day }}
+                                {% endif %}</td>
+                            {% else %}
+                                <td class="new_chess-d_k status{{ d_v.1 }}"
+                                    data-date="{{ d_k.day }}-{{ d_k.month }}-{{ d_k.year }}"
+                                    data-booking-id="{{ d_v.0 }}"
+                                >{% if d_v.0 != 'freeday' %}
+                                    ID: {{ d_v.0 }}
+                                {% else %}
+                                    {{ d_k.day }}
+                                {% endif %}</td>
+                            {% endif %}
+                        {% endfor %}
+
+                    </tr>
+                {% endfor %}
+            {% endfor %}
+
+        </table>
+    </div>
+
+    {% include 'new-chess/free-rooms.html' %}
+
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'js/libs/popper.min.js' %}"></script>
+    <script src="{% static 'js/libs/mdb.min.js' %}"></script>
+    <script src="{% static 'js/kill-all-page.js' %}"></script>
+    <script src="{% static 'js/cellSelection.min.js' %}"></script>
+    <script src="{% static 'js/new-chess.js' %}"></script>
+    <script>
+        // SideNav Initialization
+        $(".button-collapse").sideNav();
+
+        var container = document.querySelector('.custom-scrollbar');
+        Ps.initialize(container, {
+            wheelSpeed: 2,
+            wheelPropagation: true,
+            minScrollbarLength: 20
+        });
+
+        // Data Picker Initialization
+        $('.datepicker').pickadate();
+
+        // Material Select Initialization
+        $(document).ready(function () {
+            $('.mdb-select').material_select();
+        });
+
+        // Tooltips Initialization
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        })
+
+    </script>
+
+    <!-- Charts -->
+    <script>
+        // Small chart
+        $(function () {
+            $('.min-chart#chart-sales').easyPieChart({
+                barColor: "#4285F4",
+                onStep: function (from, to, percent) {
+                    $(this.el).find('.percent').text(Math.round(percent));
+                }
+            });
+        });
+
+
+        //bar
+        var ctxB = document.getElementById("barChart").getContext('2d');
+        var myBarChart = new Chart(ctxB, {
+            type: 'bar',
+            data: {
+                labels: ["January", "Febuary", "March", "April", "May"],
+                datasets: [{
+                    label: '# of Votes',
+                    data: [13, 19, 8, 11, 5],
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.3)',
+                        'rgba(41, 182, 246, 0.3)',
+                        'rgba(255, 187, 51, 0.3)',
+                        'rgba(66, 133, 244, 0.3)',
+                        'rgba(153, 102, 255, 0.3)',
+
+                    ],
+                    borderColor: [
+                        'rgba(255,99,132,1)',
+                        'rgba(41, 182, 246, 1)',
+                        'rgba(255, 187, 51, 1)',
+                        'rgba(66, 133, 244, 1)',
+                        'rgba(153, 102, 255, 1)',
+
+                    ],
+                    borderWidth: 2
+                }]
+            },
+            optionss: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                }
+            }
+        });
+
+    </script>
+{% endblock %}
