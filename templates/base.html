@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css?family=Exo+2" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/all.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/libs/bootstrap.min.css' %}">
-    {#    <link rel="stylesheet" href="{% static 'css/libs/mdb.min.css' %}">#}
+    <link rel="stylesheet" href="{% static 'css/libs/mdb.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/libs/jquery.datetimepicker.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/libs/select2.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
@@ -37,20 +37,26 @@
                         <li><a href="{% url 'home' %}" title="Календарь">
                             <i class="fas fa-calendar-day"></i>
                         </a></li>
-                        <li><a href="{% url 'new-chess' %}" title="Шахматка">
+                        <li><a href="{% url 'chess' %}" title="Шахматка">
                             <i class="fas fa-chess-board"></i>
                         </a></li>
-                        <li><a href="{% url 'list-booking' %}" title="База бронирований">
-                            <i class="fas fa-tasks"></i>
+                        <li><a href="{% url 'new-chess' %}" title="Шахматка">
+                            <i class="fas fa-chess-board"></i>
                         </a></li>
                         <li><a href="{% url 'booking' %}" title="Регистрация">
                             <i class="fas fa-person-booth"></i>
                         </a></li>
+                        <li><a href="{% url 'list-booking' %}" title="База бронирований">
+                            <i class="fas fa-tasks"></i>
+                        </a></li>
                         <li><a href="{% url 'guests' %}" title="База клиентов">
                             <i class="fas fa-address-card"></i>
                         </a></li>
-                        <li><a href="{% url 'organization' %}" title="Организации">
+                        <li><a href="{% url 'organization' %}" title="База организаций">
                             <i class="fas fa-users"></i>
+                        </a></li>
+                        <li><a href="{% url 'services-list' %}" title="Услуги">
+                            <i class="fas fa-concierge-bell"></i>
                         </a></li>
                         {#                        <li><a href="{% url 'guests' %}" title="Создать нового клиента">#}
                         {#                            <i class="fas fa-user-plus"></i>#}
@@ -62,6 +68,9 @@
                         {#                        </a></li>#}
                         <li><a href="{% url 'statistics' %}" title="Статистика">
                             <i class="fas fa-file-medical-alt"></i>
+                        </a></li>
+                        <li><a href="{% url 'checks-list' %}" title="Чеки">
+                            <i class="fas fa-money-check-alt"></i>
                         </a></li>
                         <li><a href="{% url 'profile' %}" title="Профиль">
                             <i class="fas fa-street-view"></i>

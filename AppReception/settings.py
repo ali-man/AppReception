@@ -128,6 +128,13 @@ USE_L10N = True
 
 USE_TZ = True
 
+
+HOTEL_NAME = 'БРАВО-ЛЮКС'
+ROOMS_QUANTITY = 40
+CITEZNSHIP_RUZ = 7
+CITEZNSHIP_RF = 8
+
+
 MEDIA_ROOT = (os.path.join(BASE_DIR, 'media'))
 MEDIA_URL = "/media/"
 

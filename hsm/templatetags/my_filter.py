@@ -149,7 +149,10 @@ def today_booking(room, date):
         else:
             return 'freeday'
 
-    return 'freeday'
+    if room.clean:
+        return 'freeday'
+    else:
+        return 'freeday dirty'
 
 
 @register.filter(name='organization')
@@ -168,3 +171,10 @@ def type_room(room):
 @register.filter(name='number_to_str')
 def number_to_str(num):
     return num2text(int(num))
+
+
+@register.filter(name='divide_price')
+def divide_price(price, guests):
+    quantity = len(list(guests))
+    result = price / quantity
+    return result

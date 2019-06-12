@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load my_filter %}
+
+{% block css %}
+
+{% endblock %}
+
+{% block title %}
+    Оргазинации
+{% endblock %}
+
+{% block content %}
+
+
+    <table class="table booking-list" style="background-color: #fff; color: #505050; margin-top: 15px;">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Номер чека</th>
+            <th>Дата печати чека</th>
+            <th>Кассир</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for check in checks %}
+            <tr>
+                <td>{{ check.id }}</td>
+                <td>{{ check.check_number }}</td>
+                <td>{{ check.created_datetime }}</td>
+                <td>{{ check.kassir }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}
+
+{% block scripts %}
+
+{% endblock %}

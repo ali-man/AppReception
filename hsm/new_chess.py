@@ -53,7 +53,7 @@ class NewChessViews(View):
         free_rooms = []
         for tr_k, tr_v in db.items():
             for r_k, r_v in tr_v.items():
-                freedays = [d_v for d_k, d_v in r_v.items() if d_v == 'freeday']
+                freedays = [d_v for d_k, d_v in r_v.items() if d_v == ['freeday', '']]
                 if len(freedays) == days:
                     free_rooms.append(r_k)
 

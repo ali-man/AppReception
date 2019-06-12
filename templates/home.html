@@ -13,10 +13,11 @@
 
 {% block content %}
     <div class="container">
-        <div class="row" style="margin-top: 15px;">
+        <div class="row mb-2" style="margin-top: 15px;">
             <div class="col-4">
                 <form action="." method="get">{% csrf_token %}
-                    <input type="text" name="filter_date" autocomplete="off" class="input_search_date" id="filter_date" placeholder="Введите дату">
+                    <input type="text" name="filter_date" autocomplete="off" class="input_search_date" id="filter_date"
+                           placeholder="Введите дату">
                     <button type="submit" class="btn btn-primary btn-sm btn_search_date">Поиск по дате</button>
                 </form>
             </div>
@@ -29,6 +30,22 @@
                 </ul>
             </div>
         </div>
+
+        {% for guest in guests_birthday %}
+            <div class="row mb-2">
+                <div class="col-12">
+                    <div class="alert alert-info" style="margin-bottom: 0;" role="alert">
+                        {{ guest }}
+                        {% for booking in guest.booking_set.all %}
+                            {% if booking.status_booking == -2 or booking.status_booking == 2 %}
+                                <a href="{% url 'edit-booking' booking.id %}">{{ booking.room }}</a>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+
 
         {% include 'home/cards.html' %}
 

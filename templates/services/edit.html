@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="col-6">
+            <table class="table" style="margin-top: 15px; background-color: #fff;">
+                <thead>
+                <tr>
+                    <th>Услуга</th>
+                    <th>Цена</th>
+                    <th>
+                        {% if service.booking %}
+                            <b>Номер брони: </b>
+                            <a href="/booking/edit-{{ service.booking.id }}">{{ service.booking.id }}</a>
+                        {% endif %}
+                    </th>
+                    <th><b>ID: </b>{{ service.id }}</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for p_s in service.paymentservices_set.all %}
+                    <tr>
+                        <td>{{ p_s.name }}</td>
+                        <td>{{ p_s.price }}</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                {% endfor %}
+                <tr style="border-top: 2px solid #ccc;">
+                    <th>Итоговая сумма</th>
+                    <td>{{ service.get_price_all }}</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <th>Оплачено</th>
+                    <td>{{ service.paid }}</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <th>Долг</th>
+                    <td>{{ service.get_debt }}</td>
+                    <form action="{% url 'services-edit' service.id %}" method="post">{% csrf_token %}
+                        <td>
+                            <input type="text" name="paid" value="paid" style="opacity: 0;">
+                        </td>
+                        <td>
+                            <button type="submit" class="btn btn-success btn-sm">Оплатить</button>
+                        </td>
+                    </form>
+
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-6">
+            <form action="{% url 'services-edit' service.id %}" method="post">{% csrf_token %}
+                <table class="table" style="background-color: #fff; margin-top: 15px;">
+                    <thead>
+                    <tr>
+                        <th>Название услуги</th>
+                        <th>Цена услуги</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for i in i|rjust:3 %}
+                        <tr>
+                            <td><input type="text" class="form-control" name="name{{ forloop.counter }}"></td>
+                            <td><input type="number" class="form-control" name="price{{ forloop.counter }}"></td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                <button type="submit" class="btn btn-success" style="float:right;">Добавить</button>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}

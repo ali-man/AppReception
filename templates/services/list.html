@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load my_filter %}
+
+{% block css %}
+    <style>
+        .table th, .table td {
+            font-size: 12px;
+        }
+    </style>
+{% endblock %}
+
+{% block title %}
+    Счета услуг
+{% endblock %}
+
+
+{% block content %}
+    <a href="{% url 'services-create' %}" class="btn btn-primary btn-sm" style="margin-top: 15px;">Создать счёт
+        услуги</a>
+
+    <div class="row">
+        {% for service in services %}
+            <div class="col-4">
+                <table class="table" style="margin-top: 15px;
+                background-color:
+                {% if service.get_debt == 0 %}#e8e8e8{% else %}#fff{% endif %}
+                ;">
+                    <thead>
+                    <tr>
+                        <th>Услуга</th>
+                        <th>Цена</th>
+                        <th>
+                            {% if service.booking %}
+                                <b>Номер брони: </b>
+                                <a href="/booking/edit-{{ service.booking.id }}">{{ service.booking.id }}</a>
+                            {% endif %}
+                        </th>
+                        <th><b>ID: </b><a href="{% url 'services-edit' service.id %}">{{ service.id }}</a></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for p_s in service.paymentservices_set.all %}
+                        <tr>
+                            <td>{{ p_s.name }}</td>
+                            <td>{{ p_s.price }}</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    {% endfor %}
+                    <tr style="border-top: 2px solid #ccc;">
+                        <th>Итоговая сумма</th>
+                        <td>{{ service.get_price_all }}</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <th>Оплачено</th>
+                        <td>{{ service.paid }}</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <th>Долг</th>
+                        <td>{{ service.get_debt }}</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        {% endfor %}
+    </div>
+
+
+{% endblock %}
+
+
+{% block scripts %}
+
+{% endblock %}

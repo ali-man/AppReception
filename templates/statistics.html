@@ -26,6 +26,10 @@
         td.days {
             text-align: center;
         }
+
+        .table td {
+            font-size: 12px;
+        }
     </style>
 {% endblock %}
 
@@ -46,7 +50,8 @@
     {#    <button class="btn btn-primary" id="printer">На печать</button>#}
     <div id="div2">
         <div style="width: 100%; display: inline-block; margin-top: 25px;">
-            <h6 style="text-align: center;">ЕЖЕДНЕВНЫЙ ОТЧЁТ проживающих в гостинице "Браво-люкс" на {{ date }}</h6>
+            <h6 style="text-align: center;">ЕЖЕДНЕВНЫЙ ОТЧЁТ проживающих в гостинице "{{ hotel_name }}"
+                на {{ date }}</h6>
         </div>
 
         <table class="table table-bordered" style="font-size: 12px; background-color: #fff;">
@@ -54,9 +59,9 @@
             <tr>
                 <td rowspan="2"><b>№</b></td>
                 <td rowspan="2"><b>Тип номера</b></td>
-                <td rowspan="2"><b>Номер</b></td>
-                <td rowspan="2" style="width: 35px;"><b>Админис тратор</b></td>
+                <td rowspan="2"><b>Но мер</b></td>
                 <td rowspan="2"><b>Ф.И.О</b></td>
+                <td rowspan="2" style="width: 35px;"><b>Гражданство</b></td>
                 <td rowspan="2"><b>Организация</b></td>
                 <td rowspan="2"><b>Дата заезда</b></td>
                 <td rowspan="2"><b>Дата выезда</b></td>
@@ -64,8 +69,8 @@
                 <td rowspan="2"><b>Цена номера</b></td>
                 <td rowspan="2"><b>Начислено</b></td>
                 <th colspan="4">Оплата</th>
-                <td rowspan="2"><b>К оплате</b></td>
-                <td rowspan="2"><b>Кассир</b></td>
+                <td rowspan="2"><b>Сальдо</b></td>
+                <td rowspan="2"><b>Минимал</b></td>
                 <td rowspan="2"><b>Статус</b></td>
             </tr>
             <tr>
@@ -82,20 +87,20 @@
                         <td scope="row" class="number text-center"></td>
                         <td class="text-center">{{ booking.room.type_room.name|type_room }}</td>
                         <td class="text-center">{{ booking.room.number_room }}</td>
-                        <td class="text-center">{{ booking.user }}</td>
                         <td>{{ guest }}</td>
+                        <td class="text-center" id="id_citeznship">{{ guest.citeznship }}</td>
                         <td>{{ booking.organization|organization }}</td>
                         <td class="text-center">{{ booking.date_arrival }}</td>
                         <td class="text-center">{{ booking.date_departure }}</td>
                         <td class="text-center">{{ booking.days|floatformat }}</td>
-                        <td class="text-right">{{ booking.price_per_night }}</td>
-                        <td class="text-right">{{ booking.price_for_all_time }}</td>
-                        <td class="text-right">{{ booking.payment_nal }}</td>
-                        <td class="text-right">{{ booking.payment_bez_nal }}</td>
-                        <td class="text-right">{{ booking.payment_terminal }}</td>
-                        <td class="text-right">{{ booking.payment_usd }}</td>
-                        <td class="text-right">{{ booking.left_to_pay }}</td>
-                        <td class="text-center">{{ booking.user }}</td>
+                        <td class="text-right">{{ booking.price_per_night|divide_price:booking.guest.all }}</td>
+                        <td class="text-right">{{ booking.price_for_all_time|divide_price:booking.guest.all }}</td>
+                        <td class="text-right">{{ booking.payment_nal|divide_price:booking.guest.all }}</td>
+                        <td class="text-right">{{ booking.payment_bez_nal|divide_price:booking.guest.all }}</td>
+                        <td class="text-right">{{ booking.payment_terminal|divide_price:booking.guest.all }}</td>
+                        <td class="text-right">{{ booking.payment_usd|divide_price:booking.guest.all }}</td>
+                        <td class="text-right">{{ booking.left_to_pay|divide_price:booking.guest.all }}</td>
+                        <td class="text-center days-number">{{ booking.days|floatformat }}</td>
                         <td class="text-center">{{ booking.status_booking|status_booking_print }}</td>
                     </tr>{% endfor %}
             {% endfor %}
@@ -104,6 +109,120 @@
         </table>
     </div>
     <button class="btn btn-primary btn-sm" onclick="$('#div2').print();">
+        Распечатать
+    </button>
+    <hr>
+    <table class="table" width="300" style="background-color: #fff; width: 300px;">
+        <tr>
+            <td>Индивидуал</td>
+            <td>{{ result_sum.individual }}</td>
+        </tr>
+        <tr>
+            <td>Контрагент</td>
+            <td>{{ result_sum.contragent }}</td>
+        </tr>
+        <tr>
+            <td>Налом</td>
+            <td>{{ result_sum.nal }}</td>
+        </tr>
+        <tr>
+            <td>Терминал</td>
+            <td>{{ result_sum.terminal }}</td>
+        </tr>
+        <tr>
+            <td>Перечисление</td>
+            <td>{{ result_sum.bez_nal }}</td>
+        </tr>
+        <tr>
+            <td>$</td>
+            <td>{{ result_sum.usd }}</td>
+        </tr>
+        <tr>
+            <td>Итого</td>
+            <td>{{ result_sum.itogo }}</td>
+        </tr>
+        <tr>
+            <td>Сальдо</td>
+            <td>{{ result_sum.saldo }}</td>
+        </tr>
+        <tr>
+            <td>Итог минимала</td>
+            <td id="result_minimal"></td>
+        </tr>
+        <tr>
+            <td>Проживает</td>
+            <td>{{ result_sum.proj }}</td>
+        </tr>
+        <tr>
+            <td>Уехал</td>
+            <td>{{ result_sum.uehal }}</td>
+        </tr>
+        <tr>
+            <td>Прибыль</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Должники</td>
+            <td></td>
+        </tr>
+    </table>
+    <div id="div3" style="display: none;">
+        <table border="1" width="300">
+            <tr>
+                <td>Индивидуал</td>
+                <td>{{ result_sum.individual }}</td>
+            </tr>
+            <tr>
+                <td>Контрагент</td>
+                <td>{{ result_sum.contragent }}</td>
+            </tr>
+            <tr>
+                <td>Налом</td>
+                <td>{{ result_sum.nal }}</td>
+            </tr>
+            <tr>
+                <td>Терминал</td>
+                <td>{{ result_sum.terminal }}</td>
+            </tr>
+            <tr>
+                <td>Перечисление</td>
+                <td>{{ result_sum.bez_nal }}</td>
+            </tr>
+            <tr>
+                <td>$</td>
+                <td>{{ result_sum.usd }}</td>
+            </tr>
+            <tr>
+                <td>Итого</td>
+                <td>{{ result_sum.itogo }}</td>
+            </tr>
+            <tr>
+                <td>Сальдо</td>
+                <td>{{ result_sum.saldo }}</td>
+            </tr>
+            <tr>
+                <td>Итог минимала</td>
+                <td id="result_minimal"></td>
+            </tr>
+            <tr>
+                <td>Проживает</td>
+                <td>{{ result_sum.proj }}</td>
+            </tr>
+            <tr>
+                <td>Уехал</td>
+                <td>{{ result_sum.uehal }}</td>
+            </tr>
+            <tr>
+                <td>Прибыль</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Должники</td>
+                <td></td>
+            </tr>
+        </table>
+    </div>
+    <button class="btn btn-primary btn-sm" onclick="$('#div3').print();">
         Распечатать
     </button>
 
@@ -129,8 +248,8 @@
         $.fn.extend({
             print: function () {
                 {#$.ajax();#}
-                var frameName = 'printIframe';
-                var doc = window.frames[frameName];
+                let frameName = 'printIframe';
+                let doc = window.frames[frameName];
                 if (!doc) {
                     $('<iframe>').hide().attr('name', frameName).appendTo(document.body);
                     doc = window.frames[frameName];
@@ -140,5 +259,34 @@
                 return this;
             }
         });
+        let roomNumber = $('.room-number');
+        let objRoomNumber = {}
+        for (let i = 0; i < roomNumber.length; i++) {
+            objRoomNumber[$(roomNumber[i]).text()] = []
+            for (let j = 0; j < roomNumber.length; j++) {
+                if ($(roomNumber[i]).text() == $(roomNumber[j]).text()) {
+                    objRoomNumber[$(roomNumber[i]).text()].push($(roomNumber[j]).text());
+                }
+            }
+        }
+
+        let daysNumber = $('.days-number');
+        let minimal = 33000;
+        for (let i = 0; i < daysNumber.length; i++) {
+            if ($(daysNumber[i]).text().search(',')) {
+                let proc = parseFloat($(daysNumber[i]).text().replace(',', '.')) * minimal;
+                $(daysNumber[i]).text(proc);
+            } else {
+                let proc = parseFloat($(daysNumber[i]).text()) * minimal;
+                $(daysNumber[i]).text(proc);
+            }
+        }
+
+        let minimalSum = $('.days-number');
+        let minimalSumAnswer = 0;
+        for (let i = 0; i < minimalSum.length; i++) {
+            minimalSumAnswer += parseFloat($(minimalSum[i]).text());
+        }
+        $('#result_minimal').text(minimalSumAnswer);
     </script>
 {% endblock %}

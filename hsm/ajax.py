@@ -2,11 +2,12 @@ import datetime
 import json
 
 from django.core import serializers
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 from django.http import JsonResponse, HttpResponse
 
-from hsm.models import TypeRoom, Booking, Organization, Guest, Nationality, Citeznship, Visa, SourceBooking, Rooms, City
+from hsm.models import TypeRoom, Booking, Organization, Guest, Nationality, Citeznship, Visa, SourceBooking, Rooms, \
+    City, Checks
 
 
 def to_datetime(_date, _time):
@@ -20,14 +21,48 @@ def str_to_int(dates):
     return datetime.datetime(dt[0], dt[1], dt[2], dt[3], dt[4])
 
 
+def ajax_today_date(request):
+    today = datetime.datetime.now().date()
+    bookings = Booking.objects.exclude(status_booking=-3).filter(stat=True)
+
+    guests_birthday = []
+    for b in bookings:
+        for g in b.guest.all():
+            if '-' in g.date_of_birth:
+                gd_list = list(map(int, g.date_of_birth.split('-')))
+            if '.' in g.date_of_birth:
+                gd_list = list(map(int, g.date_of_birth.split('.')))
+
+            guest_date_of_birth = datetime.date(gd_list[2], gd_list[1], gd_list[0])
+
+            if today.month == guest_date_of_birth.month and today.day == guest_date_of_birth.day:
+                guests_birthday.append(g.full_name)
+
+    if len(guests_birthday) != 0:
+        return JsonResponse({'ok': guests_birthday})
+    else:
+        return JsonResponse({'error': 'Not guests'})
+
+
 def ajax_booking_info(request):
     booking_id = int(request.GET['bookingID'])
-    print(booking_id)
     booking = Booking.objects.get(pk=booking_id)
     data = serializers.serialize('json', [booking])
     struct = json.loads(data)
     data = json.dumps(struct[0])
     return HttpResponse(data, content_type="application/json")
+
+
+def ajax_services_info(request):
+    print(request.GET)
+    booking_id = int(request.GET['bookingID'])
+    booking = Booking.objects.get(pk=booking_id)
+    try:
+        service = booking.services.get_debt()
+        service_id = booking.services.id
+        return JsonResponse({'debt': service, 'id': service_id})
+    except Booking.services.RelatedObjectDoesNotExist:
+        return JsonResponse({'error': 'Нет услуг'})
 
 
 def ajax_search_rooms(request):
@@ -439,6 +474,9 @@ def ajax_evict_send(request):
 
     booking.status_booking = -3
     booking.save()
+    room = Rooms.objects.get(id=booking.room.id)
+    room.clean = False
+    room.save()
 
     return JsonResponse({'ok': 'good!'})
 
@@ -499,3 +537,61 @@ def ajax_search_booking_id(request):
         list_bookings[b.id].append(b.days)
         list_bookings[b.id].append(status_booking(b.status_booking))
     return JsonResponse(list_bookings)
+
+
+def ajax_bookings_change(request):
+    if request.user.is_anonymous:
+        return redirect('/')
+    booking_ids = request.GET.getlist('bookingIDs[]', None)
+    status_booking = int(request.GET['statusBooking'])
+
+    if booking_ids is None:
+        pass
+    booking_ids = list(map(int, booking_ids))
+    for i in booking_ids:
+        b = Booking.objects.get(id=i)
+        b.status_booking = status_booking
+        b.save()
+
+    return JsonResponse({'ok': 'yuhu'})
+
+
+def ajax_bookings_extend(request):
+    if request.user.is_anonymous:
+        return redirect('/')
+    booking_ids = request.GET.getlist('bookingIDs[]', None)
+    days = int(request.GET['days'])
+
+    if booking_ids is None:
+        pass
+    booking_ids = list(map(int, booking_ids))
+    for i in booking_ids:
+        b = Booking.objects.get(id=i)
+        b.date_departure += datetime.timedelta(days=days)
+        b.save()
+
+    return JsonResponse({'ok': 'yuhu'})
+
+
+def ajax_check_print(request):
+    if request.user.is_anonymous:
+        return redirect('/login')
+    r = request.GET
+    check_number = int(r['checkNumber'])
+    booking_id = int(r['bookingID'])
+    booking = Booking.objects.get(id=booking_id)
+    check = Checks()
+    check.check_number = int(check_number)
+    check.booking = booking
+    check.kassir = request.user
+    check.save()
+
+    return JsonResponse({'ok': 'yeah'})
+
+
+def ajax_cleaning(request):
+    room_number = request.GET['roomNumber']
+    room = Rooms.objects.get(number_room=room_number)
+    room.clean = True
+    room.save()
+    return JsonResponse({'ok': 'clean'})

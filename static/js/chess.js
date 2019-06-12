@@ -1,96 +1,123 @@
 $(document).ready(function () {
 
-    let dataObj = {};
-    let $freeday = $('.freeday');
-    $freeday.on({
-        mousedown: function (e) {
-            if (e.button === 0) {
-                if (!$(this).hasClass('selected')) {
-                    $(this).toggleClass('selected');
-                    $freeday.on('mouseenter', function () {
-                        $(this).toggleClass('selected');
-                    })
+    $('.mdb-select').materialSelect();
+
+    $('#js-rooms-select').select2({
+        width: '100%',
+    });
+
+    $('#datetime-picker-in').datetimepicker();
+
+    $('#datetime-picker-out').datetimepicker();
+
+    let cs = $('#table-cell').cellSelection({
+        selectClass: '.selected',
+        ignoreCell: '.ignore',
+    });
+
+    function btnCancelSelected() {
+        let btnCancel = $('#cancel_selected_btn');
+        btnCancel.show();
+        btnCancel.click(function () {
+            cs.cellSelection('deselect');
+            $(this).hide();
+            $('#booking_room_btn').hide();
+            $('#booking_rooms_btn').hide();
+        });
+    }
+
+    function btnBookingRoom() {
+        let btnBooking = $('#booking_room_btn');
+        btnBooking.show();
+    }
+
+    function btnBookingRooms() {
+        let btnBooking = $('#booking_rooms_btn');
+        btnBooking.show();
+    }
+
+    function searchSelected() {
+        let selected = $('.selected');
+        let roomName = [], dateList = []; // Хранит информацию о номерах и дате
+
+        for (let i = 0; i < selected.length; i++) {
+
+            // TODO: сменить логику получения имени номера, для удаления лишнего атрибута 'data' в тегах html
+            let roomNameIter = $(selected[i]).attr('data-room-name'); // Получаем имя номера ячейки. В каждой итерации меняется ячейка
+            if (roomName.length === 0) {
+                roomName.push(roomNameIter);
+            } else {
+                if ($.inArray(roomNameIter, roomName) === -1) {
+                    roomName.push(roomNameIter);
                 }
             }
-        },
-        mouseup: function (e) {
-            if (e.button === 0) {
-                if ($(this).hasClass('selected')) {
-                    $freeday.off('mouseenter');
-                    // $('#new-booking-mini').show();
-                    let sel = $('.selected');
-                    // цена номера UZS
-                    let priceUzs = sel.eq(0).attr('data-room-uzs');
-                    // цена номера USD
-                    let priceUsd = sel.eq(0).attr('data-room-usd');
-                    selectedDisplayPrice(sel.eq(1), priceUzs, priceUsd, sel.length - 1);
-                    selectedBookingAdd(sel.eq(1));
-                    // Начальная дата брони
-                    let start = sel.eq(0).attr('title').split(', ')[0];
-                    // Конечная дата брони
-                    let end = sel.eq(sel.length - 1).attr('title').split(', ')[0];
-                    // Хранение даты начало и конца
-                    dataObj.date = [];
-                    dataObj.date.push(start);
-                    dataObj.date.push(end);
-                    // newBooking(dataObj);
-                    console.log(dataObj.date);
-                    $('#date_timepicker_start').val(start);
-                    $('#date_timepicker_end').val(end);
-                }
+
+            let dateListIter = $(selected[i]).attr('data-date'); // Получаем дату ячейки. В каждой итерации меняется ячейка
+            if ($.inArray(dateListIter, dateList) === -1) {
+                dateList.push(dateListIter);
             }
+        }
+
+        return {roomName: roomName, dateList: dateList};
+    }
+
+    function bookingRoom() {
+    }
+
+    function bookingRooms() {
+    }
+
+    // Запуск кода после отпускание ПКМ по ячейке таблицы
+    $('td.new_chess-d_k').on('mouseup', function () {
+        let selected = searchSelected();
+
+        // Проверка брони на количество номеров, если выбран один номер,
+        // запускается модальное окно для брони одного номера,
+        // если выбрано больше одного номера, запускается группавая бронь
+        if (selected.roomName.length === 1) {
+            $('#booking_rooms_btn').hide();
+            btnCancelSelected(); // показываем кнопку отмены
+            btnBookingRoom();
+            console.log('booking room');
+        } else if (selected.roomName.length > 1) {
+            $('#booking_room_btn').hide();
+            btnCancelSelected(); // показываем кнопку отмены
+            btnBookingRooms();
+            console.log('booking rooms');
+        } else {
+            alert('Вы не верно указали дни');
         }
     });
 
-    function selectedBookingAdd(sel) {
-        $(sel).append(
-            `<div id="new-booking-mini">
-                <div class="new-wrap">
-                    <a id="booking_add" class="btn btn-primary btn-sm">Бронь</a>
-                    <a id="close_repaid" class="btn btn-primary btn-sm">Ремонт</a>
-                    <a id="booking_close" class="btn btn-primary btn-sm">Отмена</a>
-                </div>
-            </div>`
-        );
-        $('#booking_add').click(function () {
-            let $selected = $('.selected');
-            for (let i = 0; i < $selected.length; i++) {
-                if ($selected[i] === $selected[0]) {
-                    Cookies.set('dateArrival', $($selected[i]).attr('data-day'));
-                    Cookies.set('nameRoom', $($selected[i]).siblings('.firstcol').children('span.room-name')[0].innerText);
-                } else if ($selected.length === 1) {
-                    Cookies.set('dateDeparture', $($selected[i]).attr('data-day'));
-                } else if ($selected[i] === $selected[$selected.length - 1]) {
-                    Cookies.set('dateDeparture', $($selected[i]).attr('data-day'));
-                }
-            }
-            window.location.href = '/booking/';
-        });
-
-        $('#booking_close').click(function () {
-            // $('#new-booking').hide();
-            $('.selected-price-info').remove();
-            $('#new-booking-mini').remove();
-            $('.freeday').removeClass('selected');
-        });
-    }
-
-    function selectedDisplayPrice(sel, uzs, usd, len) {
-        $(sel).append(
-            `<div class="selected-price-info">
-                <span class="price">${uzs * len} | ${usd * len} сум</span> 
-                <span class="fordays">За <b>${len}</b> суток</span></div>`
-        );
-    }
-
-    let tdBooking = $('td.booking');
-    tdBooking.on({
-        mouseover: function () {
-            $(this).children('.display-info-booking').show();
-        },
-        mouseleave: function () {
-            $(this).children('.display-info-booking').hide();
+    // BOOKING ROOM FORM
+    $('#addGuest1').click(function () {
+        if ($('#addGuest1').is(':checked')) {
+            $('.guest1').slideDown(900);
+        } else {
+            $('.guest1').slideUp(900);
+            $('.guest2').slideUp(900);
+            $('#addGuest2').prop('checked', false);
+            $('.guest3').slideUp(900);
+            $('#addGuest3').prop('checked', false);
         }
-    })
+    });
+
+    $('#addGuest2').click(function () {
+        if ($('#addGuest2').is(':checked')) {
+            $('.guest2').slideDown(900);
+        } else {
+            $('.guest2').slideUp(900);
+            $('.guest3').slideUp(900);
+            $('#addGuest3').prop('checked', false);
+        }
+    });
+
+    $('#addGuest3').click(function () {
+        if ($('#addGuest3').is(':checked')) {
+            $('.guest3').slideDown(900);
+        } else {
+            $('.guest3').slideUp(900);
+        }
+    });
 
 });

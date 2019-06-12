@@ -25,6 +25,7 @@ class Rooms(models.Model):
     type_room = models.ForeignKey(TypeRoom, verbose_name='Тип комнаты', on_delete=models.CASCADE)
     number_room = models.CharField(verbose_name='Номер комнаты', max_length=50, blank=True)
     close = models.BooleanField(verbose_name='Закрыть номер', default=False)
+    clean = models.BooleanField(verbose_name='Статус номера', default=True)
 
     class Meta:
         verbose_name = 'Номер комнаты'
@@ -187,18 +188,6 @@ class Organization(models.Model):
 admin.site.register(Organization)
 
 
-class Services(models.Model):
-    name = models.CharField(verbose_name='Дополнительные услуги', max_length=100, blank=True)
-    price = models.DecimalField(verbose_name='Сумма услуги', max_digits=8, decimal_places=0, null=True, blank=True)
-
-    class Meta:
-        verbose_name = 'Дополнительная услуга'
-        verbose_name_plural = 'Дополнительные услуги'
-
-    def __str__(self):
-        return '%s - %s сум' % (self.name, self.price)
-
-
 # Информация бронирования
 class Booking(models.Model):
     EMPTY = 0
@@ -240,18 +229,16 @@ class Booking(models.Model):
     early_arrival = models.BooleanField(verbose_name='Ранний заезд', default=False)
     date_departure = models.DateTimeField(verbose_name='Дата и время выезда', null=True, blank=True)
     late_departure = models.BooleanField(verbose_name='Поздник заезд', default=False)
-    price_per_night = models.DecimalField(verbose_name='Цена за ночь', max_digits=10, decimal_places=0, null=True,
-                                          blank=True)
+    price_per_night = models.DecimalField(verbose_name='Цена за ночь', max_digits=10, decimal_places=0, default=0)
     price_for_all_time = models.DecimalField(verbose_name='Цена за всё время', max_digits=10, decimal_places=0,
-                                             null=True, blank=True)
+                                             default=0)
     payment_nal = models.DecimalField(verbose_name='Сумма - налом', max_digits=10, decimal_places=0, default=0)
     payment_bez_nal = models.DecimalField(verbose_name='Сумма - перечисление', max_digits=10, decimal_places=0,
                                           default=0)
     payment_terminal = models.DecimalField(verbose_name='Сумма - терминал', max_digits=10, decimal_places=0, default=0)
     payment_usd = models.DecimalField(verbose_name='Сумма - в долларах', max_digits=10, decimal_places=0, default=0)
-    paid = models.DecimalField(verbose_name='Оплачено', max_digits=10, decimal_places=0, null=True, blank=True)
-    left_to_pay = models.DecimalField(verbose_name='Осталось оплатить', max_digits=10, decimal_places=0, null=True,
-                                      blank=True)
+    paid = models.DecimalField(verbose_name='Оплачено', max_digits=10, decimal_places=0, default=0)
+    left_to_pay = models.DecimalField(verbose_name='Осталось оплатить', max_digits=10, decimal_places=0, default=0)
     days = models.FloatField(verbose_name='Суток', null=True, blank=True)
     status_booking = models.IntegerField(verbose_name='Статус брони', choices=STATUS_BOOKING, default=EMPTY)
 
@@ -279,32 +266,70 @@ class Booking(models.Model):
             self.days += 0.5
         if self.late_departure:
             self.days += 0.5
-        if self.price_per_night != 0:
-            self.price_for_all_time = int(int(self.price_per_night) * float(self.days))
-            if self.payment_usd == 0:
-                all_payment = self.payment_nal + self.payment_bez_nal + self.payment_terminal
-                left_to_pay = self.price_for_all_time - all_payment
-                self.paid = all_payment
-                self.left_to_pay = left_to_pay
-            else:
-                self.paid = self.payment_usd
-                self.left_to_pay = self.price_for_all_time - self.payment_usd
+        if self.price_per_night == 0:
+            self.price_per_night = self.room.type_room.price_uzs
+        self.price_for_all_time = int(int(self.price_per_night) * float(self.days))
+        if self.payment_usd == 0:
+            all_payment = self.payment_nal + self.payment_bez_nal + self.payment_terminal
+            left_to_pay = self.price_for_all_time - all_payment
+            self.paid = all_payment
+            self.left_to_pay = left_to_pay
+        else:
+            self.paid = self.payment_usd
+            self.left_to_pay = self.price_for_all_time - self.payment_usd
+
         super(Booking, self).save(*args, **kwargs)
 
     def __str__(self):
         return F'Дата заезда: {self.date_arrival} Дата выезда: {self.date_departure} - {self.room}'
 
 
-class OwnServicesBooking(models.Model):
-    booking = models.ForeignKey(Booking, verbose_name='ID брони', on_delete=models.CASCADE, related_name='osb',
-                                null=True)
-    service = models.CharField(verbose_name='Услуга', max_length=100, blank=True)
-    price = models.DecimalField(verbose_name='Цена', max_digits=10, decimal_places=0, default=0)
-    type_payment = models.IntegerField(verbose_name='Тип оплаты', choices=Booking.TYPE_PAYMENT, default=0)
+class Checks(models.Model):
+    check_number = models.IntegerField(verbose_name='Номер счёта')
+    booking = models.ForeignKey(Booking, verbose_name='Бронь', on_delete=models.CASCADE)
+    kassir = models.ForeignKey(User, verbose_name='Кассир', on_delete=models.CASCADE)
+    created_datetime = models.DateTimeField(verbose_name='Дата и время создания чека', auto_now_add=True)
 
     class Meta:
-        verbose_name = 'Доп. платёж'
-        verbose_name_plural = 'Доп. платежи'
+        verbose_name = 'Чек'
+        verbose_name_plural = 'Чеки'
 
     def __str__(self):
-        return self.service
+        return '%s' % self.check_number
+
+
+admin.site.register(Checks)
+
+
+class Services(models.Model):
+    booking = models.OneToOneField(Booking, verbose_name='Бронь', null=True, blank=True, on_delete=models.CASCADE)
+    paid = models.DecimalField(verbose_name='Оплачено', max_digits=11, decimal_places=0, default=0)
+
+    class Meta:
+        verbose_name = 'Дополнительная услуга'
+        verbose_name_plural = 'Дополнительные услуги'
+
+    def get_price_all(self):
+        return sum(i.price for i in self.paymentservices_set.all())
+
+    def get_debt(self):
+        return self.get_price_all() - self.paid
+
+    # def save(self, *args, **kwargs):
+    #     super(Services, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return '%s' % self.id
+
+
+class PaymentServices(models.Model):
+    service = models.ForeignKey(Services, verbose_name='ID услуги', on_delete=models.CASCADE)
+    name = models.CharField(verbose_name='Услуга', max_length=100, blank=True)
+    price = models.DecimalField(verbose_name='Сумма услуги', max_digits=8, decimal_places=0, null=True, blank=True)
+
+    class Meta:
+        verbose_name = 'Доп. услуга'
+        verbose_name_plural = 'Доп. услуги'
+
+    def __str__(self):
+        return '%s %s' % (self.name, self.price)

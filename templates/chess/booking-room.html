@@ -1,0 +1,41 @@
+<div class="modal fade" id="bookingRoomModal" tabindex="-1" role="dialog" aria-labelledby="bookingRoomModal"
+     aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h2 class="h2-responsive product-name text-center">
+                            <strong>Бронирование номера</strong>
+                        </h2>
+                        <h4 class="h4-responsive text-center">
+                            <span class="green-text">
+                                <strong>$49</strong>
+                            </span>
+                            <span class="grey-text">
+                                <small>
+                                    <s>$89</s>
+                                </small>
+                            </span>
+                        </h4>
+
+                        <div class="card-body">
+                            <div class="row mb-5">
+                                <div class="col-md-12">
+
+                                    {% include 'chess/booking-room__form.html' %}
+
+                                </div>
+                            </div>
+                            <div class="text-center">
+
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                                <button class="btn btn-primary">Зарегистировать</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -58,7 +58,7 @@
                 <div class="block-print">
                     <div class="text">
                         <h4>ГОСТИНИЦА "{{ hotel_name }}" МЕХМОНХОНАСИ</h4>
-                        <h4>СЧЁТ № <span id="id_number_span"></span></h4>
+                        <h4>СЧЁТ № <span id="id_number_span">{{ check_number }}</span></h4>
                     </div>
                     <table>
                         <tr>
@@ -115,6 +115,9 @@
             <button class="btn btn-primary btn-sm" onclick="$('#div2').print();">
                 Распечатать
             </button>
+            <div style="opacity: 0;">
+                <span id="booking_id">{{ booking.id }}</span>
+            </div>
         </div>
     </div>
 </div>
@@ -127,7 +130,21 @@
     });
     $.fn.extend({
         print: function () {
-            $.ajax();
+            let checkNumber = $('#id_number_span').text();
+            let bookingID = $('#booking_id').text();
+
+            $.ajax({
+                url: '/ajax/check-print/',
+                method: 'get',
+                data: {
+                    checkNumber: checkNumber,
+                    bookingID: bookingID
+                },
+                dataType: 'json',
+                success: function (data) {
+                    console.log(data.ok);
+                }
+            });
             var frameName = 'printIframe';
             var doc = window.frames[frameName];
             if (!doc) {

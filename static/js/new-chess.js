@@ -5,18 +5,22 @@ $(document).ready(function () {
         ignoreCell: 'booking' // ячейки с классом '.ignore' не будут выделяться
     });
 
-    // let bookings = $('td.new_chess-d_k');
-    // for (let i = 0; i < bookings.length; i++) {
-    //     if ($(bookings[i]).attr('data-booking-id') !== 'freeday') $(bookings[i]).css({
-    //         // 'background-color': 'green',
-    //         'color': 'white',
-    //     });
-    // }
-
     let freeRooms = $('ul.free_rooms li');
     $('.free_rooms_quantity').text(freeRooms.length);
+    let objFreeRooms = {
+        'Single': 0,
+        'Twin': 0,
+        'Double': 0,
+        'Lux': 0,
+        'Apartments': 0,
+    };
     for (let i = 0; i < freeRooms.length; i++) {
         let freeRoomName = $(freeRooms[i]).text();
+        if (freeRoomName.search('Single') === 0) objFreeRooms['Single'] += 1;
+        if (freeRoomName.search('Twin') === 0) objFreeRooms['Twin'] += 1;
+        if (freeRoomName.search('Double') === 0) objFreeRooms['Double'] += 1;
+        if (freeRoomName.search('Lux') === 0) objFreeRooms['Lux'] += 1;
+        if (freeRoomName.search('Apartments') === 0) objFreeRooms['Apartments'] += 1;
         let roomsName = $('td.new_chess-r_k');
         for (let j = 0; j < roomsName.length; j++) {
             if ($(roomsName[j]).text() === freeRoomName) {
@@ -28,6 +32,25 @@ $(document).ready(function () {
             }
         }
     }
+    $('#single_free').text(objFreeRooms.Single);
+    $('#twin_free').text(objFreeRooms.Twin);
+    $('#double_free').text(objFreeRooms.Double);
+    $('#lux_free').text(objFreeRooms.Lux);
+    $('#apartments_free').text(objFreeRooms.Apartments);
+    let objBookingRooms = {
+        'Single': 20,
+        'Twin': 17,
+        'Double': 1,
+        'Lux': 1,
+        'Apartments': 2,
+    };
+    $('#single_booking').text(objBookingRooms.Single - objFreeRooms.Single);
+    $('#twin_booking').text(objBookingRooms.Twin - objFreeRooms.Twin);
+    $('#double_booking').text(objBookingRooms.Double - objFreeRooms.Double);
+    $('#lux_booking').text(objBookingRooms.Lux - objFreeRooms.Lux);
+    $('#apartments_booking').text(objBookingRooms.Apartments - objFreeRooms.Apartments);
+
+
     $('ul.free_rooms').css({'display': 'none'});
 
     $('#date_arrival').datetimepicker({

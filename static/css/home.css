@@ -74,6 +74,10 @@
     background-color: #eeeeee;
 }
 
+[data-booking-id*='dirty'] {
+    background-color: #ff5252!important;
+}
+
 [data-booking-id*='today-arrival'] {
     background-color: #ffbb33 !important;
 }
@@ -207,4 +211,8 @@ ul.color-bookings li:nth-child(4)::before {
     padding-left: 5px;
     border-radius: 4px;
     width: 100%;
+}
+
+.own-card {
+    height: 200px;
 }

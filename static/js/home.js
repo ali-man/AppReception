@@ -1,42 +1,29 @@
 $(document).ready(function () {
-    // let rooms = $('.type-room__room');
-    // for (let i = 0; i < rooms.length; i++) {
-    //     if ($(rooms[i]).attr('data-booking-id') !== 'freeday') {
-    //         let id = $(rooms[i]).attr('data-booking-id');
-    //         $.ajax({
-    //             url: '/ajax/booking-info/',
-    //             method: 'GET',
-    //             data: {
-    //                 bookingID: id
-    //             },
-    //             dataType: 'json',
-    //             beforeSend: function () {
-    //                 console.log('Идёт загрузка данных');
-    //             },
-    //             success: function (data) {
-    //                 $(rooms[i]).addClass(`status${data.fields.status_booking}`);
-    //             }
-    //         });
-    //     }
-    // }
+
+    let today = new Date();
+    let year = today.getFullYear();
+    let month = today.getMonth();
+    let date = today.getDate();
+
+    $.ajax({
+        url: '/ajax/today-date/',
+        method: 'get',
+        data: {},
+        dataType: 'json',
+        success: function (data) {
+            if (data.ok) {
+                console.log(data.ok);
+            } else {
+                console.log(data.error);
+            }
+        }
+    });
 
     function fnBooking() {
 
         $('#send_obj_to_server').click(function () {
             let objDataAll = fnDataAll();
             console.log(objDataAll['earlyArrival']);
-            // $.ajax({
-            //     url: '/ajax/booking-post/',
-            //     method: 'POST',
-            //     data: objDataAll,
-            //     dataType: 'json',
-            //     beforeSend: function () {
-            //         console.log('Идёт сохранение данных');
-            //     },
-            //     success: function (data) {
-            //         window.location.href = '/';
-            //     }
-            // });
         });
     }
 
@@ -52,23 +39,73 @@ $(document).ready(function () {
         Cookies.set('room', `${typeRoom}-${this.textContent}`);
         if (dataBookingID === 'freeday') {
             window.location.href = '/booking/';
-            // } else if ( dataBookingID.split(' ')[0] === 'status-3' ) {
-            //     $(this).append('<i class="fas fa-user-clock"></i>');
         } else {
             let bookingID = dataBookingID.split(' ')[1];
-            $(this).css('position', 'relative');
-            $('.display_hide').remove();
-            $(this).append(
-                `<div class="display_hide">
-                  <ul data-booking-id="${bookingID}" class="menu-booking-room">
-                    <li class="menu-evict" data-toggle="modal" data-target="#evictModal">Выселить</li>
-                    <li class="menu-change">Изменить</li>
-                    <li class="menu-cancel">Отмена</li>
-                  </ul>
-                </div>`
-            );
+            if (bookingID === 'dirty') {
+                $(this).css('position', 'relative');
+                $('.display_hide').remove();
+                $(this).append(
+                    `<div class="display_hide">
+                      <ul data-booking-id="${room}" class="menu-booking-room">
+                        <li class="menu-cleaning">Чистый</li>
+                        <li class="menu-cancel">Отмена</li>
+                      </ul>
+                    </div>`
+                );
+            } else {
+                $(this).css('position', 'relative');
+                $('.display_hide').remove();
+                $(this).append(
+                    `<div class="display_hide">
+                      <ul data-booking-id="${bookingID}" class="menu-booking-room">
+                        <li class="menu-evict" data-toggle="modal" data-target="#evictModal">Выселить</li>
+                        <li class="menu-change">Изменить</li>
+                        <li class="menu-services">Услуги</li>
+                        <li class="menu-cancel">Отмена</li>
+                      </ul>
+                    </div>`
+                );
+            }
+
             // window.location.href = `/booking/edit-${bookingID}`;
         }
+
+        $('li.menu-services').click(function () {
+            let bookingID = $(this).parent().attr('data-booking-id');
+            Cookies.set('bookingID', Number(bookingID));
+            $.ajax({
+                url: '/ajax/services-info/',
+                method: 'get',
+                data: {
+                    bookingID: bookingID
+                },
+                dataType: 'json',
+                success: function (data) {
+                    console.log(data);
+                    if (data.debt) {
+                        window.location.href = `/services/edit-${data.id}`;
+                    }
+                    if (data.error) {
+                        window.location.href = '/services/create';
+                    }
+                }
+            });
+        });
+
+        $('li.menu-cleaning').click(function () {
+            let roomNumber = $(this).parent().attr('data-booking-id');
+            $.ajax({
+                url: '/ajax/cleaning/',
+                method: 'get',
+                data: {
+                    roomNumber: roomNumber
+                },
+                dataType: 'json',
+                success: function (data) {
+                    window.location.href = '/';
+                }
+            });
+        });
 
         $('li.menu-evict').click(function () {
             let bookingID = $(this).parent().attr('data-booking-id');
@@ -82,7 +119,7 @@ $(document).ready(function () {
                 },
                 dataType: 'json',
                 success: function (data) {
-                    console.log(data.fields);
+                    // console.log(data);
                     if (data.fields) {
                         // let room = data.fields.room;
                         let statusBooking = data.fields.status_booking;
@@ -113,6 +150,25 @@ $(document).ready(function () {
                         $('.booking_price_all').text(priceAllTime);
                         $('.booking_price_paid').text(paid);
                         $('.booking_price_left_pay').text(leftToPay);
+                    }
+                }
+            });
+
+            $.ajax({
+                url: '/ajax/services-info/',
+                method: 'get',
+                data: {
+                    bookingID: bookingID
+                },
+                dataType: 'json',
+                success: function (data) {
+                    // console.log(data);
+                    if (data.debt !== "0") {
+                        $('.debt').html(
+                            `
+                            <a href="/services/edit-${data.id}">Долг за услуги ${data.debt}</a>
+                            `
+                        );
                     }
                 }
             });

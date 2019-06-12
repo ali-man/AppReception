@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+
+{% endblock %}
+
+{% block title %}
+
+{% endblock %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="col-6">
+            <form action="{% url 'services-create' %}" method="post">{% csrf_token %}
+            <button type="submit" class="btn btn-success" style="margin: 15px 0 10px 0;">Создать</button>
+                <input type="number" name="booking_id" id="id_booking_id" style="opacity: 0;">
+
+                <table class="table" style="background-color: #fff;">
+                    <thead>
+                    <tr>
+                        <th>Название услуги</th>
+                        <th>Цена услуги</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for i in i|rjust:10 %}
+                        <tr>
+                            <td><input type="text" class="form-control" name="name{{ forloop.counter }}"></td>
+                            <td><input type="number" class="form-control" name="price{{ forloop.counter }}"></td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                <button type="submit" class="btn btn-success" style="margin-top: 10px;">Создать</button>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}
+{% block scripts %}
+    <script>
+        $(document).ready(function () {
+            $('#id_booking_id').val(Cookies.get('bookingID'));
+            Cookies.remove('bookingID');
+        });
+    </script>
+{% endblock %}

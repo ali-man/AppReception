@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from hsm.models import Rooms, TypeRoom, Booking, Citeznship, OwnServicesBooking
+from hsm.models import Rooms, TypeRoom, Booking, Citeznship, PaymentServices, Services
 
 
 class RoomsLine(admin.TabularInline):
@@ -8,8 +8,8 @@ class RoomsLine(admin.TabularInline):
     extra = 1
 
 
-class OwnServicesBookingLine(admin.TabularInline):
-    model = OwnServicesBooking
+class PaymentServicesLine(admin.TabularInline):
+    model = PaymentServices
     extra = 1
 
 
@@ -26,7 +26,6 @@ admin.site.register(TypeRoom, TypeRoomAdmin)
 class BookingAdmin(admin.ModelAdmin):
     list_display = ['id', 'room', 'date_arrival', 'date_departure']
     list_display_links = ['id']
-    inlines = [OwnServicesBookingLine]
 
 
 admin.site.register(Booking, BookingAdmin)
@@ -38,3 +37,12 @@ class CiteznshipAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Citeznship, CiteznshipAdmin)
+
+
+class ServicesAdmin(admin.ModelAdmin):
+    list_display = ['id', 'booking', 'paid']
+    list_display_links = ['id']
+    inlines = [PaymentServicesLine]
+
+
+admin.site.register(Services, ServicesAdmin)

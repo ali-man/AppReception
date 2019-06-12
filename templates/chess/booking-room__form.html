@@ -1,0 +1,245 @@
+<div class="row">
+    <div class="col-4 mt-4">
+        <select class="md-form" id="js-rooms-select">
+            <optgroup label="team 1">
+                <option value="1">Option 1</option>
+                <option value="2">Option 2</option>
+            </optgroup>
+            <optgroup label="team 2">
+                <option value="3">Option 3</option>
+                <option value="4">Option 4</option>
+            </optgroup>
+        </select>
+    </div>
+    <div class="col-8">
+        <div class="row">
+            <div class="col">
+                <div class="md-form">
+                    <input placeholder="Дата и время" type="text" id="datetime-picker-in" class="form-control">
+                    <label for="date-picker-example">Заезд</label>
+                </div>
+            </div>
+            <div class="col">
+                <div class="md-form">
+                    <input placeholder="Дата и время" type="text" id="datetime-picker-out" class="form-control">
+                    <label for="date-picker-example">Выезд</label>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="materialChecked1">
+                    <label class="form-check-label" for="materialChecked1" style="font-size: 12px;">Ранний заез</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="materialChecked2">
+                    <label class="form-check-label" for="materialChecked2" style="font-size: 12px;">Поздний выез</label>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr>
+<div class="row">
+    <div class="col">
+        <div class="float-right">
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="addGuest1">
+                <label class="form-check-label" for="addGuest1" style="font-size: 12px;">Добавить гостя</label>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row guest1" style="display: none;">
+    <div class="col">
+        <div class="md-form">
+            <div class="md-form input-group input-group-sm mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text md-addon">Серийный номер</span>
+                </div>
+                <input type="text" name="serialNumber1" class="form-control">
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="md-form">
+            <div class="md-form input-group input-group-sm mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text md-addon">Полное имя</span>
+                </div>
+                <input type="text" name="fullname1" class="form-control">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row guest1" style="display: none;">
+    <div class="col">
+        <div class="md-form">
+            <div class="md-form input-group input-group-sm mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text md-addon">Национальность</span>
+                </div>
+                <input type="text" name="nationality1" class="form-control">
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="md-form">
+            <div class="md-form input-group input-group-sm mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text md-addon">Гражданство</span>
+                </div>
+                <input type="text" name="citeznship1" class="form-control">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row guest1" style="display: none;">
+    <div class="col">
+        <div class="form-check">
+            <input type="checkbox" name="foreigner1" class="form-check-input" id="foreiginerCheck1">
+            <label class="form-check-label" for="foreiginerCheck1" style="font-size: 12px;">Иностранец</label>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="row guest1" style="display: none;">
+    <div class="col">
+        <hr>
+        <div class="float-right">
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="addGuest2">
+                <label class="form-check-label" for="addGuest2" style="font-size: 12px;">Добавить гостя</label>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row guest2" style="display: none;">
+    <div class="col">
+        <div class="md-form">
+            <div class="md-form input-group input-group-sm mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text md-addon">Серийный номер</span>
+                </div>
+                <input type="text" name="serialNumber2" class="form-control">
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="md-form">
+            <div class="md-form input-group input-group-sm mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text md-addon">Полное имя</span>
+                </div>
+                <input type="text" name="fullname2" class="form-control">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row guest2" style="display: none;">
+    <div class="col">
+        <div class="md-form">
+            <div class="md-form input-group input-group-sm mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text md-addon">Национальность</span>
+                </div>
+                <input type="text" name="nationality2" class="form-control">
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="md-form">
+            <div class="md-form input-group input-group-sm mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text md-addon">Гражданство</span>
+                </div>
+                <input type="text" name="citeznship2" class="form-control">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row guest2" style="display: none;">
+    <div class="col">
+        <div class="form-check">
+            <input type="checkbox" name="foreigner2" class="form-check-input" id="foreignerCheck2">
+            <label class="form-check-label" for="foreignerCheck2" style="font-size: 12px;">Иностранец</label>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="row guest2" style="display: none;">
+    <div class="col">
+        <hr>
+        <div class="float-right">
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="addGuest3">
+                <label class="form-check-label" for="addGuest3" style="font-size: 12px;">Добавить гостя</label>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row guest3" style="display: none;">
+    <div class="col">
+        <div class="md-form">
+            <div class="md-form input-group input-group-sm mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text md-addon">Серийный номер</span>
+                </div>
+                <input type="text" name="serialNumber3" class="form-control">
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="md-form">
+            <div class="md-form input-group input-group-sm mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text md-addon">Полное имя</span>
+                </div>
+                <input type="text" name="fullname3" class="form-control">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row guest3" style="display: none;">
+    <div class="col">
+        <div class="md-form">
+            <div class="md-form input-group input-group-sm mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text md-addon">Национальность</span>
+                </div>
+                <input type="text" name="nationality3" class="form-control">
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="md-form">
+            <div class="md-form input-group input-group-sm mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text md-addon">Гражданство</span>
+                </div>
+                <input type="text" name="citeznship3" class="form-control">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row guest3" style="display: none;">
+    <div class="col">
+        <div class="form-check">
+            <input type="checkbox" name="foreigner3" class="form-check-input" id="foreignerCheck3">
+            <label class="form-check-label" for="foreignerCheck3" style="font-size: 12px;">Иностранец</label>
+        </div>
+    </div>
+</div>

@@ -5,7 +5,21 @@
 
 
 {% block css %}
-<link rel="stylesheet" href="{% static 'css/chess.css' %}">
+    <link rel="stylesheet" href="{% static 'css/chess.css' %}">
+    <style>
+        .select2-container--default .select2-selection--single {
+            background-color: #fff;
+            border-bottom: 1px solid #ced4da!important;
+            margin-top: 5px;
+            padding-bottom: 33px;
+        }
+        .select2-container--default .select2-selection--single {
+            border: none;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            color: #798189;
+        }
+    </style>
 {% endblock %}
 
 {% block title %}
@@ -13,252 +27,141 @@
 {% endblock %}
 {% block content %}
 
-    <div class="colors">
-        <div class="reservation">Бронь без оплаты</div>
-        <div class="reservation-deposit">Бронь с предоплатой</div>
-        <div class="person">Размещение гостя c оплатой</div>
-        <div class="person-debt">Размещение гостя с долгом</div>
-        <div class="evicted-person">Выселенное размещение</div>
-        <div class="person-exit">Гости сегодня выезжают из этого номера</div>
+    {% include 'chess/booking-room.html' %}
+    {% include 'chess/booking-rooms.html' %}
+    {#    <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#groupBookingModal"#}
+    {#            id="create_booking_group">#}
+    {#        Бронь группы#}
+    {#    </button>#}
 
-        <div class="lock-room">Блокировка номера</div>
+    <ul class="fixed-top list-group list-unstyled flex-row mt-2 ml-2">
+        <li>
+            <button type="button" class="btn btn-danger px-3" style="display: none" id="cancel_selected_btn">
+                <i class="fas fa-ban" aria-hidden="true"></i>
+            </button>
+        </li>
+        <li>
+            <button type="button" class="btn btn-danger px-3" style="display: none" id="booking_room_btn"
+                    data-toggle="modal" data-target="#bookingRoomModal">
+                <i class="fas fa-user" aria-hidden="true"></i>
+            </button>
+        </li>
+        <li>
+            <button type="button" class="btn btn-danger px-3" style="display: none" id="booking_rooms_btn"
+                    data-toggle="modal" data-target="#bookingRoomsModal">
+                <i class="fas fa-users" aria-hidden="true"></i></button>
+        </li>
+    </ul>
+
+    <div class="colors">
+        <div class="status-4">Блокировка номера</div>
+        <div class="status-1">Бронь без оплаты</div>
+        <div class="status1">Бронь с предоплатой</div>
+        <div class="status-2">Размещение без оплаты</div>
+        <div class="status2">Размещение с оплаты</div>
+        <div class="status-3">Выселенное размещение</div>
     </div>
 
-    <table class="table calendar-table" id="calendar" style="background-color: #fff; padding-bottom: 400px;">
-        <thead>
-        <tr>
-            <th class="firstcol" style="border: none;"></th>
-            <th colspan="15" class="month" style="border: none;">
-                <div class="month-wrap" title="Дата сегоднящняя"
-                     style="font-size: 18px;color:#4c4c4c">{{ today.date }}</div>
-            </th>
-        </tr>
-        <tr>
-            <td style="border: none;"></td>
-            {% for date in dates.date_days %}
-                {% if date == today.day %}
-                    <th style="text-align: center; color: #fff;background-color: #505050; position: relative;">
-                        {{ date }}
-                        <div title="сегодня" class="line"
-                             style="border-color: #505050!important; top: 20px; height: 3611px;"></div>
-                    </th>
-                {% else %}
-                    <th style="text-align: center; color: #6f6e6e;">{{ date }}</th>
-                {% endif %}
-            {% endfor %}
-        </tr>
-        <tr class="dates" style="border: none;">
-            <td class="rooms firstcol" style="border: none;"><b>Номера</b></td>
-            {% for date in dates.date_weekdays %}
-                <th style="text-align: center; color: #6f6e6e;">{{ date }}</th>
-            {% endfor %}
-        </tr>
-        </thead>
-        <tbody>
-        {% for type_key, type_val in alls.items %}
-            {#                TODO: id="cat{{ type_room.id }}" #}
+    <form method="get" action="." class="date-filter">
+        <div class="form-group">
+            <input type="text" class="form-control" name="date_in" id="date_arrival" placeholder="Дата заезда"
+                   autocomplete="off">
+        </div>
+        <div class="form-group">
+            <input type="text" class="form-control" name="date_out" id="date_departure" placeholder="Дата выезда"
+                   autocomplete="off">
+        </div>
+        <button type="submit" class="btn btn-primary btn-sm">Фильтр</button>
+    </form>
+
+    <div class="new-chess">
+        <table class="table new_chess" id="table-cell">
+            <thead>
             <tr>
-                <td class="firstcol cat" colspan="16">
-                    {#                        TODO:  data-cat="{{ type_room.id }}"#}
-                    <span class="collapse"></span>
-                    <span class="cat-name">{{ type_key }}</span>
-                    <div class="fixed-column" style="width: 1401px; height: 27px;">
-                        {#                            TODO: data-cat="{{ type_room.id }}"#}
-                        <span class="collapse"></span>
-                        <span class="cat-name">{{ type_key }}</span>
-                    </div>
-                </td>
+                <th></th>
+                <th colspan="{{ days }}">С {{ date_in }} по {{ date_out }}</th>
             </tr>
-            {% for room_key, room_val in type_val.items %}
-                {#                    TODO: id="room{{ type_room.id }}" data-cat="{{ type_room.id }}"#}
-                <tr class="highlight room">
-                    {% for date_key, date_value in room_val.items %}
-                        {% if forloop.first %}
-                            <td class="firstcol cleanmode">
-                                    <span title="{{ room_key }}" class="room-name room-extra">
-                                        {{ room_key }}
-{#                                        <span>{{ room_key }}</span>#}
-                                    </span>
-                                {#                                    TODO: data-room_id="{{ room.id }}"#}
-                                <div class="room-status status0">
-                                    <a href="javascript:;" data-status_id="0">чистый</a>
-                                </div>
-                                <div class="fixed-column" style="width: 350px; height: 31px;">
-                                    <span title="1" class="room-name room-extra">
-                                        {{ room_key }}
-                                        <span>{{ type_key }} {{ room_key }}</span>
-                                    </span>
-                                    {#                                        TODO: data-room_id="{{ room.id }}"#}
-                                    <div class="room-status status0">
-                                        <a href="javascript:;" data-status_id="0">чистый</a>
-                                    </div>
-                                </div>
-                            </td>
-                        {% endif %}
-                        {#                            {{ date_value }}#}
-                        {% if date_value.0 != 'f' %}
-                            {#                                TODO: data-booking-id="{{ date.1|info_booking:room }}"#}
-                            {#                                <td title="{{ date_key }} - Бронь без оплаты" class="booking"></td>#}
-                            <td class="booking" data-booking-id="{{ date_value.id }}"
-                                data-date-arrival="{{ date_value.date_arrival.date }}"
-                                data-date-departure="{{ date_value.date_departure.date }}">
-                                <div class="pos-abs">
-                                    <div class="bg-clr status_booking{{ date_value.status_booking }}">
-                                            <span class="booking-fullname">
-                                            {% for guest in date_value.guest.all %}
-                                                {{ guest }}
-                                            {% endfor %}
-                                            </span>
-                                    </div>
-                                </div>
-                                <div class="display-info-booking">
-                                    <div class="grid-col">
-                                        <div class="context-management">
-                                            <a href="{% url 'detail-booking' date_value.id %}" title="Просмотр"><i
-                                                    class="fas fa-eye"></i></a>
-                                            <a href="{% url 'edit-booking' date_value.id %}" title="Редактировать"><i
-                                                    class="fas fa-cut"></i></a>
-                                            <a href="{% url 'status-booking' date_value.id %}"
-                                               title="Изменения статуса"><i class="fas fa-pen-square"></i></a>
-                                        </div>
-                                        {% for guest in date_value.guest.all %}
-                                            <span class="fullname"><b>{{ guest }}</b></span>
-                                        {% endfor %}
-
-                                        <span>Статус брони:  {{ date_value.status_booking|status_booking }} </span>
-                                        <span>Разместил:  {{ date_value.user }} </span>
-                                        <span>Цена за ночь:  {{ date_value.price_per_night }} </span>
-                                        <span>Цена за {{ date_value.days }} суток:  {{ date_value.price_for_all_time }} </span>
-                                        {% if date_value.paid == 0 %}
-                                            <span>Оплачено:  {{ date_value.paid }} </span>
-                                        {% else %}
-                                            <span style="color: green;">Оплачено:  {{ date_value.paid }} </span>
-                                        {% endif %}
-                                        {% if date_value.left_to_pay == 0 %}
-                                            <span>Осталось оплатить:  {{ date_value.left_to_pay }} </span>
-                                        {% else %}
-                                            <span style="color: red;">Осталось оплатить:  {{ date_value.left_to_pay }} </span>
-                                        {% endif %}
-                                        <span>Тип оплаты:  {{ date_value.type_payment|type_payment }} </span>
-
-                                        <span>Номер:  {{ date_value.room }} </span>
-
-                                        <span>Дата заезда:  {{ date_value.date_arrival }} </span>
-                                        <span>Дата выезда:  {{ date_value.date_departure }} </span>
-
-                                        <span>Источник бронирования:  {{ date_value.source_of_booking }} </span>
-                                        {% if date_value.number_source_booking %}
-                                            <span>Номер брони источника:  {{ date_value.number_source_booking }} </span>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </td>
-                        {% else %}
-                            {#                                TODO:  data-id="r24397d1554498000"#}
-                            <td title="{{ date_key }}" data-room-uzs="{{ date_value.1 }}"
-                                data-room-usd="{{ date_value.2 }}"
-                                class="freeday" data-day="{{ date_key.day }}">{{ date_key.day }}</td>
-                        {% endif %}
-                    {% endfor %}
+            <tr>
+                <th></th>
+                {% for date in dates %}
+                    {% if date == today %}
+                        <th class="today" style="background-color: #4ec8ea !important">
+                            {{ date.day }}
+                        </th>
+                    {% else %}
+                        <th>{{ date.day }}</th>
+                    {% endif %}
+                {% endfor %}
+            </tr>
+            <tr>
+                <th></th>
+                {% for date in dates %}
+                    {% if date == today %}
+                        <th class="today" style="background-color: #4ec8ea !important">
+                            {{ date.weekday|week_day }}
+                            {#                            <div title="сегодня" class="line"#}
+                            {#                                 style="border-color: rgb(78, 200, 234) !important; top: 27px; height: 1477px;"></div>#}
+                        </th>
+                    {% else %}
+                        <th>{{ date.weekday|week_day }}</th>
+                    {% endif %}
+                {% endfor %}
+            </tr>
+            </thead>
+            {% for tr_k, tr_v in db.items %}
+                <tr>
+                    <td class="new_chess-tr_k">{{ tr_k }}</td>
                 </tr>
+                {% for r_k, r_v in tr_v.items %}
+                    <tr>
+                        {% for d_k, d_v in r_v.items %}
+                            {% if forloop.first %}
+                                <td class="new_chess-r_k ignore">{{ r_k }}</td>
+
+                                {% if d_v.0 != 'freeday' %}
+                                    <td class="new_chess-d_k status{{ d_v.1 }} ignore"
+                                        data-booking-id="{{ d_v.0 }}"
+                                    >
+                                        ID: {{ d_v.0 }}
+                                    </td>
+                                {% else %}
+                                    <td class="new_chess-d_k"
+                                        data-date="{{ d_k.day }}-{{ d_k.month }}-{{ d_k.year }}"
+                                        data-room-name="{{ r_k }}"
+                                    >
+                                        {{ d_k.day }}
+                                    </td>
+                                {% endif %}
+                            {% else %}
+                                {% if d_v.0 != 'freeday' %}
+                                    <td class="new_chess-d_k status{{ d_v.1 }} ignore"
+                                        data-booking-id="{{ d_v.0 }}"
+                                    >
+                                        ID: {{ d_v.0 }}
+                                    </td>
+                                {% else %}
+                                    <td class="new_chess-d_k"
+                                        data-date="{{ d_k.day }}-{{ d_k.month }}-{{ d_k.year }}"
+                                        data-room-name="{{ r_k }}"
+                                    >
+                                        {{ d_k.day }}
+                                    </td>
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
             {% endfor %}
-        {% endfor %}
-        </tbody>
-    </table>
 
-
-
-    {#    <div id="new-booking">#}
-    {#        <div class="wrap">#}
-    {#            <div class="title">#}
-    {#                <b>Новое бронирование</b>#}
-    {#            </div>#}
-    {#            <div class="desc">#}
-    {#                <span class="start">Заезд:</span>#}
-    {#                <span class="end">Выезд:</span>#}
-    {#            </div>#}
-    {#            <div class="datepicker">#}
-    {#                <input type="text" id="date_timepicker_start" name="date-start">#}
-    {#                <input type="text" id="date_timepicker_end" name="date-end">#}
-    {#            </div>#}
-    {#            <div class="btns">#}
-    {#                <a id="new-booking_add" role="button" class="btn btn-success btn-sm">Забронировать</a>#}
-    {#                <a role="button" class="btn btn-primary btn-sm">Резерв</a>#}
-    {#                <a role="button" class="btn btn-dark btn-sm">Закрыть на ремонт</a>#}
-    {#                <a id="new-booking_cancel" role="button" class="btn btn-danger btn-sm">Отмена</a>#}
-    {#            </div>#}
-    {#        </div>#}
-    {#    </div>#}
-
+        </table>
+    </div>
 
 {% endblock %}
 
 {% block scripts %}
-
-    <script type="text/javascript">
-
-        jQuery(function () {
-            jQuery('#date_timepicker_start').datetimepicker({
-                format: 'd-m-Y',
-                timepicker: false
-            });
-            jQuery('#date_timepicker_end').datetimepicker({
-                format: 'd-m-Y',
-                timepicker: false
-            });
-
-            let dataBookingIDs = $('*[data-booking-id]');
-            let objDataBookingID = {};
-            for (let i = 0; i < dataBookingIDs.length; i++) {
-                objDataBookingID[$(dataBookingIDs[i]).attr('data-booking-id')] = $(dataBookingIDs[i]).attr('data-booking-id');
-            }
-            for (key in objDataBookingID) {
-                let dataKey = $(`*[data-booking-id=${key}]`);
-                for (let i = 0; i < dataKey.length; i++) {
-                    if (dataKey[i] === dataKey[0]) {
-                        $(dataKey[0]).attr('colspan', dataKey.length - 1);
-                        if (dataKey.length - 1 !== 0) {
-                            let a = $(dataKey[0]).after('<td class="freeday"></td>');
-                        } else {
-                            $(dataKey[0]).children('.pos-abs').css({
-                                'left': '0',
-                                'width': '50%'
-                            });
-                        }
-                    } else {
-                        {#$(dataKey[i]).css({"background-color": "orange"});#}
-                        $(dataKey[i]).remove()
-                    }
-                }
-            }
-
-            let rooms = $('.cleanmode');
-            let logic = true;
-            for (let i = 0; i < rooms.length; i++) {
-                let dates = $(rooms[i]).parent().children();
-                {#console.log($(rooms[i]).parent().children('td .cleanmode').children('span').attr('title'));#}
-                {#console.log('i' + i);#}
-                for (let j = 0; j < dates.length; j++) {
-                    if ($(dates[j]).attr('data-date-arrival')) {
-                        for (let k = 0; k < $(dates[j]).attr('data-date-arrival').length; k++) {
-                            if ($(dates[j]).attr('data-date-departure') === $(dates[k]).attr('data-date-arrival')) {
-                                let num = Number($(dates[k]).attr('colspan'));
-                                if (!logic) {
-                                    $(dates[k]).attr('colspan', num + 1);
-                                    logic = false;
-                                } else {
-                                    $(dates[k]).attr('colspan', num + 1);
-                                }
-                                $(dates[k]).next().remove();
-                            }
-                        }
-                    }
-                }
-            }
-
-        });
-    </script>
-
+    <script src="{% static 'js/libs/popper.min.js' %}"></script>
+    <script src="{% static 'js/libs/mdb.min.js' %}"></script>
+    {#    <script src="{% static 'js/kill-all-page.js' %}"></script>#}
+    <script src="{% static 'js/cellSelection.min.js' %}"></script>
     <script src="{% static 'js/chess.js' %}"></script>
-
 {% endblock %}

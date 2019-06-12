@@ -3,7 +3,26 @@
 {% load my_filter %}
 
 {% block css %}
+    <link rel="stylesheet" href="{% static 'css/libs/datatables.min.css' %}">
+    <style>
+        .block-fixed {
+            position: fixed;
+            top: 70px;
+            right: 10px;
+            width: 135px;
+        }
 
+        .block-fixed input {
+            margin-top: 20px;
+            padding-left: 5px;
+            width: 100%;
+        }
+
+        .block-fixed button {
+            font-size: 12px;
+            margin-top: 10px;
+        }
+    </style>
 {% endblock %}
 
 {% block title %}
@@ -12,36 +31,183 @@
 
 {% block content %}
 
-    <table class="table booking-list" style="background-color: #fff; color: #505050; margin-top: 15px;">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Номер остановки</th>
-                <th>Дата заезда</th>
-                <th>Дата выезда</th>
-                <th>Статус брони</th>
-                <th>Гость</th>
-            </tr>
-        </thead>
-        {% for booking in bookings %}
-            <tr>
-                <td><a href="{% url 'edit-booking' booking.id %}">{{ booking.id }}</a></td>
-                <td>{{ booking.room }}</td>
-                <td>{{ booking.date_arrival }}</td>
-                <td>{{ booking.date_departure }}</td>
-                <td class="status{{ booking.status_booking }}">{{ booking.status_booking|status_booking }}</td>
-                <td>
-                    {% for guest in booking.guest.all %}
-                        {{ guest }},
-                    {% endfor %}
-                </td>
-            </tr>
-        {% endfor %}
+    <div class="card">
+        <h3 class="card-header text-center font-weight-bold text-uppercase py-4">Список всех броней</h3>
+        <div class="card-body">
 
-    </table>
+            <div id="table" class="table-editable">
+                <div class="d-flex justify-content-center buttons-wrapper flex-wrap pb-3">
+                    <button id="" class="btn btn-sm btn-teal btn-rounded addNewColumn">Сменить статус</button>
+                    <button id="" class="btn btn-sm btn-teal btn-rounded addNewColumn">Продлить</button>
+                    <button id="" class="btn btn-sm btn-mdb-color btn-rounded removeColumns">Удалить бронь
+                    </button>
+                    <button id="" class="btn btn-sm btn-info btn-rounded addNewRows">Автопродление</button>
+                </div>
+                <div class="closeByClick d-none"></div>
+                <div class="showForm d-none"
+                     style="position: fixed; top: 20%; left:50%; transform: translate(-50%, -50%); z-index: 1100;">
+                    <form class="text-center border border-light p-5" style="background: white;">
+                        <button type="button" class="close position-relative button-x" style="top:-12%; right: -5%">
+                            <span aria-hidden="true" class="text-danger">×</span>
+                        </button>
+                        <h3 class="h3 my-3 text-danger font-weight-bold">Delete</h3>
+                        <hr class="mt-2 mb-3">
+                        <p class="text-center h5 py-2 pb-3">Are you sure to delete selected rows?</p>
+                        <hr class="mt-2 mb-3">
+                        <div class="d-flex justify-content-center buttonYesNoWrapper">
+                            <button type="button" class="btn btn-danger btnYes btn-sm" data-dismiss="modal">Yes</button>
+                            <button type="button" class="btn btn-primary btnNo btn-sm" data-dismiss="modal">No</button>
+                        </div>
+                    </form>
+                </div>
+
+                <table class="table table-bordered table-responsive-md table-striped text-center">
+                    <thead>
+                    <tr>
+                        <th class="text-center"></th>
+                        <th class="text-center">ID</th>
+                        <th class="text-center">Номер</th>
+                        <th class="text-center">Дата заезда</th>
+                        <th class="text-center">Дата выезда</th>
+                        <th class="text-center">Статус</th>
+                        <th class="text-center">Гости</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for booking in bookings %}
+                        <tr>
+                            <td><input type="checkbox" name="action-selected" value="{{ booking.id }}"
+                                       class="action-select"></td>
+                            <td><a href="{% url 'edit-booking' booking.id %}">{{ booking.id }}</a></td>
+                            <td>{{ booking.room }}</td>
+                            <td>{{ booking.date_arrival }}</td>
+                            <td>{{ booking.date_departure }}</td>
+                            <td class="status{{ booking.status_booking }}">{{ booking.status_booking|status_booking }}</td>
+                            <td>
+                                {% for guest in booking.guest.all %}
+                                    {{ guest }},
+                                {% endfor %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+{#    <div class="block-fixed">#}
+{#        <select name="status_booking" id="id_status_booking">#}
+{#            <option value="-2">Разместить без оплаты</option>#}
+{#            <option value="2">Разместить с оплатой</option>#}
+            {#            <option value="-3">Выселить</option>#}
+{#        </select>#}
+{#        <button class="btn btn-info btn-sm" id="change_status_booking">Изменить статус брони</button>#}
+{##}
+{#        <input type="number" id="booking_days" value="0">#}
+{#        <button class="btn btn-info btn-sm" id="change_date_departure">Продлить дату выезда</button>#}
+{#    </div>#}
+
+    {#    <table class="table booking-list" style="background-color: #fff; color: #505050; margin-top: 15px;">#}
+    {#        <thead>#}
+    {#        <tr>#}
+    {#            <th><input type="checkbox" disabled></th>#}
+    {#            <th>ID</th>#}
+    {#            <th>Номер остановки</th>#}
+    {#            <th>Дата заезда</th>#}
+    {#            <th>Дата выезда</th>#}
+    {#            <th>Статус брони</th>#}
+    {#            <th>Гость</th>#}
+    {#        </tr>#}
+    {#        </thead>#}
+    {#        {% for booking in bookings %}#}
+    {#            <tr>#}
+    {#                <td><input type="checkbox" name="action-selected" value="{{ booking.id }}" class="action-select"></td>#}
+    {#                <td><a href="{% url 'edit-booking' booking.id %}">{{ booking.id }}</a></td>#}
+    {#                <td>{{ booking.room }}</td>#}
+    {#                <td>{{ booking.date_arrival }}</td>#}
+    {#                <td>{{ booking.date_departure }}</td>#}
+    {#                <td class="status{{ booking.status_booking }}">{{ booking.status_booking|status_booking }}</td>#}
+    {#                <td>#}
+    {#                    {% for guest in booking.guest.all %}#}
+    {#                        {{ guest }},#}
+    {#                    {% endfor %}#}
+    {#                </td>#}
+    {#            </tr>#}
+    {#        {% endfor %}#}
+    {##}
+    {#    </table>#}
 
 {% endblock %}
 
 {% block scripts %}
+    <script src="{% static 'js/libs/datatables.min' %}"></script>
+    <script>
 
+        $('#dt-more-row-col').mdbEditor({
+            modalEditor: true,
+            headerLength: 7,
+        });
+        $('.dataTables_length').addClass('bs-select');
+
+        $('.dataTables_length').addClass('bs-select');
+
+        $('#id_status_booking').select2({
+            width: '100%'
+        });
+        $('#change_status_booking').click(function () {
+            let actionSelected = $('.action-select');
+            let statusBooking = $('#id_status_booking').val();
+            let bookingIDs = [];
+            for (let i = 0; i < actionSelected.length; i++) {
+                if ($(actionSelected[i]).is(':checked')) {
+                    bookingIDs.push($(actionSelected[i]).val());
+                }
+            }
+            if (bookingIDs.length === 0) {
+                alert('Вы не выбрали бронь');
+            } else {
+                $.ajax({
+                    url: '/ajax/bookings-change/',
+                    method: 'get',
+                    data: {
+                        statusBooking: statusBooking,
+                        bookingIDs: bookingIDs
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                        if (data.ok) window.location.href = '/';
+                    }
+                })
+            }
+        });
+        $('#change_date_departure').click(function () {
+            let days = $('#booking_days').val();
+            let actionSelected = $('.action-select');
+            let bookingIDs = [];
+            for (let i = 0; i < actionSelected.length; i++) {
+                if ($(actionSelected[i]).is(':checked')) {
+                    bookingIDs.push($(actionSelected[i]).val());
+                }
+            }
+            console.log(days);
+            if (days !== 0 && bookingIDs.length !== 0) {
+                $.ajax({
+                    url: '/ajax/bookings-extend/',
+                    method: 'get',
+                    data: {
+                        days: days,
+                        bookingIDs: bookingIDs
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                        if (data.ok) window.location.href = '/';
+                    }
+                })
+            } else {
+                console.log(days);
+                console.log(bookingIDs);
+            }
+        });
+    </script>
 {% endblock %}
